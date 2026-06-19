@@ -46,7 +46,12 @@ pip-delete-this-directory.txt
 
 # Data and outputs
 data/processed_proposals/
-outputs/
+outputs/*.txt
+outputs/*.log
+outputs/graphs/*
+outputs/results/*
+!outputs/graphs/.gitkeep
+!outputs/results/.gitkeep
 *.log
 
 # OS
