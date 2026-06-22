@@ -61,3 +61,9 @@ Thumbs.db
 # Large files and datasets (keep data/train.json and validation.json if needed, but ignore massive processed files)
 *.zip
 *.tar.gz
+
+# Local virtualenv created by the assistant for reproducible runs
+.venv39/
+
+# Model and dataset binaries (do not commit large .pt checkpoints)
+*.pt
