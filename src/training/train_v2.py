@@ -348,7 +348,7 @@ def main():
 
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode='max', factor=0.5,
-        patience=5, verbose=True)    # reduce LR when F1 stops improving
+        patience=5)    # reduce LR when F1 stops improving
 
     # ── Training ──────────────────────────────────────────────
     print(f"\n{'─'*55}")
