@@ -9,46 +9,34 @@
 #
 # WHAT'S NEW VS V1:
 #   • PD_GNN instead of CausalGNN (unbounded force pathway)
-#   • Lagrange momentum constraint (λ=10.0, not soft 0.1)
+#   • Lagrange momentum constraint, computed PER-GRAPH via
+#     global_add_pool (see lagrange_momentum_loss docstring —
+#     an earlier version incorrectly summed momentum across the
+#     WHOLE BATCH instead of per collision event; fixed here)
 #   • Multi-task: exit prediction + velocity prediction
 #   • Passes edge_attr through the GNN
 #   • Saves full metrics history for comparison plots
 # ─────────────────────────────────────────────────────────────
 
-import os, random, bz2, sys
+import os, random, bz2
 import torch
 import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import global_add_pool
 from sklearn.metrics import (accuracy_score, f1_score,
                               confusion_matrix, precision_score,
                               recall_score)
 
-ROOT_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
-
-MODEL_DIR = os.path.join(ROOT_DIR, 'src', 'models')
-if MODEL_DIR not in sys.path:
-    sys.path.insert(0, MODEL_DIR)
-
 # ── Import PD_GNN ─────────────────────────────────────────────
-# If running on Colab from repo root, this file will find src/models/pd_gnn.py
+# If running on Colab, make sure pd_gnn.py is in the same folder
+# or add its location to sys.path
 try:
     from pd_gnn import PD_GNN, CausalGNN
 except ImportError:
-    sys.path.insert(0, '/content')
+    import sys
+    # Corrected path to pd_gnn.py
+    sys.path.append('/content/CausalVis/src/models')
     from pd_gnn import PD_GNN, CausalGNN
-
-
-def resolve_dataset_path(filename):
-    candidates = [
-        os.path.join(os.getcwd(), filename),
-        os.path.join(ROOT_DIR, filename),
-        os.path.join(ROOT_DIR, 'data', filename),
-    ]
-    for path in candidates:
-        if os.path.exists(path):
-            return path
-    return candidates[-1]
 
 
 # ══════════════════════════════════════════════════════════════
@@ -113,43 +101,61 @@ def stratified_split(dataset, seed=42):
 
 
 # ══════════════════════════════════════════════════════════════
-# LAGRANGE MOMENTUM CONSTRAINT LOSS
+# LAGRANGE MOMENTUM CONSTRAINT LOSS  (FIXED — see comment below)
 # ══════════════════════════════════════════════════════════════
 def lagrange_momentum_loss(pred_vel_batch, pre_vel_batch,
-                            mass_batch, lambda_momentum=10.0):
+                            mass_batch, batch_idx, lambda_momentum=1.0):
     """
-    Hard momentum conservation constraint via Lagrange multiplier.
+    Hard momentum conservation constraint, computed PER COLLISION
+    EVENT (per graph in the batch) — NOT aggregated across the
+    entire batch.
 
-    WHY λ=10.0 (not 0.1 like V1's soft penalty):
-      A soft penalty of 0.1 is cheaply violated — the optimizer
-      finds it easier to ignore it than to satisfy it.
-      λ=10.0 makes the constraint DOMINATE the loss early in
-      training, forcing the network to learn physically consistent
-      dynamics before optimizing exit prediction accuracy.
+    BUG THIS FIXES (found from the training run with phys=14344):
+      The original version did `.sum(dim=0)` over ALL nodes in the
+      WHOLE BATCH — e.g. 64 unrelated collisions (128 nodes) summed
+      into a single number. That asks the network to match the
+      aggregate momentum of 64 unrelated physics events, which is
+      not a real conservation law and has no learnable pattern.
+      This produced a huge, noisy loss (~14,000) that completely
+      drowned out the exit-prediction task (~1.2), explaining the
+      accuracy crash from 80.6% (V1) to 51.6% (broken V2).
 
-    Conservation law being enforced:
-      Σ(mass_i × velocity_i) BEFORE = Σ(mass_i × velocity_i) AFTER
+    THE FIX:
+      Use PyG's batch index to sum momentum WITHIN each individual
+      2-node subgraph via global_add_pool, so the constraint
+      correctly enforces: "momentum before THIS collision ≈
+      momentum after THIS SAME collision" for every event
+      independently. F.mse_loss then averages the per-graph error
+      across the batch (not summed), so the loss magnitude stays
+      well-scaled regardless of batch size.
+
+    Conservation law being enforced (per graph g):
+      Σ_i(mass_i × velocity_i) BEFORE = Σ_i(mass_i × velocity_i) AFTER
 
     Parameters
     ----------
     pred_vel_batch : [N, 2] predicted post-collision velocities
     pre_vel_batch  : [N, 2] ground truth pre-collision velocities
     mass_batch     : [N]    mass proxy per node
-    lambda_momentum: float  Lagrange multiplier (dominance factor)
+    batch_idx      : [N]    graph index per node (batch.batch from PyG)
+    lambda_momentum: float  penalty weight (default lowered 10.0→1.0;
+                             tune up only after exit task is solid —
+                             watch the exit vs phys ratio in the logs)
 
     Returns
     -------
     Scalar momentum conservation loss
     """
-    # mass: [N] → [N, 1] for broadcasting
-    m = mass_batch.unsqueeze(1)
+    m = mass_batch.unsqueeze(1)                       # [N, 1]
 
-    # Total momentum before and after (summed over all nodes in batch)
-    # In a 2-node subgraph: p_before[0] + p_before[1] ≈ p_after[0] + p_after[1]
-    p_before = (m * pre_vel_batch).sum(dim=0)    # [2] (x, y components)
-    p_after  = (m * pred_vel_batch).sum(dim=0)   # [2]
+    p_before_node = m * pre_vel_batch                  # [N, 2]
+    p_after_node  = m * pred_vel_batch                 # [N, 2]
 
-    return lambda_momentum * F.mse_loss(p_after, p_before)
+    # Sum momentum WITHIN each graph only — this is the fix
+    p_before_graph = global_add_pool(p_before_node, batch_idx)  # [B, 2]
+    p_after_graph  = global_add_pool(p_after_node,  batch_idx)  # [B, 2]
+
+    return lambda_momentum * F.mse_loss(p_after_graph, p_before_graph)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -183,10 +189,10 @@ def train(model, train_loader, optimizer, pos_weight, device,
         else:
             L_vel = torch.tensor(0.0, device=device)
 
-        # ── Task 3: Lagrange momentum constraint ──────────────
+        # ── Task 3: Lagrange momentum constraint (per-graph) ──
         if hasattr(batch, 'pre_vel') and batch.pre_vel is not None:
             L_phys = lagrange_momentum_loss(
-                pred_vel, batch.pre_vel, batch.mass,
+                pred_vel, batch.pre_vel, batch.mass, batch.batch,
                 lambda_momentum=lambda_momentum)
         else:
             L_phys = torch.tensor(0.0, device=device)
@@ -307,14 +313,17 @@ def counterfactual_sensitivity(model, test_loader, device,
 # ══════════════════════════════════════════════════════════════
 def main():
     # ── Config ───────────────────────────────────────────────
-    DATASET_BZ2 = 'causal_dataset_v2.pt.bz2'   # if compressed
-    DATASET_PT  = 'causal_dataset_v2.pt'
+    DATASET_BZ2 = '../../data/causal_dataset_v2.pt.bz2'   # if compressed
+    DATASET_PT  = '../../data/causal_dataset_v2.pt'
     SAVE_PATH   = 'causal_gnn_v2.pt'
     BATCH_SIZE  = 64
     EPOCHS      = 50
     LR          = 0.005
     WD          = 1e-4
-    LAMBDA_MOM  = 10.0
+    LAMBDA_MOM  = 1.0     # lowered from 10.0 — the per-graph fix already
+                          # makes this loss well-scaled; start conservative
+                          # and raise later if physics compliance is weak
+                          # (watch the exit-vs-phys ratio in the epoch logs)
     VEL_WEIGHT  = 0.3
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -322,10 +331,6 @@ def main():
     print(f" CausalVis V2 Training — PD-GNN + Lagrange Constraint")
     print(f"{'═'*55}")
     print(f" Device: {device}")
-
-    DATASET_BZ2 = resolve_dataset_path('causal_dataset_v2.pt.bz2')
-    DATASET_PT  = resolve_dataset_path('causal_dataset_v2.pt')
-    SAVE_PATH   = os.path.join(ROOT_DIR, 'causal_gnn_v2.pt')
 
     # ── Decompress if needed ──────────────────────────────────
     if os.path.exists(DATASET_BZ2) and not os.path.exists(DATASET_PT):
@@ -372,13 +377,15 @@ def main():
                   f"  loss={losses['total']:.4f}"
                   f"  (exit={losses['exit']:.4f}"
                   f"  phys={losses['phys']:.4f}"
-                  f"  vel={losses['vel']:.4f})"
-                  f"  │  acc={metrics['accuracy']:.3f}"
+                  f"  vel={losses['vel']:.4f})")
+
+            history.append({'epoch': epoch, **losses, **metrics})
+
+            # Only print metrics if calculated, otherwise it's redundant to the previous epoch
+            print(f"              │  acc={metrics['accuracy']:.3f}"
                   f"  f1={metrics['f1']:.3f}"
                   f"  prec={metrics['precision']:.3f}"
                   f"  rec={metrics['recall']:.3f}")
-
-            history.append({'epoch': epoch, **losses, **metrics})
 
             if metrics['f1'] > best_f1:
                 best_f1 = metrics['f1']
