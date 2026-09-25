@@ -67,3 +67,62 @@ Thumbs.db
 
 # Model and dataset binaries (do not commit large .pt checkpoints)
 *.pt
+
+# ---- Paper release (added 2026-09-19) ----
+# Third-party data: download it with the instructions in README.md, do not redistribute
+data/trajectories_*/
+data/traj3d_test/
+data/*.7z
+external/
+zechennlp/
+# Run records are large (about 280 MB); they go in a separate archive
+paper_exp/runs/
+paper_exp/qruns/
+paper_exp/comphy_runs/*.jsonl
+# Scratch and local files
+out3d/
+history/
+manifest-*.json
+*.stackdump
+traces.jsonl
+app/session_files/
+# The trained world models are small (3.2 MB in total) and are part of the release
+!v6_voxel.pt
+!v6_voxel_seed1.pt
+!v6_voxel_seed2.pt
+!v6_control.pt
+!v5b_noyaw.pt
+!v5_noyaw.pt
+!v3_6_3d.pt
+!v3_7_3d_frozen.pt
+!v3_8_impulse.pt
+!v7_2/ckpt/*.pt
+
+# ---- Release hygiene (added 2026-09-25) ----
+# never commit dependency trees
+node_modules/
+# bulk per-option records: kept as one zip in paper_exp/records/ instead
+paper_exp/runs/
+paper_exp/qruns/
+paper_exp/prelim_gtinv/
+paper_exp/butfor/*/shard*.jsonl
+paper_exp/idcheck/
+v4/runs/
+v5/runs/
+v6/cmp/*.jsonl
+v7/runs/
+v7_1/runs/
+v7_2/runs/
+v7_3/runs/
+v8/runs/
+v7_1_oracle/runs/
+probe/*.jsonl
+# large working notes and course/university material (not part of the code release)
+misses.md
+fyp/
+cs493/
+presentation/
+
+# keep the two archives we do want
+!paper_exp/records/test_records.zip
+!paper/causalvis_paper_overleaf.zip

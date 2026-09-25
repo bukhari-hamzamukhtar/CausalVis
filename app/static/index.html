@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CausalVis Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@80,500;80,700;100,500;100,700&family=Spectral:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F3F5F4; --panel:#FFFFFF; --ink:#1B2127; --ink2:#56616B; --line:#D2D8D6; --tint:#E7ECEA;
+  --rec:#8A5A2C; --sim:#0E7C89; --lm:#6A4B9E; --hand:#66707A; --bad:#B0442E; --amber:#B7791F;
+  --rec-bg:#F3EAE0; --sim-bg:#E1F1F2; --lm-bg:#ECE6F5; --bad-bg:#F6E6E1; --amber-bg:#F7EEDC;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"Spectral",Georgia,serif; --mono:"IBM Plex Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root{
+  --paper:#111416; --panel:#171B1E; --ink:#E3E7E9; --ink2:#9AA3AA; --line:#2B3237; --tint:#1D2226;
+  --rec:#CE9C66; --sim:#4BC0CC; --lm:#AD8FE6; --hand:#A3ACB4; --bad:#E5826B; --amber:#E2AE55;
+  --rec-bg:#2A2119; --sim-bg:#15292C; --lm-bg:#231D30; --bad-bg:#2E1B17; --amber-bg:#2D2414;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 var(--body)}
+h1,h2,h3{font-family:var(--display);font-stretch:80%;margin:0;line-height:1.15}
+button,input,textarea,select{font:inherit;color:inherit}
+button{font-family:var(--display);font-stretch:90%;font-weight:700;cursor:pointer;border:1px solid var(--ink);background:var(--panel);padding:8px 14px}
+button.primary{background:var(--sim);border-color:var(--sim);color:#fff}
+button.on{background:var(--lm);border-color:var(--lm);color:#fff}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,canvas:focus-visible{outline:3px solid var(--sim);outline-offset:2px}
+.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding:16px 24px;border-bottom:2px solid var(--ink)}
+.top h1{font-size:1.7rem;font-weight:700}
+.tag{font-family:var(--display);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.app{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 64px)}
+.side{border-right:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:18px;background:var(--panel)}
+.main{padding:18px 24px 60px;display:flex;flex-direction:column;gap:22px;min-width:0}
+.label{font-family:var(--display);font-stretch:100%;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input[type=number]{width:120px;padding:8px 10px;border:1px solid var(--line);background:var(--paper);font-family:var(--mono)}
+textarea{width:100%;min-height:90px;padding:9px 10px;border:1px solid var(--line);background:var(--paper);resize:vertical}
+select{padding:3px 6px;border:1px solid var(--line);background:var(--paper)}
+input[type=range]{accent-color:var(--sim)}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{font-family:var(--display);font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;background:var(--tint)}
+.chip.test{background:var(--sim-bg);color:var(--sim)}
+.objs{display:flex;flex-direction:column;gap:6px}
+.obj{display:grid;grid-template-columns:16px 1fr auto;align-items:center;gap:4px 8px;padding:6px 8px;border:1px solid var(--line)}
+.obj .acts{grid-column:1/-1;display:flex;gap:4px;flex-wrap:wrap}
+.oname{border:0;background:none;padding:0;text-align:left;font-family:var(--body);font-weight:500;cursor:pointer}
+.oname:hover{text-decoration:underline}
+.mini{padding:2px 8px;font-size:.76rem;border-color:var(--line);font-weight:500}
+.mini:hover:not(:disabled){border-color:var(--ink)}
+.sw{width:14px;height:14px;display:inline-block;border:1px solid rgba(0,0,0,.25)}
+.sw.metal{border-radius:50%;box-shadow:inset -3px -3px 0 rgba(255,255,255,.45)}
+.obj small{font-family:var(--mono);color:var(--ink2);font-size:.75rem}
+.qs button,.examples button{display:block;width:100%;text-align:left;font-family:var(--body);font-weight:400;font-size:.9rem;margin-bottom:5px;border-color:var(--line);padding:6px 9px}
+.examples{max-height:230px;overflow-y:auto}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-family:var(--display);font-size:.9rem}
+.steps li{color:var(--ink2);display:flex;gap:8px;align-items:center}
+.steps li::before{content:"";width:9px;height:9px;border:1.5px solid currentColor}
+.steps li.now{color:var(--sim);font-weight:700} .steps li.now::before{background:var(--sim)}
+.steps li.done{color:var(--ink)} .steps li.done::before{background:var(--ink)}
+.bar{height:5px;background:var(--tint);margin-top:6px} .bar i{display:block;height:100%;background:var(--sim);width:0;transition:width .3s}
+.err{color:var(--bad);font-size:.92rem;margin:6px 0 0}
+.note{font-size:.85rem;color:var(--ink2);margin:6px 0 0}
+.player{background:var(--panel);border:1px solid var(--line)}
+.views{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
+figure{margin:0;border:1px solid var(--line)}
+figure .head{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-bottom:1px solid var(--line);font-family:var(--display);font-weight:700}
+figure .head span{font-weight:500;color:var(--ink2);font-size:.85rem;text-align:right}
+canvas.view{width:100%;aspect-ratio:3/2;display:block;background:#dfe3e6;touch-action:none;cursor:grab}
+canvas.view.dragging{cursor:grabbing} canvas.view.marking{cursor:crosshair}
+.controls{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:9px 12px;border-top:1px solid var(--line)}
+.ctl{display:flex;align-items:center;gap:6px;font-family:var(--display);font-size:.85rem;color:var(--ink2)}
+.mono{font-family:var(--mono);font-size:.82rem;color:var(--ink2);min-width:13ch}
+.legend{display:flex;gap:6px 16px;flex-wrap:wrap;padding:8px 12px;font-size:.82rem;color:var(--ink2);font-family:var(--display);border-top:1px solid var(--line)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.ring{display:inline-block;width:11px;height:11px;border-radius:50%;border:2px dashed var(--lm);margin-right:5px;vertical-align:-2px}
+section.card{background:var(--panel);border:1px solid var(--line);padding:16px 18px}
+section.card h2{font-size:1.25rem;margin-bottom:10px}
+.summary{font-size:1.12rem;margin:0 0 10px}
+.card ul,.card ol{margin:6px 0 10px;padding-left:1.3rem}
+.caution{background:var(--amber-bg);padding:8px 12px;font-size:.93rem;margin:8px 0 0}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.three h3{font-size:.95rem;font-stretch:100%;margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.three ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;font-size:.93rem}
+.three li{padding:6px 8px;background:var(--tint)}
+.three .kept li{background:var(--amber-bg)} .three .new li{background:var(--bad-bg)} .three .gone li{text-decoration:line-through;text-decoration-color:var(--ink2)}
+.fr{font-family:var(--mono);font-size:.78rem;color:var(--ink2)}
+.tl{display:grid;grid-template-columns:230px 1fr;gap:8px 12px;align-items:center;font-size:.9rem}
+.track{position:relative;height:14px;background:var(--tint)}
+.track i{position:absolute;top:0;bottom:0}
+.track .v{background:var(--rec)} .track .s{background:var(--sim)} .track .x{background:var(--hand);opacity:.5}
+.track .chg{top:-5px;bottom:-5px;width:3px;margin-left:-1px;background:var(--lm)}
+.track .end{top:-4px;bottom:-4px;border-left:2px dashed var(--ink2)}
+.axis{grid-column:2;display:flex;justify-content:space-between;font-family:var(--mono);font-size:.75rem;color:var(--ink2)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--display);font-weight:700;background:var(--tint)}
+.ok{color:var(--sim);font-weight:600} .no{color:var(--bad);font-weight:600}
+.explain h3{font-size:.95rem;font-stretch:100%;margin-top:12px}
+@media (max-width:1100px){.app{grid-template-columns:1fr}.side{border-right:0;border-bottom:1px solid var(--line)}.views,.three{grid-template-columns:1fr}.tl{grid-template-columns:130px 1fr}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>CausalVis Lab</h1>
+  <span class="tag">what-if physics · world model v7.1 · 88.4% on held-out removal questions</span>
+  <span class="tag" id="llmTag">language model: checking…</span>
+</header>
+<div class="app">
+<aside class="side">
+  <div>
+    <div class="label">1 · Pick a video</div>
+    <div class="row">
+      <input id="vid" type="number" min="0" max="19999" placeholder="e.g. 10002" aria-label="Video number">
+      <button id="loadBtn">Load</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button id="randTest" title="A video from the held-out test set, never used for training or tuning">Random test video</button>
+      <button id="randAny">Any video</button>
+    </div>
+    <div class="badges" id="badges"></div>
+  </div>
+  <div>
+    <div class="label">2 · Objects in this video</div>
+    <div class="objs" id="objs"><span class="note">Load a video to see its objects.</span></div>
+    <p class="note">Click a name to put it into your question. The small buttons run that change straight away.</p>
+  </div>
+  <div class="qs" id="qsWrap" hidden>
+    <div class="label">The dataset asks about removing…</div>
+    <div id="qs"></div>
+  </div>
+  <div>
+    <div class="label">3 · Ask what if</div>
+    <textarea id="req" placeholder="Anything that changes the scene: remove, add, move, speed up, turn, come from another side, change material, shape, size, mass, bounciness or friction, glue to the table… and combinations."></textarea>
+    <div class="row" style="margin-top:8px">
+      <button id="markBtn" title="Click a point on the table, then say 'here' in your question">Mark a spot</button>
+      <button id="clearMark" class="mini" hidden>Clear spot</button>
+    </div>
+    <p class="note" id="markNote"></p>
+    <div class="row" style="margin-top:8px"><button class="primary" id="runBtn" disabled>Run the world model</button></div>
+  </div>
+  <div>
+    <div class="label">Try one of these</div>
+    <div class="examples" id="examples"><span class="note">Examples appear when a video is loaded.</span></div>
+  </div>
+  <div>
+    <div class="label">Progress</div>
+    <ol class="steps" id="steps">
+      <li data-k="reading">Reading your request</li>
+      <li data-k="building">Building the what-if world</li>
+      <li data-k="finding">Finding collisions</li>
+      <li data-k="writing">Writing the explanation</li>
+    </ol>
+    <div class="bar"><i id="barFill"></i></div>
+    <p class="note" id="stageNote"></p>
+    <p class="err" id="err" role="alert"></p>
+  </div>
+  <p class="note">Everything this page creates is deleted when you load another video, refresh, or close the page.</p>
+</aside>
+
+<main class="main">
+  <section class="player" aria-label="3D player">
+    <div class="views">
+      <figure><div class="head">Real video <span>3D replay of the recorded tracks</span></div>
+        <canvas id="cvRec" class="view" tabindex="0" aria-label="3D replay of the real video. Drag to turn, scroll to zoom."></canvas></figure>
+      <figure><div class="head">What-if world <span id="cfNote">not run yet</span></div>
+        <canvas id="cvCf" class="view" tabindex="0" aria-label="3D view of the what-if world. Drag to turn, scroll to zoom."></canvas></figure>
+    </div>
+    <div class="controls">
+      <button id="playBtn" class="primary" style="min-width:74px">Pause</button>
+      <input id="frame" type="range" min="0" max="127" value="0" aria-label="Frame" style="flex:1;min-width:180px">
+      <span id="frameLbl" class="mono">frame 0</span>
+      <label class="ctl">speed <select id="speed"><option value="0.25">¼×</option><option value="0.5">½×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+    </div>
+    <div class="controls">
+      <label class="ctl">turn <input id="az" type="range" min="-180" max="180" step="1" aria-label="Turn the camera around the table"></label>
+      <label class="ctl">tilt <input id="el" type="range" min="3" max="89" step="1" aria-label="Tilt the camera"></label>
+      <label class="ctl">zoom <input id="zoom" type="range" min="4" max="20" step="0.1" aria-label="Zoom"></label>
+      <button class="mini" data-view="video">video camera</button>
+      <button class="mini" data-view="top">top</button>
+      <button class="mini" data-view="side">side</button>
+    </div>
+    <div class="controls">
+      <label class="ctl"><input type="checkbox" id="optLabels"> names</label>
+      <label class="ctl"><input type="checkbox" id="optGhosts" checked> faint real motion of removed / changed objects</label>
+      <span style="flex:1"></span>
+      <button class="mini" id="gif_rec" disabled>Save real video as GIF (this view)</button>
+      <button class="mini" id="gif_cf" disabled>Save what-if as GIF (this view)</button>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:#ec9f1e"></i>collision that happens in the real video</span>
+      <span><i class="dot" style="background:#de3a2e"></i>new collision</span>
+      <span><i class="ring"></i>your marked spot</span>
+      <span>drag a view to turn it, scroll to zoom · both views move together · space = play/pause, ← → = step</span>
+    </div>
+  </section>
+
+  <section class="card" id="planCard" hidden>
+    <h2>What the system simulated</h2>
+    <div id="plan"></div>
+  </section>
+
+  <section class="card" id="truthCard">
+    <h2>Collisions in the real video</h2>
+    <div class="note" id="truthList">These are the dataset's own recorded collisions (the ground truth).</div>
+  </section>
+
+  <section class="card" id="diffCard" hidden>
+    <h2>What changed</h2>
+    <div class="three">
+      <div class="kept"><h3><i class="dot" style="background:var(--amber)"></i>Still happen</h3><ul id="kept"></ul></div>
+      <div class="gone"><h3><i class="dot" style="background:var(--hand)"></i>No longer happen</h3><ul id="gone"></ul></div>
+      <div class="new"><h3><i class="dot" style="background:var(--bad)"></i>New</h3><ul id="new"></ul></div>
+    </div>
+    <p class="note">Frames 128 and later are the world model's prediction after the real video ends.</p>
+  </section>
+
+  <section class="card" id="whoCard" hidden>
+    <h2>Who the world model simulated, and why</h2>
+    <div class="legend" style="padding:0 0 10px;border:0"><span><i class="dot" style="background:var(--rec)"></i>follows the real video</span><span><i class="dot" style="background:var(--sim)"></i>simulated by the world model</span><span><i class="dot" style="background:var(--lm);border-radius:0;width:4px"></i>your change</span><span>dashed line = end of the real video</span></div>
+    <div class="tl" id="tl"></div>
+  </section>
+
+  <section class="card" id="checkCard" hidden>
+    <h2>Checked against the dataset's answers</h2>
+    <p class="note">The dataset asks a question about this exact removal, so we can compare.</p>
+    <div style="overflow-x:auto"><table><thead><tr><th>Option</th><th>Dataset</th><th>World model</th><th></th></tr></thead><tbody id="checks"></tbody></table></div>
+  </section>
+
+  <section class="card explain" id="explainCard" hidden>
+    <h2>What happened, explained</h2>
+    <div id="explain"></div>
+  </section>
+</main>
+</div>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const D2R = Math.PI / 180;
+// the recovered CLEVRER camera (camera_fit.json) as azimuth / elevation / distance
+const VIEWS = {video: {az: -69.17, el: 34.89, dist: 8.29}, top: {az: -90, el: 89, dist: 12}, side: {az: -90, el: 9, dist: 10}};
+const PAL = {gray:[140,140,140], red:[196,60,50], blue:[55,95,190], green:[60,155,75], brown:[135,95,55], purple:[140,75,175], cyan:[60,175,190], yellow:[220,195,60]};
+const LIGHT = norm([0.35, -0.5, 0.78]);
+const S = {video:null, info:null, rec:null, cf:null, res:null, busy:false, marking:false, marked:null};
+const view = {...VIEWS.video};
+const play = {t:0, playing:true, speed:1, acc:0, last:0, dirty:true};
+const opts = {labels:false, ghosts:true};
+
+// ------------------------------------------------------------------ vector maths + camera
+function vsub(a,b){ return [a[0]-b[0], a[1]-b[1], a[2]-b[2]]; }
+function vadd(a,b){ return [a[0]+b[0], a[1]+b[1], a[2]+b[2]]; }
+function vmul(a,k){ return [a[0]*k, a[1]*k, a[2]*k]; }
+function dot(a,b){ return a[0]*b[0] + a[1]*b[1] + a[2]*b[2]; }
+function cross(a,b){ return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]; }
+function norm(a){ const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0]/l, a[1]/l, a[2]/l]; }
+const clamp = (x,a,b) => Math.min(b, Math.max(a, x));
+const rgb = (c) => `rgb(${c[0]|0},${c[1]|0},${c[2]|0})`;
+
+// same pinhole as src2/render3d.py and app/render_worker.py, so a saved GIF matches the view
+function makeCam(W, H){
+  const az = view.az*D2R, el = view.el*D2R, d = view.dist;
+  const loc = [d*Math.cos(el)*Math.cos(az), d*Math.cos(el)*Math.sin(az), d*Math.sin(el)];
+  const fwd = norm(vsub([0,0,0], loc)), right = norm(cross(fwd, [0,0,1])), up = cross(right, fwd);
+  return {loc, fwd, right, up, f: 34.21875/32*W, cx: W/2, cy: H/2};
+}
+function project(c, p){
+  const r = vsub(p, c.loc), z = dot(r, c.fwd);
+  if(z < 1e-3) return null;
+  return [c.cx + c.f*dot(r, c.right)/z, c.cy - c.f*dot(r, c.up)/z, z];
+}
+function shade(base, n, fc, cam, metal){
+  const diff = Math.max(dot(n, LIGHT), 0);
+  if(metal){
+    const h = norm(vadd(LIGHT, norm(vsub(cam.loc, fc))));
+    const spec = Math.pow(Math.max(dot(n, h), 0), 48), k = 0.40 + 0.52*diff;
+    return base.map(c => Math.min(255, c*k + 235*0.6*spec));
+  }
+  const k = 0.36 + 0.60*diff;
+  return base.map(c => c*k);
+}
+
+// ------------------------------------------------------------------ drawing
+let groundCache = {key:null, cv:null};
+function ground(cam, W, H){
+  const key = [view.az, view.el, view.dist, W, H].join(",");
+  if(groundCache.key === key) return groundCache.cv;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const g = cv.getContext("2d");
+  const sky = g.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, "#eef0f2"); sky.addColorStop(1, "#d9dde1");
+  g.fillStyle = sky; g.fillRect(0, 0, W, H);
+  const half = 6, step = 0.4, n = 30;
+  for(let i = 0; i < n; i++) for(let j = 0; j < n; j++){
+    const x0 = -half + i*step, y0 = -half + j*step;
+    const pts = [[x0,y0,0],[x0+step,y0,0],[x0+step,y0+step,0],[x0,y0+step,0]].map(p => project(cam, p));
+    if(pts.some(p => !p)) continue;
+    g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for(let k = 1; k < 4; k++) g.lineTo(pts[k][0], pts[k][1]); g.closePath();
+    const tone = (i + j) % 2 === 0 ? 206 : 190;
+    g.fillStyle = g.strokeStyle = `rgb(${tone},${tone},${tone+6})`; g.lineWidth = 0.8; g.fill(); g.stroke();
+  }
+  groundCache = {key, cv};
+  return cv;
+}
+const MESH = new Map();
+function mesh(shape, s){
+  const key = shape + ":" + s;
+  if(MESH.has(key)) return MESH.get(key);
+  let v, f;
+  if(shape === "cube"){
+    v = [[-s,-s,0],[s,-s,0],[s,s,0],[-s,s,0],[-s,-s,2*s],[s,-s,2*s],[s,s,2*s],[-s,s,2*s]];
+    f = [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]];
+  } else {
+    const n = 28; v = [];
+    for(let i = 0; i < n; i++){ const a = i/n*2*Math.PI; v.push([s*Math.cos(a), s*Math.sin(a), 0]); }
+    for(let i = 0; i < n; i++){ const a = i/n*2*Math.PI; v.push([s*Math.cos(a), s*Math.sin(a), 2*s]); }
+    f = []; for(let i = 0; i < n; i++) f.push([i, (i+1)%n, n+(i+1)%n, n+i]);
+    f.push([...Array(n).keys()].map(i => n + i));
+  }
+  const m = {v, f}; MESH.set(key, m); return m;
+}
+function shadow(ctx, cam, it){
+  const s = it.o.size*1.05, pts = [];
+  for(let a = 0; a < 18; a++){
+    const th = a/18*2*Math.PI;
+    const p = project(cam, [it.x + s*Math.cos(th) - 0.15*s, it.y + s*Math.sin(th) + 0.2*s, 0.002]);
+    if(!p) return; pts.push(p);
+  }
+  ctx.globalAlpha = 0.16*it.alpha; ctx.fillStyle = "#000";
+  ctx.beginPath(); pts.forEach((p,i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.fill();
+  ctx.globalAlpha = 1;
+}
+function drawObject(ctx, cam, it){
+  const o = it.o, s = o.size, base = PAL[o.color] || [150,150,150], metal = o.material === "metal";
+  ctx.globalAlpha = it.alpha;
+  if(o.shape === "sphere"){
+    const c = [it.x, it.y, s], pc = project(cam, c);
+    if(!pc){ ctx.globalAlpha = 1; return; }
+    const rad = cam.f*s/pc[2];
+    const hp = project(cam, vadd(c, vmul(LIGHT, s*0.5))) || pc;
+    const g = ctx.createRadialGradient(hp[0], hp[1], rad*0.05, pc[0], pc[1], rad);
+    const k0 = metal ? 1.0 : 0.95, k1 = metal ? 0.30 : 0.38;
+    g.addColorStop(0, rgb(base.map(x => Math.min(255, x*k0 + (metal ? 25 : 0)))));
+    g.addColorStop(0.65, rgb(base.map(x => x*(k0 + k1)/2)));
+    g.addColorStop(1, rgb(base.map(x => x*k1)));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(pc[0], pc[1], rad, 0, 2*Math.PI); ctx.fill();
+    if(metal){
+      const h = norm(vadd(LIGHT, norm(vsub(cam.loc, c)))), sp = project(cam, vadd(c, vmul(h, s*0.92)));
+      if(sp){
+        const gg = ctx.createRadialGradient(sp[0], sp[1], 0, sp[0], sp[1], rad*0.35);
+        gg.addColorStop(0, "rgba(255,255,255,0.9)"); gg.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(sp[0], sp[1], rad*0.35, 0, 2*Math.PI); ctx.fill();
+      }
+    }
+  } else {
+    const m = mesh(o.shape, s), cy = Math.cos(it.yaw), sy = Math.sin(it.yaw);
+    const W3 = m.v.map(p => [it.x + cy*p[0] - sy*p[1], it.y + sy*p[0] + cy*p[1], p[2]]);
+    const P2 = W3.map(p => project(cam, p)), centre = [it.x, it.y, s];
+    for(const f of m.f){
+      if(f.some(i => !P2[i])) continue;
+      const a = W3[f[0]], b = W3[f[1]], c = W3[f[2]];
+      let n = cross(vsub(b, a), vsub(c, a)); const L = Math.hypot(n[0], n[1], n[2]);
+      if(L < 1e-12) continue;
+      n = vmul(n, 1/L);
+      const fc = vmul(f.reduce((acc, i) => vadd(acc, W3[i]), [0,0,0]), 1/f.length);
+      if(dot(n, vsub(fc, centre)) < 0) n = vmul(n, -1);          // outward
+      if(dot(n, vsub(cam.loc, fc)) <= 0) continue;                // back face
+      const col = rgb(shade(base, n, fc, cam, metal));
+      ctx.beginPath(); f.forEach((i, j) => j ? ctx.lineTo(P2[i][0], P2[i][1]) : ctx.moveTo(P2[i][0], P2[i][1])); ctx.closePath();
+      ctx.fillStyle = ctx.strokeStyle = col; ctx.lineWidth = 0.6; ctx.fill(); ctx.stroke();
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+function drawMarks(ctx, cam, list, t, dpr){
+  for(const m of list || []){
+    const age = t - m.f;
+    if(age < 0 || age > 10) continue;
+    const p = project(cam, [m.x, m.y, 0.35]);
+    if(!p) continue;
+    ctx.globalAlpha = Math.max(0.3, 1 - age/11);
+    ctx.beginPath(); ctx.arc(p[0], p[1], (12 - age*0.6)*dpr, 0, 2*Math.PI);
+    ctx.fillStyle = m.kind === "new" ? "#de3a2e" : "#ec9f1e"; ctx.fill();
+    ctx.lineWidth = 2*dpr; ctx.strokeStyle = "#fff"; ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+function drawSpot(ctx, cam, dpr){
+  if(!S.marked) return;
+  const c = S.marked, pts = [];
+  for(let a = 0; a < 28; a++){
+    const th = a/28*2*Math.PI, p = project(cam, [c[0] + 0.35*Math.cos(th), c[1] + 0.35*Math.sin(th), 0.01]);
+    if(!p) return; pts.push(p);
+  }
+  ctx.beginPath(); pts.forEach((p,i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath();
+  ctx.lineWidth = 2.5*dpr; ctx.strokeStyle = "#6a4b9e"; ctx.setLineDash([6*dpr, 4*dpr]); ctx.stroke(); ctx.setLineDash([]);
+  const pc = project(cam, [c[0], c[1], 0.01]);
+  if(pc){ ctx.beginPath(); ctx.arc(pc[0], pc[1], 3*dpr, 0, 2*Math.PI); ctx.fillStyle = "#6a4b9e"; ctx.fill(); }
+}
+function pill(ctx, txt, x, y, dpr, bg, align){
+  ctx.font = `600 ${11.5*dpr}px Archivo, Arial, sans-serif`;
+  const w = ctx.measureText(txt).width + 12*dpr, h = 19*dpr, x0 = align === "center" ? x - w/2 : x;
+  ctx.fillStyle = bg; ctx.fillRect(x0, y, w, h);
+  ctx.fillStyle = "#fff"; ctx.textAlign = "left"; ctx.textBaseline = "middle"; ctx.fillText(txt, x0 + 6*dpr, y + h/2);
+}
+function drawPanel(cv, sc, kind){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = Math.round(cv.clientWidth*dpr), H = Math.round(W*2/3);
+  if(cv.width !== W || cv.height !== H){ cv.width = W; cv.height = H; }
+  if(!W) return;
+  const ctx = cv.getContext("2d"), cam = makeCam(W, H);
+  ctx.globalAlpha = 1; ctx.drawImage(ground(cam, W, H), 0, 0);
+  if(!sc){
+    drawSpot(ctx, cam, dpr);
+    const msg = kind === "rec" ? "Load a video" : (S.busy ? "The world model is working…" : "Ask a what-if question to see the world model's prediction");
+    ctx.font = `500 ${14*dpr}px Archivo, Arial, sans-serif`; ctx.fillStyle = "#4b555e"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(msg, W/2, H*0.12);
+    return;
+  }
+  const vf = S.rec ? S.rec.frames : 128;
+  const t = Math.min(play.t, sc.frames - 1), held = play.t >= sc.frames;
+  const items = [];
+  sc.objects.forEach(o => { if(o.x[t] !== null && o.y[t] !== null) items.push({o, x:o.x[t], y:o.y[t], yaw:o.yaw[t] || 0, alpha:1}); });
+  if(kind === "cf" && opts.ghosts && S.rec && play.t < S.rec.frames){
+    sc.objects.forEach((o, k) => {
+      if(o.status !== "removed" && o.status !== "changed") return;
+      const r = S.rec.objects[k];
+      if(r && r.x[play.t] !== null) items.push({o:r, x:r.x[play.t], y:r.y[play.t], yaw:r.yaw[play.t] || 0, alpha:0.22, ghost:true});
+    });
+  }
+  items.forEach(it => shadow(ctx, cam, it));
+  items.forEach(it => { const p = project(cam, [it.x, it.y, it.o.size]); it.depth = p ? p[2] : 1e9; });
+  items.sort((a, b) => b.depth - a.depth).forEach(it => drawObject(ctx, cam, it));
+  drawMarks(ctx, cam, sc.marks, t, dpr);
+  drawSpot(ctx, cam, dpr);
+  if(opts.labels) items.filter(it => !it.ghost).forEach(it => {
+    const p = project(cam, [it.x, it.y, 2*it.o.size + 0.3]);
+    if(p) pill(ctx, it.o.name, p[0], p[1] - 20*dpr, dpr, "rgba(20,24,28,.72)", "center");
+  });
+  let txt, bg = "rgba(20,24,28,.72)";
+  if(kind === "rec") txt = held ? `real video ended · showing frame ${sc.frames - 1}` : `real video · frame ${t}`;
+  else if(play.t >= vf){ txt = `what-if · frame ${t} · predicted after the video`; bg = "rgba(14,124,137,.92)"; }
+  else txt = `what-if · frame ${t}`;
+  pill(ctx, txt, 8*dpr, 8*dpr, dpr, bg, "left");
+}
+function totalFrames(){ return Math.max(S.rec ? S.rec.frames : 1, S.cf ? S.cf.frames : 1); }
+function draw(){
+  drawPanel($("#cvRec"), S.rec, "rec");
+  drawPanel($("#cvCf"), S.cf, "cf");
+  const n = totalFrames(), sl = $("#frame"), vf = S.rec ? S.rec.frames : 128;
+  if(+sl.max !== n - 1) sl.max = n - 1;
+  if(+sl.value !== play.t) sl.value = play.t;
+  $("#frameLbl").textContent = `frame ${play.t} / ${n - 1}` + (play.t >= vf ? " · after the video" : "");
+}
+const dirty = () => { play.dirty = true; };
+function loop(ts){
+  if(play.playing && S.rec){
+    const dt = Math.min(0.1, (ts - (play.last || ts))/1000);
+    play.acc += dt*25*play.speed;                       // CLEVRER runs at about 25 frames per second
+    const adv = Math.floor(play.acc);
+    if(adv > 0){ play.acc -= adv; play.t = (play.t + adv) % totalFrames(); dirty(); }
+  }
+  play.last = ts;
+  if(play.dirty){ play.dirty = false; draw(); }
+  requestAnimationFrame(loop);
+}
+
+// ------------------------------------------------------------------ camera + playback controls
+function syncView(){
+  view.az = ((view.az + 540) % 360) - 180;
+  $("#az").value = Math.round(view.az); $("#el").value = Math.round(view.el); $("#zoom").value = (24 - view.dist).toFixed(1);
+  dirty();
+}
+function pickGround(cv, ev){
+  const rect = cv.getBoundingClientRect(), k = cv.width/rect.width;
+  const u = (ev.clientX - rect.left)*k, v = (ev.clientY - rect.top)*k, cam = makeCam(cv.width, cv.height);
+  const d = norm(vadd(vadd(vmul(cam.right, (u - cam.cx)/cam.f), vmul(cam.up, -(v - cam.cy)/cam.f)), cam.fwd));
+  if(d[2] >= -1e-6) return null;
+  const s = -cam.loc[2]/d[2], x = cam.loc[0] + s*d[0], y = cam.loc[1] + s*d[1];
+  return Math.abs(x) > 5.4 || Math.abs(y) > 5.4 ? null : [x, y];
+}
+function bindCanvas(cv){
+  let drag = null;
+  cv.addEventListener("pointerdown", e => {
+    if(S.marking){
+      const p = pickGround(cv, e);
+      if(p){ S.marked = p; S.marking = false; updateMark(); }
+      else $("#markNote").textContent = "That point is off the table. Click on the table.";
+      return;
+    }
+    drag = {x:e.clientX, y:e.clientY}; cv.setPointerCapture(e.pointerId); cv.classList.add("dragging");
+  });
+  cv.addEventListener("pointermove", e => {
+    if(!drag) return;
+    view.az -= (e.clientX - drag.x)*0.4; view.el = clamp(view.el + (e.clientY - drag.y)*0.3, 3, 89);
+    drag = {x:e.clientX, y:e.clientY}; syncView();
+  });
+  const end = () => { drag = null; cv.classList.remove("dragging"); };
+  cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+  cv.addEventListener("wheel", e => { e.preventDefault(); view.dist = clamp(view.dist*(e.deltaY > 0 ? 1.08 : 1/1.08), 4, 20); syncView(); }, {passive:false});
+}
+function updatePlay(){ $("#playBtn").textContent = play.playing ? "Pause" : "Play"; }
+function togglePlay(){ play.playing = !play.playing; updatePlay(); }
+function updateMark(){
+  $("#markBtn").textContent = S.marking ? "Click the table…" : (S.marked ? "Mark again" : "Mark a spot");
+  $("#markBtn").classList.toggle("on", S.marking);
+  $("#clearMark").hidden = !S.marked;
+  $("#markNote").textContent = S.marking ? "Click a point on the table in either view." : (S.marked ? "Spot marked (dashed ring). Say 'here' in your question." : "");
+  document.querySelectorAll("canvas.view").forEach(c => c.classList.toggle("marking", S.marking));
+  dirty();
+}
+
+// ------------------------------------------------------------------ talking to the server
+function el(tag, cls, text){ const e = document.createElement(tag); if(cls) e.className = cls; if(text !== undefined) e.textContent = text; return e; }
+async function api(path, body){
+  const opt = body === undefined ? {cache:"no-store"} : {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)};
+  const r = await fetch(path, opt); const j = await r.json().catch(() => ({error:"The server did not answer."}));
+  if(!r.ok) throw new Error(j.error || ("HTTP " + r.status));
+  return j;
+}
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+async function poll(job, onTick){
+  for(;;){
+    const j = await api("/api/job/" + job); onTick && onTick(j);
+    if(j.status === "done") return j.result;
+    if(j.status === "error") throw new Error(j.error);
+    await sleep(700);
+  }
+}
+function setBusy(b){
+  S.busy = b;
+  ["loadBtn","randTest","randAny","markBtn"].forEach(id => $("#" + id).disabled = b);
+  $("#runBtn").disabled = b || !S.video;
+  $("#gif_rec").disabled = b || !S.rec; $("#gif_cf").disabled = b || !S.cf;
+  document.querySelectorAll("#objs .mini, #examples button, #qs button").forEach(x => x.disabled = b);
+  dirty();
+}
+function showErr(m){ $("#err").textContent = m || ""; }
+function stepper(stage, progress, elapsed){
+  const order = ["reading","building","finding","writing"], cur = order.findIndex(k => (stage || "").startsWith(k));
+  document.querySelectorAll("#steps li").forEach((li, i) => { li.className = stage === "done" ? "done" : (i < cur ? "done" : (i === cur ? "now" : "")); });
+  $("#barFill").style.width = Math.round((progress || 0)*100) + "%";
+  $("#stageNote").textContent = stage && stage !== "waiting" && stage !== "done" ? `${stage} · ${elapsed || 0}s` : "";
+}
+function resetResults(){
+  ["planCard","diffCard","whoCard","checkCard","explainCard"].forEach(id => $("#" + id).hidden = true);
+  S.cf = null; S.res = null; $("#cfNote").textContent = "not run yet"; dirty();
+}
+
+async function loadVideo(v){
+  if(S.busy) return;
+  showErr(""); stepper("", 0); resetResults(); setBusy(true);
+  try{
+    const info = await api("/api/load", {video:v});
+    Object.assign(S, {video:info.video, info, rec:info.scene, marked:null, marking:false});
+    $("#vid").value = info.video; renderInfo(info); updateMark();
+    play.t = 0; play.playing = true; updatePlay();
+  }catch(e){ showErr(e.message); }
+  setBusy(false);
+}
+
+function quickPlan(kind, o){
+  const k = o.index;
+  if(kind === "remove") return {understood:`The ${o.name} is removed.`, events:[{do:"remove", object:k}]};
+  if(kind === "fast") return {understood:`The ${o.name} moves twice as fast.`, events:[{do:"move", object:k, motion:{speed_factor:2}}]};
+  if(kind === "stop") return {understood:`The ${o.name} stops as soon as it starts moving.`, events:[{do:"move", object:k, motion:{stop:true}}]};
+  return {understood:`The ${o.name} is glued to the table.`, events:[{do:"pin", object:k}]};
+}
+function insertText(txt){
+  const ta = $("#req"), a = ta.selectionStart ?? ta.value.length, b = ta.selectionEnd ?? a;
+  ta.value = ta.value.slice(0, a) + txt + ta.value.slice(b); ta.focus(); ta.selectionStart = ta.selectionEnd = a + txt.length;
+}
+function renderInfo(info){
+  const b = $("#badges"); b.replaceChildren();
+  b.append(el("span", "chip", "video " + info.video), el("span", "chip" + (info.split === "test" ? " test" : ""), info.split === "test" ? "held-out test" : info.split + " split"), el("span", "chip", info.questions.length + " dataset questions"));
+  const box = $("#objs"); box.replaceChildren();
+  info.objects.forEach(o => {
+    const row = el("div", "obj"), sw = el("span", "sw" + (o.material === "metal" ? " metal" : ""));
+    sw.style.background = rgb(PAL[o.color] || [150,150,150]);
+    const nm = el("button", "oname", o.name); nm.title = "Put this object into your question"; nm.onclick = () => insertText(`the ${o.name}`);
+    const acts = el("div", "acts");
+    [["remove","remove"],["fast","2× speed"],["stop","stop"],["pin","glue down"]].forEach(([k, lbl]) => {
+      const q = quickPlan(k, o), btn = el("button", "mini", lbl); btn.title = q.understood; btn.onclick = () => run(q); acts.append(btn);
+    });
+    row.append(sw, nm, el("small", null, o.enters === null ? "" : `frames ${o.enters}–${o.leaves}`), acts);
+    box.append(row);
+  });
+  const qs = $("#qs"); qs.replaceChildren(); $("#qsWrap").hidden = !info.questions.length;
+  const seen = new Set();
+  info.questions.forEach(q => {
+    if(seen.has(q.removed)) return; seen.add(q.removed);
+    const btn = el("button", null, `the ${q.removed_name}`); btn.title = q.question;
+    btn.onclick = () => { $("#req").value = q.question; };
+    qs.append(btn);
+  });
+  const t = $("#truthList"); t.replaceChildren();
+  if(!info.truth.length) t.textContent = "The dataset records no collisions in this video.";
+  else { const ul = el("ul"); ul.style.margin = "0"; info.truth.forEach(c => { const li = el("li"); li.append(el("span", "fr", `frame ${c.frame} · `), document.createTextNode(`${c.a} and ${c.b}`)); ul.append(li); }); t.append(ul); }
+  renderExamples(info);
+  $("#req").value = "";
+}
+function renderExamples(info){
+  const obs = info.objects, box = $("#examples"); box.replaceChildren();
+  if(!obs.length) return;
+  const mover = obs.find(o => o.moves) || obs[0], other = obs.find(o => o !== mover) || obs[0], entering = obs.find(o => o.side);
+  const opp = {left:"right", right:"left", near:"back", far:"front"};
+  [
+    [`What if the ${other.name} were removed?`, false],
+    [`What if the ${mover.name} moved twice as fast?`, false],
+    [entering ? `What if the ${entering.name} came in from the ${opp[entering.side]}?` : `What if the ${mover.name} came in from the left?`, false],
+    ["What if a red rubber cube were standing here?", true],
+    [`What if a purple metal sphere rolled in from the right and hit the ${other.name}?`, false],
+    [`What if the ${other.name} were made of metal and three times as heavy?`, false],
+    [`What if the ${mover.name} stopped at frame 40 and a cyan cylinder appeared right behind it?`, false],
+    [`What if the ${mover.name} were twice as big?`, false],
+    ["What if there were no friction at all?", false],
+    ["What if the table were tilted so everything slides to the left?", false],
+    [`What if the ${other.name} were glued to the table?`, false],
+    ["What happens in the 3 seconds after the video ends?", false],
+  ].forEach(([q, spot]) => {
+    const btn = el("button", null, q);
+    btn.onclick = () => { $("#req").value = q; if(spot && !S.marked){ S.marking = true; updateMark(); } $("#req").focus(); };
+    box.append(btn);
+  });
+}
+
+async function run(plan){
+  if(S.busy || !S.video) return;
+  showErr("");
+  const text = $("#req").value.trim();
+  if(!plan && !text){ showErr("Type a what-if question, or use a button next to an object."); return; }
+  resetResults(); setBusy(true); stepper("reading", 0.02, 0);
+  try{
+    const {job} = await api("/api/intervene", {video:S.video, text: plan ? plan.understood : text, plan: plan || null, marked:S.marked});
+    const res = await poll(job, j => stepper(j.stage, j.progress, j.elapsed));
+    stepper("done", 1);
+    S.res = res; S.cf = res.scene; play.t = 0; play.playing = true; updatePlay();
+    renderResult(res);
+  }catch(e){ showErr(e.message); stepper("", 0); }
+  setBusy(false);
+}
+
+function pairLi(x){
+  const li = el("li");
+  li.append(document.createTextNode(`${x.a} + ${x.b} `), el("span", "fr", `frame ${x.frames.join(", ")}${x.after_end ? " · after the video ends" : ""}${x.with_removed ? " · removed object" : ""}`));
+  return li;
+}
+function why(a){
+  const chg = a.change_frame !== null && a.change_frame !== undefined && a.cause !== "edited" ? ` · your change at frame ${a.change_frame}` : "";
+  if(a.status === "removed") return "removed";
+  if(a.status === "added") return `added · simulated from frame ${a.sim_from}`;
+  if(a.replaced) return `its real path was replaced · simulated from frame ${a.sim_from}`;
+  if(a.cause === "vanished") return `disappears at frame ${a.sim_from}`;
+  if(a.cause === "edited") return `your change at frame ${a.sim_from} · simulated after`;
+  if(a.cause === "lost_contact") return `simulated from frame ${a.sim_from}: it was about to touch the ${a.because_of}, which now moves differently` + chg;
+  if(a.cause === "new_contact") return `simulated from frame ${a.sim_from}: the simulated ${a.because_of} came close` + chg;
+  if(a.cause === "video_ended") return "follows the real video until it ends, then predicted" + chg;
+  return "follows the real video" + chg;
+}
+function renderResult(r){
+  $("#cfNote").textContent = r.understood || "your change";
+  const pc = $("#plan"); pc.replaceChildren(); $("#planCard").hidden = false;
+  if(r.understood) pc.append(el("p", "summary", r.understood));
+  const ul = el("ul"); r.steps.forEach(s => ul.append(el("li", null, s))); pc.append(ul);
+  r.notes.forEach(n => pc.append(el("p", "caution", n)));
+  if(!r.pure_removal) pc.append(el("p", "note", "The dataset only has answers for removals, and the world model was only scored on removals (88.4%). For this change there is no answer key: the result is the world model's prediction, compared below with the real video."));
+
+  $("#diffCard").hidden = false;
+  [["kept", r.kept], ["gone", r.gone], ["new", r.new]].forEach(([id, list]) => {
+    const u = $("#" + id); u.replaceChildren();
+    if(!list.length) u.append(el("li", null, "none")); else list.forEach(x => u.append(pairLi(x)));
+  });
+
+  $("#whoCard").hidden = false;
+  const tl = $("#tl"); tl.replaceChildren();
+  const total = r.total_frames, end = r.video_frames, pct = f => (100*f/total).toFixed(2) + "%";
+  r.affected.forEach((a, k) => {
+    const o = S.cf.objects[k], name = el("div", null, a.name), tr = el("div", "track");
+    if(a.status === "removed"){ const x = el("i", "x"); x.style.left = "0"; x.style.width = "100%"; tr.append(x); }
+    else {
+      const m = o.mode; let s = 0;
+      for(let t = 1; t <= m.length; t++){
+        if(t === m.length || m[t] !== m[s]){
+          if(m[s] > 0){ const seg = el("i", m[s] === 1 ? "v" : "s"); seg.style.left = pct(s); seg.style.width = pct(t - s); tr.append(seg); }
+          s = t;
+        }
+      }
+    }
+    if(a.change_frame !== null && a.change_frame !== undefined){ const c = el("i", "chg"); c.style.left = pct(a.change_frame); c.title = `your change, frame ${a.change_frame}`; tr.append(c); }
+    const e = el("i", "end"); e.style.left = pct(end); tr.append(e);
+    name.append(el("div", "fr", why(a)));
+    tl.append(name, tr);
+  });
+  const ax = el("div", "axis"); ["0", String(end - 1), String(total - 1)].forEach(t => ax.append(el("span", null, t))); tl.append(ax);
+
+  $("#checkCard").hidden = !r.checks.length;
+  const tb = $("#checks"); tb.replaceChildren();
+  r.checks.forEach(c => { const tr = el("tr"); tr.append(el("td", null, c.option), el("td", null, c.truth), el("td", null, c.ours), el("td", c.match ? "ok" : "no", c.match ? "match" : "differs")); tb.append(tr); });
+
+  const ex = $("#explain"); ex.replaceChildren(); $("#explainCard").hidden = false;
+  if(!r.explanation){ ex.append(el("p", "note", r.llm_error ? "The language model could not answer: " + r.llm_error : "No language model is connected. Start the server with GROQ_API_KEY set to get explanations.")); return; }
+  const E = r.explanation;
+  if(E.summary) ex.append(el("p", "summary", E.summary));
+  const list = (title, items, ordered) => { if(!items || !items.length) return; ex.append(el("h3", null, title)); const l = el(ordered ? "ol" : "ul"); items.forEach(t => l.append(el("li", null, String(t)))); ex.append(l); };
+  list("The story, in order", E.story, true);
+  list("What changed and why", E.changes, false);
+  if(E.unchanged){ ex.append(el("h3", null, "What stayed the same")); ex.append(el("p", null, E.unchanged)); }
+  if(E.ground_truth_check){ ex.append(el("h3", null, "Compared with the ground truth")); ex.append(el("p", null, E.ground_truth_check)); }
+  if(E.caution) ex.append(el("p", "caution", E.caution));
+}
+
+async function saveGif(which){
+  if(S.busy) return;
+  const btn = $("#gif_" + which), label = btn.textContent;
+  showErr(""); setBusy(true);
+  try{
+    const {job} = await api("/api/gif", {which, view:{az:view.az, el:view.el, dist:view.dist}});
+    const res = await poll(job, j => { btn.textContent = `Drawing the GIF… ${Math.round((j.progress || 0)*100)}%`; });
+    const a = document.createElement("a"); a.href = res.gif; a.download = res.download; document.body.append(a); a.click(); a.remove();
+  }catch(e){ showErr(e.message); }
+  btn.textContent = label; setBusy(false);
+}
+
+// ------------------------------------------------------------------ wiring
+$("#loadBtn").onclick = () => { const v = parseInt($("#vid").value, 10); if(Number.isNaN(v)) return showErr("Type a video number."); loadVideo(v); };
+$("#vid").addEventListener("keydown", e => { if(e.key === "Enter") $("#loadBtn").click(); });
+$("#randTest").onclick = async () => { const {video} = await api("/api/random?pool=test"); loadVideo(video); };
+$("#randAny").onclick = async () => { const {video} = await api("/api/random?pool=any"); loadVideo(video); };
+$("#runBtn").onclick = () => run(null);
+$("#req").addEventListener("keydown", e => { if(e.key === "Enter" && (e.ctrlKey || e.metaKey)) run(null); });
+$("#markBtn").onclick = () => { S.marking = !S.marking; updateMark(); };
+$("#clearMark").onclick = () => { S.marked = null; S.marking = false; updateMark(); };
+$("#playBtn").onclick = togglePlay;
+$("#frame").addEventListener("input", e => { play.t = +e.target.value; dirty(); });
+$("#speed").addEventListener("change", e => { play.speed = +e.target.value; });
+$("#az").addEventListener("input", e => { view.az = +e.target.value; dirty(); });
+$("#el").addEventListener("input", e => { view.el = +e.target.value; dirty(); });
+$("#zoom").addEventListener("input", e => { view.dist = 24 - +e.target.value; dirty(); });
+document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => { Object.assign(view, VIEWS[b.dataset.view]); syncView(); });
+$("#optLabels").addEventListener("change", e => { opts.labels = e.target.checked; dirty(); });
+$("#optGhosts").addEventListener("change", e => { opts.ghosts = e.target.checked; dirty(); });
+$("#gif_rec").onclick = () => saveGif("rec");
+$("#gif_cf").onclick = () => saveGif("cf");
+document.addEventListener("keydown", e => {
+  if(["INPUT","TEXTAREA","SELECT","BUTTON"].includes(document.activeElement.tagName)) return;
+  if(e.code === "Space"){ e.preventDefault(); togglePlay(); }
+  else if(e.key === "ArrowRight" || e.key === "ArrowLeft"){
+    e.preventDefault(); play.playing = false; updatePlay();
+    play.t = clamp(play.t + (e.key === "ArrowRight" ? 1 : -1), 0, totalFrames() - 1); dirty();
+  }
+});
+window.addEventListener("resize", dirty);
+window.addEventListener("pagehide", () => { navigator.sendBeacon("/api/reset"); });
+bindCanvas($("#cvRec")); bindCanvas($("#cvCf"));
+syncView(); updatePlay(); requestAnimationFrame(loop);
+
+(async () => {
+  try{
+    await api("/api/reset", {});
+    const st = await api("/api/status");
+    $("#llmTag").textContent = st.llm ? `language model: ${st.llm_model} (Groq)` : "language model: off, use the buttons next to objects";
+    const {video} = await api("/api/random?pool=test"); loadVideo(video);
+  }catch(e){ showErr("Can't reach the server: " + e.message); }
+})();
+</script>
+</body>
+</html>

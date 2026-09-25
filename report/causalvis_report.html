@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CausalVis Field Report</title>
+<meta name="description" content="How the CausalVis world model answers what-if questions about CLEVRER collision videos, module by module.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@80,500;80,700;100,500;100,700;100,800&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F3F5F4; --panel:#FFFFFF; --ink:#1B2127; --ink2:#56616B; --line:#D2D8D6; --tint:#E7ECEA;
+  --rec:#8A5A2C; --sim:#0E7C89; --lm:#6A4B9E; --hand:#66707A; --bad:#B0442E; --good:#2F7A45;
+  --rec-bg:#F3EAE0; --sim-bg:#E1F1F2; --lm-bg:#ECE6F5; --hand-bg:#E9ECEE; --bad-bg:#F6E6E1;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --body:"Spectral",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111416; --panel:#171B1E; --ink:#E3E7E9; --ink2:#9AA3AA; --line:#2B3237; --tint:#1D2226;
+    --rec:#CE9C66; --sim:#4BC0CC; --lm:#AD8FE6; --hand:#A3ACB4; --bad:#E5826B; --good:#6CC287;
+    --rec-bg:#2A2119; --sim-bg:#15292C; --lm-bg:#231D30; --hand-bg:#20252A; --bad-bg:#2E1B17;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111416; --panel:#171B1E; --ink:#E3E7E9; --ink2:#9AA3AA; --line:#2B3237; --tint:#1D2226;
+  --rec:#CE9C66; --sim:#4BC0CC; --lm:#AD8FE6; --hand:#A3ACB4; --bad:#E5826B; --good:#6CC287;
+  --rec-bg:#2A2119; --sim-bg:#15292C; --lm-bg:#231D30; --hand-bg:#20252A; --bad-bg:#2E1B17;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.62;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px 90px}
+.col{max-width:70ch}
+h1,h2,h3,h4{font-family:var(--display);font-stretch:80%;line-height:1.12;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.4rem,5vw,3.6rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:1.9rem;font-weight:700;margin-top:3.2rem;padding-top:1.1rem;border-top:2px solid var(--ink)}
+h3{font-size:1.28rem;font-weight:700;margin-top:2.2rem}
+h4{font-size:1rem;font-weight:700;font-stretch:100%;letter-spacing:.02em;margin-top:1.4rem}
+p{margin:.7rem 0}
+a{color:var(--sim);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:3px solid var(--sim);outline-offset:2px}
+code,.mono{font-family:var(--mono);font-size:.84em}
+.eyebrow{font-family:var(--display);font-stretch:100%;font-weight:500;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+.lede{font-size:1.2rem;color:var(--ink2);max-width:62ch}
+header.top{padding:48px 0 26px;display:grid;gap:14px;border-bottom:1px solid var(--line)}
+.stats{display:flex;flex-wrap:wrap;gap:0;margin-top:10px;border:1px solid var(--line);background:var(--panel);width:fit-content;max-width:100%}
+.stats div{padding:12px 20px;border-right:1px solid var(--line)}
+.stats div:last-child{border-right:0}
+.stats b{display:block;font-family:var(--mono);font-weight:500;font-size:1.6rem;font-variant-numeric:tabular-nums}
+.stats span{font-family:var(--display);font-size:.8rem;color:var(--ink2);letter-spacing:.03em}
+.key{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--display);font-size:.9rem;margin:.6rem 0}
+.key i{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px}
+.chip{font-family:var(--display);font-stretch:100%;font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;white-space:nowrap}
+.c-rec{color:var(--rec);background:var(--rec-bg)} .c-sim{color:var(--sim);background:var(--sim-bg)}
+.c-lm{color:var(--lm);background:var(--lm-bg)} .c-hand{color:var(--hand);background:var(--hand-bg)}
+.c-bad{color:var(--bad);background:var(--bad-bg)} .c-good{color:var(--good);background:var(--sim-bg)}
+.answers{display:grid;gap:0;margin:1.2rem 0;border-top:1px solid var(--line)}
+.answers div{display:grid;grid-template-columns:minmax(180px,30%) 1fr;gap:18px;padding:14px 0;border-bottom:1px solid var(--line)}
+.answers dt{font-family:var(--display);font-weight:700;font-stretch:90%;font-size:1.02rem}
+.answers dd{margin:0}
+.word{background:var(--tint);padding:12px 16px;margin:1.1rem 0;font-size:.95rem;max-width:70ch}
+.word b{font-family:var(--display);font-stretch:90%;letter-spacing:.02em}
+.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 34px;margin-top:1rem}
+.gloss div{padding:10px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.gloss dt{font-family:var(--display);font-weight:700;font-stretch:90%}
+.gloss dd{margin:2px 0 0}
+figure{margin:1.6rem 0;background:var(--panel);border:1px solid var(--line)}
+figure .scroll{overflow-x:auto}
+figure svg{display:block;width:100%;min-width:900px;height:auto}
+figcaption{font-size:.92rem;color:var(--ink2);padding:12px 16px;border-top:1px solid var(--line);max-width:none}
+figcaption b{color:var(--ink);font-family:var(--display);font-stretch:90%}
+.tbl{overflow-x:auto;margin:1rem 0;border:1px solid var(--line);background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--display);font-stretch:90%;font-weight:700;font-size:.86rem;letter-spacing:.02em;background:var(--tint)}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.us td{background:var(--sim-bg);font-weight:600}
+tr.void td{color:var(--ink2)}
+.opt th:first-child{width:24%}
+.module{margin-top:2.6rem}
+.module .who{margin:.3rem 0 .2rem;display:flex;gap:8px;flex-wrap:wrap}
+.twoup{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin:1rem 0}
+.note{font-size:.92rem;color:var(--ink2)}
+.verdict{font-family:var(--display);font-stretch:85%;font-weight:800;font-size:1.5rem}
+ol.plain,ul.plain{padding-left:1.2rem} ol.plain li,ul.plain li{margin:.4rem 0}
+svg text{font-family:var(--display)}
+.s-ink{fill:var(--ink)} .s-ink2{fill:var(--ink2)} .s-line{stroke:var(--line)}
+.f-panel{fill:var(--panel)} .f-tint{fill:var(--tint)} .f-paper{fill:var(--paper)}
+.f-rec{fill:var(--rec)} .f-sim{fill:var(--sim)} .f-lm{fill:var(--lm)} .f-hand{fill:var(--hand)} .f-bad{fill:var(--bad)}
+.f-recbg{fill:var(--rec-bg)} .f-simbg{fill:var(--sim-bg)} .f-lmbg{fill:var(--lm-bg)} .f-handbg{fill:var(--hand-bg)}
+.k-ink{stroke:var(--ink)} .k-ink2{stroke:var(--ink2)} .k-rec{stroke:var(--rec)} .k-sim{stroke:var(--sim)} .k-lm{stroke:var(--lm)} .k-hand{stroke:var(--hand)} .k-bad{stroke:var(--bad)}
+@media (max-width:640px){body{font-size:17px}.answers div{grid-template-columns:1fr;gap:4px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <span class="eyebrow">Final year project · GIKI · CLEVRER counterfactual questions</span>
+  <h1>CausalVis, explained from the ground up</h1>
+  <p class="lede">A small physics "world model" that watches a video of colliding objects, removes one object in its imagination, replays the scene, and answers "what would happen then?" This report explains every part in plain English: what it does, why we built it that way, what else we could have done, how each version scored, where it still fails, and how it compares with the best published research.</p>
+  <div class="stats" role="list">
+    <div role="listitem"><b>88.1%</b><span>answer options correct</span></div>
+    <div role="listitem"><b>66.6%</b><span>whole questions correct</span></div>
+    <div role="listitem"><b>930</b><span>test questions, never tuned on</span></div>
+    <div role="listitem"><b>51,909</b><span>learned numbers in the world model</span></div>
+  </div>
+</header>
+
+<section class="col">
+<h2>The short answers</h2>
+<p>You asked many questions. Here are the answers first. Every one is explained in detail further down.</p>
+<dl class="answers">
+  <div><dt>What did we make?</dt><dd>A system that answers "if object X were removed, which collisions would happen?" A language model reads the question, a physics world model re-plays the video without that object, the replay is saved, and the answers are read from the saved replay.</dd></div>
+  <div><dt>Final score</dt><dd><b>88.1%</b> of answer options and <b>66.6%</b> of whole questions correct, on 930 test questions we never used for any tuning. The previous best version scored 74.8% and 30.9%.</dd></div>
+  <div><dt>Do we beat the top papers?</dt><dd><b>Partly.</b> We beat NS-DR (the method from the CLEVRER paper itself) by +14.0 / +24.4 points and DCL by +7.7 / +20.1. We do <b>not</b> beat ALOE, VRDP or CRCG; the best of them (CRCG with VRDP) is 8.0 / 21.2 points ahead. And our test questions are not the official test set, so this is an approximate comparison, not an official one.</dd></div>
+  <div><dt>Did the world model make all the decisions itself?</dt><dd><b>No.</b> The world model decides how every object moves and bounces. Rules we wrote decide when an object starts being simulated and whether two objects "collided". The language model decides which object is removed and reads the answers. The top neuro-symbolic papers (NS-DR, DCL, VRDP, CRCG) are built the same way: their final answer comes from a separate program, not from the world model. Only ALOE decides everything inside one network, and it has no real physics simulation inside.</dd></div>
+  <div><dt>Is our key idea new?</dt><dd><b>No, and we should say so.</b> The idea that gave the biggest jump (use the real video for each object until the removed object could affect it, then simulate) was published in 2024 by the CRCG paper ("Think before You Simulate"). We reached it on our own, but it is not ours alone.</dd></div>
+  <div><dt>Can the world model decide things itself, or even "talk"?</dt><dd><b>Yes, it is possible.</b> Four realistic ways, and one idea we did not find anywhere, are listed at the end.</dd></div>
+</dl>
+
+<h2>Words used in this report</h2>
+<p>These words appear again and again. Each is explained once here, in simple terms, and again near where it is used.</p>
+<dl class="gloss">
+  <div><dt>World model</dt><dd>A program that has learned how the world moves, so it can predict what happens next. Ours only knows how objects on a table push, slide and bounce.</dd></div>
+  <div><dt>Simulation / rollout</dt><dd>Letting the world model predict the scene frame after frame, using its own previous prediction as the next starting point.</dd></div>
+  <div><dt>Counterfactual</dt><dd>"What would have happened if…" A world that did not happen, for example the same video but with one object removed.</dd></div>
+  <div><dt>Intervention</dt><dd>The change we make to create the counterfactual world. Here: deleting one object.</dd></div>
+  <div><dt>Frame</dt><dd>One picture of the video. A CLEVRER video has 128 frames (numbered 0 to 127), about 5 seconds.</dd></div>
+  <div><dt>Trajectory / track</dt><dd>The list of an object's positions over all frames.</dd></div>
+  <div><dt>Option vs question accuracy</dt><dd>Each question has several options (e.g. "the cube and the sphere collide"). Option accuracy counts options right. Question accuracy only counts a question right if every option is right, so it is much harder.</dd></div>
+  <div><dt>Train / validation / test</dt><dd>Three separate piles of data. We learn from train, choose settings using validation, and report the final score on test exactly once, so the score is honest.</dd></div>
+  <div><dt>Momentum</dt><dd>Mass times velocity. In a collision between two objects, the total momentum stays the same: what one loses, the other gains.</dd></div>
+  <div><dt>Potential energy V</dt><dd>Stored "push" between two objects that depends on how far apart they are. The force is the slope of this energy: steep energy means a strong push.</dd></div>
+  <div><dt>Friction / drag</dt><dd>The table slowly slows objects down. We measured 0.85% speed loss per frame in CLEVRER.</dd></div>
+  <div><dt>Impulse</dt><dd>A sudden push delivered at the instant of a collision.</dd></div>
+  <div><dt>Restitution</dt><dd>How bouncy a collision is. 1 means a perfect bounce, 0 means objects stick. Metal 0.8, rubber 0.5 here.</dd></div>
+  <div><dt>Voxel</dt><dd>A tiny 3D box, like a 3D pixel. We divide space into boxes 0.02 units wide and record which boxes each object fills.</dd></div>
+  <div><dt>Normal (contact normal)</dt><dd>The direction pointing straight out of a surface at the point where two objects touch. A bounce pushes along it.</dd></div>
+  <div><dt>Language model (LM / LLM)</dt><dd>A text AI like ChatGPT. We use a free one on Groq (gpt-oss-120b). A VLM is the same but can also see pictures; ours only reads text.</dd></div>
+  <div><dt>Neuro-symbolic</dt><dd>A system made of learned parts (neural networks) plus hand-written logic (symbols, programs). Most top CLEVRER methods are this kind.</dd></div>
+  <div><dt>Program executor</dt><dd>Hand-written code that runs a small "program" made from the question (like: find the cube, remove it, check collisions) to produce the answer.</dd></div>
+  <div><dt>Calibration</dt><dd>Adjusting a measurement so it matches reality. Our objects came out about 20% too small, so the collision test uses 1.2× their size.</dd></div>
+  <div><dt>Baseline</dt><dd>A simple method used as a reference point, to show how much the clever parts actually add.</dd></div>
+  <div><dt>z-score / McNemar test</dt><dd>A number that says how sure we are a difference is real and not luck. Above about 2 means "real". Ours are 10 to 15.</dd></div>
+  <div><dt>Latent space</dt><dd>The hidden numbers inside a neural network while it works, which normally nobody can read directly.</dd></div>
+</dl>
+</section>
+
+<section>
+<h2 class="col">The whole system in one picture</h2>
+<p class="col">The top strip shows the flow from video to answer. The twelve panels below show each module in detail, marked (a) to (l). The colour of each box tells you <b>who makes the decision</b> in that step. That matters for one of your questions, so keep an eye on it.</p>
+<div class="key col" aria-label="Colour key">
+  <span><i style="background:var(--rec)"></i>the real recorded video</span>
+  <span><i style="background:var(--sim)"></i>the world model</span>
+  <span><i style="background:var(--lm)"></i>the language model</span>
+  <span><i style="background:var(--hand)"></i>rules and code we wrote</span>
+</div>
+<figure>
+<div class="scroll">
+<svg viewBox="0 0 1200 1640" role="img" aria-label="CausalVis architecture: video and masks are lifted to 3D object tracks; a language model reads the question and names the removed object; the counterfactual world builder replays the scene using the real video until the removal can reach an object and the world model after that; a collision check writes events to a store; the language model answers from the store.">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="s-ink2"/></marker>
+  <marker id="ahs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-sim"/></marker>
+  <marker id="ahl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-lm"/></marker>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" class="f-simbg"/><line x1="0" y1="0" x2="0" y2="7" class="k-sim" stroke-width="2.4"/></pattern>
+</defs>
+
+<!-- ================= FLOW STRIP ================= -->
+<text x="25" y="22" font-size="13" font-weight="700" letter-spacing="1.5" class="s-ink2">FLOW · ONE QUESTION FROM VIDEO TO ANSWER</text>
+<!-- upper row -->
+<rect x="171" y="40" width="128" height="52" class="f-panel k-ink2" stroke-width="1.2"/>
+<text x="235" y="62" font-size="13.5" font-weight="700" text-anchor="middle" class="s-ink">Question</text>
+<text x="235" y="80" font-size="11.5" text-anchor="middle" class="s-ink2">"if the cube is removed…"</text>
+<rect x="317" y="40" width="128" height="52" class="f-lmbg k-lm" stroke-width="1.6"/>
+<text x="381" y="62" font-size="13.5" font-weight="700" text-anchor="middle" class="s-ink">LM reads it</text>
+<text x="381" y="80" font-size="11.5" text-anchor="middle" class="s-ink2">panel (k)</text>
+<line x1="299" y1="66" x2="315" y2="66" class="k-ink2" stroke-width="1.4" marker-end="url(#ah)"/>
+<rect x="598" y="40" width="150" height="52" class="f-simbg k-sim" stroke-width="1.6"/>
+<text x="673" y="62" font-size="13.5" font-weight="700" text-anchor="middle" class="s-ink">World model</text>
+<text x="673" y="80" font-size="11.5" text-anchor="middle" class="s-ink2">(d)–(g) learned</text>
+<path d="M445,70 C500,76 520,90 522,138" fill="none" class="k-lm" stroke-width="1.6" marker-end="url(#ahl)"/>
+<text x="470" y="108" font-size="12" class="s-ink" font-weight="700">remove: cube</text>
+<path d="M620,92 C590,110 560,118 550,138" fill="none" class="k-sim" stroke-width="1.6" marker-end="url(#ahs)"/>
+<text x="600" y="126" font-size="12" class="s-ink" font-weight="700">moves, bounces</text>
+
+<!-- main row: x = 25 + i*146, w=128 -->
+<g font-size="13.5" font-weight="700" text-anchor="middle">
+  <rect x="25" y="140" width="128" height="62" class="f-recbg k-rec" stroke-width="1.6"/>
+  <text x="89" y="166" class="s-ink">Video + masks</text><text x="89" y="186" font-size="11.5" font-weight="500" class="s-ink2">(a) 128 frames</text>
+  <rect x="171" y="140" width="128" height="62" class="f-handbg k-hand" stroke-width="1.6"/>
+  <text x="235" y="166" class="s-ink">3D lift</text><text x="235" y="186" font-size="11.5" font-weight="500" class="s-ink2">(b) fit shapes</text>
+  <rect x="317" y="140" width="128" height="62" class="f-recbg k-rec" stroke-width="1.6"/>
+  <text x="381" y="166" class="s-ink">Object tracks</text><text x="381" y="186" font-size="11.5" font-weight="500" class="s-ink2">(c) per frame</text>
+  <rect x="463" y="140" width="128" height="62" class="f-simbg k-sim" stroke-width="2.4"/>
+  <text x="527" y="163" class="s-ink">Counterfactual</text><text x="527" y="180" class="s-ink">world builder</text><text x="527" y="196" font-size="11.5" font-weight="500" class="s-ink2">(h)</text>
+  <rect x="609" y="140" width="128" height="62" class="f-handbg k-hand" stroke-width="1.6"/>
+  <text x="673" y="166" class="s-ink">Collision check</text><text x="673" y="186" font-size="11.5" font-weight="500" class="s-ink2">(i) size ×1.2</text>
+  <rect x="755" y="140" width="128" height="62" class="f-panel k-ink2" stroke-width="1.6"/>
+  <text x="819" y="166" class="s-ink">Store</text><text x="819" y="186" font-size="11.5" font-weight="500" class="s-ink2">(j) every frame</text>
+  <rect x="901" y="140" width="128" height="62" class="f-lmbg k-lm" stroke-width="1.6"/>
+  <text x="965" y="166" class="s-ink">LM answers</text><text x="965" y="186" font-size="11.5" font-weight="500" class="s-ink2">(k) cites store</text>
+  <rect x="1047" y="140" width="128" height="62" class="f-panel k-ink" stroke-width="2"/>
+  <text x="1111" y="166" class="s-ink">Answer</text><text x="1111" y="186" font-size="11.5" font-weight="500" class="s-ink2">correct / wrong</text>
+</g>
+<g class="k-ink2" stroke-width="1.4">
+  <line x1="153" y1="171" x2="169" y2="171" marker-end="url(#ah)"/><line x1="299" y1="171" x2="315" y2="171" marker-end="url(#ah)"/>
+  <line x1="445" y1="171" x2="461" y2="171" marker-end="url(#ah)"/><line x1="591" y1="171" x2="607" y2="171" marker-end="url(#ah)"/>
+  <line x1="737" y1="171" x2="753" y2="171" marker-end="url(#ah)"/><line x1="883" y1="171" x2="899" y2="171" marker-end="url(#ah)"/>
+  <line x1="1029" y1="171" x2="1045" y2="171" marker-end="url(#ah)"/>
+</g>
+<text x="819" y="232" font-size="12" text-anchor="middle" class="s-ink2">also → 3D orbiting GIF of the predicted world</text>
+
+<!-- ================= PANELS ================= -->
+<!-- panel frames: cols x=20,410,800 ; rows y=270,610,950,1290 ; 380x320 -->
+<g class="f-panel k-ink2" stroke-width="1">
+  <rect x="20" y="270" width="380" height="320"/><rect x="410" y="270" width="380" height="320"/><rect x="800" y="270" width="380" height="320"/>
+  <rect x="20" y="610" width="380" height="320"/><rect x="410" y="610" width="380" height="320"/><rect x="800" y="610" width="380" height="320"/>
+  <rect x="20" y="950" width="380" height="320"/><rect x="410" y="950" width="380" height="320"/><rect x="800" y="950" width="380" height="320"/>
+  <rect x="20" y="1290" width="380" height="320"/><rect x="410" y="1290" width="380" height="320"/><rect x="800" y="1290" width="380" height="320"/>
+</g>
+
+<!-- (a) camera & masks -->
+<g transform="translate(20,270)">
+  <rect x="0" y="0" width="6" height="320" class="f-hand"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(a) Finding the real camera</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">decides: our fitting code</text>
+  <rect x="22" y="64" width="160" height="108" class="f-tint k-ink2" stroke-width="1"/>
+  <text x="30" y="80" font-size="11" class="s-ink2">video frame</text>
+  <circle cx="72" cy="126" r="20" class="f-recbg k-rec" stroke-width="2"/>
+  <rect x="112" y="108" width="36" height="36" class="f-recbg k-rec" stroke-width="2"/>
+  <circle cx="75" cy="124" r="20" fill="none" class="k-sim" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <line x1="190" y1="118" x2="222" y2="118" class="k-ink2" stroke-width="1.4" marker-end="url(#ah)"/>
+  <path d="M240,90 L300,72 L300,164 L240,146 Z" class="f-simbg k-sim" stroke-width="1.6"/>
+  <rect x="300" y="100" width="40" height="36" class="f-handbg k-hand" stroke-width="1.6"/>
+  <text x="290" y="186" font-size="11.5" text-anchor="middle" class="s-ink2">camera position + lens</text>
+  <text x="18" y="214" font-size="12.5" class="s-ink">Brown = object outline from the video mask.</text>
+  <text x="18" y="232" font-size="12.5" class="s-ink">Dashed = outline our 3D guess would draw.</text>
+  <text x="18" y="250" font-size="12.5" class="s-ink">Move the camera until they overlap.</text>
+  <text x="18" y="282" font-size="13" font-weight="700" class="s-ink">overlap: 0.57 (published camera)</text>
+  <text x="18" y="300" font-size="13" font-weight="700" class="s-ink">→ 0.95 (recovered camera)</text>
+</g>
+
+<!-- (b) 3D lift -->
+<g transform="translate(410,270)">
+  <rect x="0" y="0" width="6" height="320" class="f-hand"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(b) Lifting objects into 3D</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">decides: our fitting code</text>
+  <path d="M40,190 L300,190 L350,120 L110,120 Z" class="f-tint k-ink2" stroke-width="1.2"/>
+  <rect x="95" y="138" width="40" height="36" class="f-recbg k-rec" stroke-width="2"/>
+  <circle cx="200" cy="150" r="20" class="f-recbg k-rec" stroke-width="2"/>
+  <ellipse cx="275" cy="140" rx="18" ry="6" class="f-recbg k-rec" stroke-width="2"/>
+  <path d="M257,140 L257,172 A18,6 0 0 0 293,172 L293,140" class="f-recbg k-rec" stroke-width="2"/>
+  <line x1="200" y1="150" x2="200" y2="176" class="k-ink" stroke-width="1" stroke-dasharray="2 2"/>
+  <text x="206" y="98" font-size="11.5" class="s-ink2">x, y on the table</text>
+  <path d="M115,128 A22,8 0 0 1 150,126" fill="none" class="k-sim" stroke-width="1.6" marker-end="url(#ahs)"/>
+  <text x="70" y="112" font-size="11.5" class="s-ink2">cube turn (yaw)</text>
+  <text x="18" y="226" font-size="12.5" class="s-ink">3 known shapes, one size, flat table.</text>
+  <text x="18" y="244" font-size="12.5" class="s-ink">So each object is just x, y (+ turn for cubes).</text>
+  <text x="18" y="262" font-size="12.5" class="s-ink">Turn is noisy per frame, so a physics rule</text>
+  <text x="18" y="280" font-size="12.5" class="s-ink">says: it only changes at collisions.</text>
+  <text x="18" y="302" font-size="13" font-weight="700" class="s-ink">turn jitter 4.4° → 0.0°</text>
+</g>
+
+<!-- (c) tracks -->
+<g transform="translate(800,270)">
+  <rect x="0" y="0" width="6" height="320" class="f-rec"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(c) Object tracks</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">decides: the recording</text>
+  <g font-size="11.5" class="s-ink">
+    <text x="18" y="82">blue metal sphere</text><text x="18" y="108">blue rubber sphere</text><text x="18" y="134">yellow cube</text><text x="18" y="160">red cylinder</text>
+  </g>
+  <g class="f-rec">
+    <rect x="140" y="72" width="220" height="12"/><rect x="140" y="98" width="220" height="12"/>
+    <rect x="228" y="124" width="132" height="12"/><rect x="140" y="150" width="150" height="12"/>
+  </g>
+  <line x1="140" y1="176" x2="360" y2="176" class="k-ink2" stroke-width="1"/>
+  <g font-size="10.5" class="s-ink2" text-anchor="middle"><text x="140" y="190">0</text><text x="250" y="190">64</text><text x="360" y="190">127</text></g>
+  <text x="228" y="206" font-size="11" class="s-ink2">enters at frame 51</text>
+  <text x="18" y="236" font-size="12.5" class="s-ink">Each object: position, speed, on-table?</text>
+  <text x="18" y="254" font-size="12.5" class="s-ink">Identity = colour + material + shape.</text>
+  <text x="18" y="272" font-size="12.5" class="s-ink">21% of videos have two look-alikes that</text>
+  <text x="18" y="290" font-size="12.5" class="s-ink">differ only by material: never mix them.</text>
+</g>
+
+<!-- (d) energy -->
+<g transform="translate(20,610)">
+  <rect x="0" y="0" width="6" height="320" class="f-sim"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(d) World model: one learned energy</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">decides: the world model</text>
+  <circle cx="60" cy="120" r="26" class="f-recbg k-rec" stroke-width="2"/>
+  <circle cx="150" cy="120" r="26" class="f-recbg k-rec" stroke-width="2"/>
+  <line x1="86" y1="86" x2="124" y2="86" class="k-ink" stroke-width="1.2" marker-start="url(#ah)" marker-end="url(#ah)"/>
+  <text x="105" y="78" font-size="11.5" text-anchor="middle" class="s-ink">gap</text>
+  <line x1="44" y1="160" x2="14" y2="160" class="k-sim" stroke-width="2.4" marker-end="url(#ahs)"/>
+  <line x1="166" y1="160" x2="196" y2="160" class="k-sim" stroke-width="2.4" marker-end="url(#ahs)"/>
+  <text x="30" y="180" font-size="11.5" class="s-ink">−F</text><text x="176" y="180" font-size="11.5" class="s-ink">+F</text>
+  <line x1="230" y1="70" x2="230" y2="180" class="k-ink2" stroke-width="1"/>
+  <line x1="230" y1="180" x2="360" y2="180" class="k-ink2" stroke-width="1"/>
+  <path d="M236,72 C250,150 270,172 356,176" fill="none" class="k-sim" stroke-width="2.4"/>
+  <text x="238" y="66" font-size="11" class="s-ink2">energy V</text><text x="330" y="196" font-size="11" class="s-ink2">gap</text>
+  <line x1="246" y1="112" x2="284" y2="152" class="k-ink" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="286" y="132" font-size="11" class="s-ink">slope = force</text>
+  <text x="18" y="226" font-size="12.5" class="s-ink">The model learns only V(gap), shared by</text>
+  <text x="18" y="244" font-size="12.5" class="s-ink">both objects. Force = −slope, by calculus.</text>
+  <text x="18" y="262" font-size="12.5" class="s-ink">So A's push is always exactly −B's push:</text>
+  <text x="18" y="280" font-size="12.5" class="s-ink">momentum is conserved by the arithmetic,</text>
+  <text x="18" y="298" font-size="12.5" class="s-ink">not by luck (drift 1.6×10⁻⁷ over 500 steps).</text>
+</g>
+
+<!-- (e) stepping + friction -->
+<g transform="translate(410,610)">
+  <rect x="0" y="0" width="6" height="320" class="f-sim"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(e) Moving one frame, with friction</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">decides: the world model</text>
+  <g font-size="11.5" text-anchor="middle">
+    <rect x="22" y="72" width="62" height="40" class="f-handbg k-hand"/><text x="53" y="90" class="s-ink">½ friction</text><text x="53" y="104" class="s-ink2">slow</text>
+    <rect x="94" y="72" width="54" height="40" class="f-simbg k-sim"/><text x="121" y="90" class="s-ink">½ kick</text><text x="121" y="104" class="s-ink2">force</text>
+    <rect x="158" y="72" width="54" height="40" class="f-simbg k-sim"/><text x="185" y="90" class="s-ink">drift</text><text x="185" y="104" class="s-ink2">move</text>
+    <rect x="222" y="72" width="54" height="40" class="f-simbg k-sim"/><text x="249" y="90" class="s-ink">½ kick</text><text x="249" y="104" class="s-ink2">force</text>
+    <rect x="286" y="72" width="62" height="40" class="f-handbg k-hand"/><text x="317" y="90" class="s-ink">½ friction</text><text x="317" y="104" class="s-ink2">slow</text>
+  </g>
+  <line x1="22" y1="126" x2="348" y2="126" class="k-ink2" stroke-width="1.2" marker-end="url(#ah)"/>
+  <text x="185" y="142" font-size="11" text-anchor="middle" class="s-ink2">frame t → frame t+1</text>
+  <rect x="22" y="156" width="326" height="42" class="f-tint"/>
+  <text x="34" y="174" font-size="11.5" class="s-ink">friction learned per material, per frame:</text>
+  <text x="34" y="190" font-size="11.5" class="s-ink">sphere 1.3–1.6% · cube 1.6–2.0% · cylinder 1.9–2.3%</text>
+  <text x="18" y="226" font-size="12.5" class="s-ink">This "leapfrog" order stays stable over long</text>
+  <text x="18" y="244" font-size="12.5" class="s-ink">runs. Momentum lost to friction is written</text>
+  <text x="18" y="262" font-size="12.5" class="s-ink">down as "given to the table", so it can be</text>
+  <text x="18" y="280" font-size="12.5" class="s-ink">checked. Spheres roll, so they slow least:</text>
+  <text x="18" y="298" font-size="12.5" class="s-ink">the model found that without being told.</text>
+</g>
+
+<!-- (f) voxel contact -->
+<g transform="translate(800,610)">
+  <rect x="0" y="0" width="6" height="320" class="f-sim"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(f) Voxel contact and the bounce</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">decides: the world model's contact step</text>
+  <g class="k-line" stroke-width="1" fill="none">
+    <path d="M22,62 H202 M22,76 H202 M22,90 H202 M22,104 H202 M22,118 H202 M22,132 H202 M22,146 H202 M22,160 H202 M22,174 H202 M22,188 H202"/>
+    <path d="M22,62 V188 M36,62 V188 M50,62 V188 M64,62 V188 M78,62 V188 M92,62 V188 M106,62 V188 M120,62 V188 M134,62 V188 M148,62 V188 M162,62 V188 M176,62 V188 M190,62 V188 M202,62 V188"/>
+  </g>
+  <g class="f-recbg k-rec" stroke-width="1">
+    <rect x="36" y="90" width="14" height="14"/><rect x="50" y="76" width="14" height="14"/><rect x="64" y="76" width="14" height="14"/><rect x="78" y="90" width="14" height="14"/>
+    <rect x="36" y="104" width="14" height="14"/><rect x="92" y="104" width="14" height="14"/><rect x="78" y="118" width="14" height="14"/><rect x="36" y="118" width="14" height="14"/>
+    <rect x="50" y="132" width="14" height="14"/><rect x="64" y="132" width="14" height="14"/>
+  </g>
+  <g class="f-handbg k-hand" stroke-width="1">
+    <rect x="106" y="90" width="14" height="14"/><rect x="106" y="104" width="14" height="14"/><rect x="106" y="118" width="14" height="14"/><rect x="106" y="132" width="14" height="14"/>
+    <rect x="120" y="90" width="14" height="14"/><rect x="134" y="90" width="14" height="14"/><rect x="148" y="90" width="14" height="14"/><rect x="148" y="104" width="14" height="14"/><rect x="148" y="118" width="14" height="14"/><rect x="148" y="132" width="14" height="14"/><rect x="120" y="132" width="14" height="14"/><rect x="134" y="132" width="14" height="14"/>
+  </g>
+  <circle cx="106" cy="111" r="5" class="f-sim"/>
+  <line x1="106" y1="111" x2="62" y2="111" class="k-sim" stroke-width="2.4" marker-end="url(#ahs)"/>
+  <text x="60" y="176" font-size="11" class="s-ink2">contact point + normal n</text>
+  <line x1="230" y1="130" x2="320" y2="84" class="k-ink" stroke-width="2" marker-end="url(#ah)"/>
+  <line x1="230" y1="130" x2="320" y2="130" class="k-sim" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#ahs)"/>
+  <line x1="320" y1="130" x2="320" y2="84" class="k-rec" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#ah)"/>
+  <text x="264" y="98" font-size="11.5" class="s-ink">speed v</text>
+  <text x="236" y="148" font-size="11" class="s-ink">along n: swapped</text>
+  <text x="326" y="112" font-size="11" class="s-ink">across:</text><text x="326" y="126" font-size="11" class="s-ink">kept</text>
+  <text x="18" y="214" font-size="12" class="mono s-ink">J = −(1+e)(v·n) / (1/m₁ + 1/m₂)</text>
+  <text x="18" y="240" font-size="12.5" class="s-ink">Every box an object fills is a "sensor". Where</text>
+  <text x="18" y="258" font-size="12.5" class="s-ink">two objects' boxes meet is the contact point.</text>
+  <text x="18" y="276" font-size="12.5" class="s-ink">The normal comes from the shape of that patch.</text>
+  <text x="18" y="300" font-size="13" font-weight="700" class="s-ink">normal error: median 0.9°, worst 7.5°</text>
+</g>
+
+<!-- (g) training -->
+<g transform="translate(20,950)">
+  <rect x="0" y="0" width="6" height="320" class="f-sim"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(g) How the world model learned</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">learns from: motion only, never answers</text>
+  <circle cx="40" cy="150" r="6" class="f-rec"/>
+  <path d="M40,150 C110,140 190,110 330,84" fill="none" class="k-rec" stroke-width="2.4" stroke-dasharray="6 4"/>
+  <path d="M40,150 C110,146 200,130 330,122" fill="none" class="k-sim" stroke-width="2.4"/>
+  <line x1="336" y1="88" x2="336" y2="118" class="k-bad" stroke-width="2" marker-start="url(#ah)" marker-end="url(#ah)"/>
+  <text x="300" y="72" font-size="11.5" class="s-ink">real path</text><text x="252" y="144" font-size="11.5" class="s-ink">predicted path</text>
+  <text x="344" y="108" font-size="11.5" class="s-ink">error</text>
+  <text x="34" y="176" font-size="11" class="s-ink2">start: real state</text><text x="300" y="176" font-size="11" class="s-ink2">20 frames later</text>
+  <text x="18" y="214" font-size="12.5" class="s-ink">Start from a real moment, let the model run</text>
+  <text x="18" y="232" font-size="12.5" class="s-ink">20 frames by itself, measure how far off it is,</text>
+  <text x="18" y="250" font-size="12.5" class="s-ink">adjust, repeat. Voxel bounces run inside every</text>
+  <text x="18" y="268" font-size="12.5" class="s-ink">step: the direction is fixed geometry, the</text>
+  <text x="18" y="286" font-size="12.5" class="s-ink">strength can learn. 11,182 videos, laptop CPU.</text>
+</g>
+
+<!-- (h) counterfactual world builder -->
+<g transform="translate(410,950)">
+  <rect x="0" y="0" width="6" height="320" class="f-sim"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(h) Building the "what if" world</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">decides: our rule + world model positions</text>
+  <!-- axis: frame 0 at x=110, 127 at x=300, 157 at x=345 ; 1.5 px per frame -->
+  <rect x="300" y="60" width="45" height="130" fill="url(#hatch)"/>
+  <text x="322" y="202" font-size="10.5" text-anchor="middle" class="s-ink2">+30</text>
+  <g font-size="11.5" class="s-ink"><text x="18" y="80">cube</text><text x="18" y="108">sphere</text><text x="18" y="136">cylinder</text><text x="18" y="164">rubber cube</text></g>
+  <rect x="110" y="70" width="190" height="12" class="f-handbg"/>
+  <line x1="110" y1="76" x2="300" y2="76" class="k-bad" stroke-width="2"/>
+  <text x="200" y="66" font-size="10.5" text-anchor="middle" class="s-ink2">removed</text>
+  <rect x="110" y="98" width="57" height="12" class="f-rec"/><rect x="167" y="98" width="178" height="12" class="f-sim"/>
+  <path d="M185,94 v20" class="k-bad" stroke-width="1.6" stroke-dasharray="3 2"/>
+  <rect x="128" y="126" width="87" height="12" class="f-rec"/><rect x="215" y="126" width="130" height="12" class="f-sim"/>
+  <rect x="186" y="154" width="114" height="12" class="f-rec"/><rect x="300" y="154" width="45" height="12" class="f-sim"/>
+  <line x1="110" y1="180" x2="345" y2="180" class="k-ink2" stroke-width="1"/>
+  <g font-size="10.5" class="s-ink2" text-anchor="middle"><text x="110" y="194">0</text><text x="205" y="194">64</text><text x="300" y="194">127</text></g>
+  <text x="18" y="226" font-size="12" class="s-ink"><tspan class="s-ink" font-weight="700">sphere:</tspan> would touch the cube at 50 → simulate</text>
+  <text x="18" y="242" font-size="12" class="s-ink">from 38 (12 frames earlier).</text>
+  <text x="18" y="260" font-size="12" class="s-ink"><tspan font-weight="700">cylinder:</tspan> was hit by the now-changed sphere.</text>
+  <text x="18" y="278" font-size="12" class="s-ink"><tspan font-weight="700">rubber cube:</tspan> enters at 51, real until the</text>
+  <text x="18" y="294" font-size="12" class="s-ink">video ends, then 30 predicted frames.</text>
+</g>
+
+<!-- (i) collision check -->
+<g transform="translate(800,950)">
+  <rect x="0" y="0" width="6" height="320" class="f-hand"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(i) Did two objects collide?</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">decides: rule we wrote, tuned on validation</text>
+  <line x1="40" y1="62" x2="40" y2="182" class="k-ink2" stroke-width="1"/>
+  <line x1="40" y1="182" x2="355" y2="182" class="k-ink2" stroke-width="1"/>
+  <rect x="40" y="144" width="315" height="22" class="f-handbg"/>
+  <line x1="40" y1="144" x2="355" y2="144" class="k-hand" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <path d="M42,70 C90,80 120,140 150,158 C170,168 190,120 230,110 C260,104 270,150 290,152 C310,154 330,100 352,86" fill="none" class="k-sim" stroke-width="2.4"/>
+  <circle cx="145" cy="155" r="6" class="f-sim"/>
+  <text x="112" y="136" font-size="11" class="s-ink" font-weight="700">counted</text>
+  <text x="270" y="172" font-size="11" class="s-ink2">counted again only</text>
+  <text x="270" y="198" font-size="11" class="s-ink2">after separating</text>
+  <text x="46" y="76" font-size="11" class="s-ink2">gap between surfaces</text>
+  <text x="46" y="198" font-size="11" class="s-ink2">frames →</text>
+  <text x="18" y="232" font-size="12.5" class="s-ink">Collision = surfaces within 0.03, objects moving</text>
+  <text x="18" y="250" font-size="12.5" class="s-ink">closer, using sizes ×1.2 (our 3D objects came out</text>
+  <text x="18" y="268" font-size="12.5" class="s-ink">~20% small). The voxel sensor reading is saved</text>
+  <text x="18" y="286" font-size="12.5" class="s-ink">too, but scored lower (82.8% vs 88.1%) because</text>
+  <text x="18" y="304" font-size="12.5" class="s-ink">it inherits the too-small objects.</text>
+</g>
+
+<!-- (j) store -->
+<g transform="translate(20,1290)">
+  <rect x="0" y="0" width="6" height="320" class="f-hand"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(j) The stored future</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">written by: our code, from the world above</text>
+  <rect x="44" y="92" width="300" height="104" class="f-tint k-ink2" stroke-width="1"/>
+  <rect x="32" y="80" width="300" height="104" class="f-tint k-ink2" stroke-width="1"/>
+  <rect x="20" y="66" width="300" height="104" class="f-panel k-ink" stroke-width="1.4"/>
+  <g font-size="11" class="mono s-ink">
+    <text x="30" y="86">sphere: real until 38, simulated after</text>
+    <text x="30" y="104">frame 65: gray sphere + cyan cube</text>
+    <text x="30" y="122">frame 70: gray sphere + blue cylinder</text>
+    <text x="30" y="140">frame 141: (after the video ends)</text>
+    <text x="30" y="158">any pair not listed: no collision</text>
+  </g>
+  <text x="18" y="224" font-size="12.5" class="s-ink">Three copies of one world: a summary (.json),</text>
+  <text x="18" y="242" font-size="12.5" class="s-ink">every position of every frame (.npz, used for</text>
+  <text x="18" y="260" font-size="12.5" class="s-ink">the 3D GIF), and a plain-text version the</text>
+  <text x="18" y="278" font-size="12.5" class="s-ink">language model reads. All options of one</text>
+  <text x="18" y="296" font-size="12.5" class="s-ink">question are read from this same world.</text>
+</g>
+
+<!-- (k) language model -->
+<g transform="translate(410,1290)">
+  <rect x="0" y="0" width="6" height="320" class="f-lm"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(k) The language model's two jobs</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">decides: the language model (Groq, free)</text>
+  <rect x="20" y="62" width="200" height="40" class="f-tint"/>
+  <text x="30" y="80" font-size="11.5" class="s-ink">"If the metal cube is removed,</text><text x="30" y="95" font-size="11.5" class="s-ink">which event will happen?"</text>
+  <line x1="222" y1="82" x2="250" y2="82" class="k-lm" stroke-width="1.6" marker-end="url(#ahl)"/>
+  <rect x="254" y="62" width="104" height="40" class="f-lmbg k-lm" stroke-width="1.4"/>
+  <text x="306" y="80" font-size="11.5" text-anchor="middle" class="s-ink" font-weight="700">remove:</text><text x="306" y="95" font-size="11.5" text-anchor="middle" class="s-ink">green metal cube</text>
+  <rect x="20" y="118" width="200" height="40" class="f-tint"/>
+  <text x="30" y="136" font-size="11.5" class="mono s-ink">stored world (j)</text><text x="30" y="151" font-size="11.5" class="s-ink">+ "sphere collides with cube?"</text>
+  <line x1="222" y1="138" x2="250" y2="138" class="k-lm" stroke-width="1.6" marker-end="url(#ahl)"/>
+  <rect x="254" y="118" width="104" height="40" class="f-lmbg k-lm" stroke-width="1.4"/>
+  <text x="306" y="136" font-size="11.5" text-anchor="middle" class="s-ink" font-weight="700">correct</text><text x="306" y="151" font-size="11" text-anchor="middle" class="s-ink">cites "frame 65"</text>
+  <text x="18" y="190" font-size="12.5" class="s-ink" font-weight="700">Two-step rule for every option:</text>
+  <text x="18" y="208" font-size="12.5" class="s-ink">1. Does this collision happen in the store?</text>
+  <text x="18" y="226" font-size="12.5" class="s-ink">2. If the question says "will NOT happen", flip it.</text>
+  <text x="18" y="254" font-size="12.5" class="s-ink">It does not choose when to simulate: the</text>
+  <text x="18" y="272" font-size="12.5" class="s-ink">question has no timing in it. On 60 test</text>
+  <text x="18" y="290" font-size="12.5" class="s-ink">questions: 86.2%, same as a plain lookup.</text>
+</g>
+
+<!-- (l) evaluation -->
+<g transform="translate(800,1290)">
+  <rect x="0" y="0" width="6" height="320" class="f-hand"/>
+  <text x="18" y="28" font-size="15.5" font-weight="700" class="s-ink">(l) Keeping the score honest</text>
+  <text x="18" y="46" font-size="11.5" class="s-ink2">decides: the method, not the model</text>
+  <!-- 300px = 11,182 clips -->
+  <rect x="20" y="64" width="300" height="22" class="f-simbg k-sim"/><text x="28" y="80" font-size="11.5" class="s-ink">train 11,182 videos: learn physics</text>
+  <rect x="20" y="96" width="37.5" height="22" class="f-lmbg k-lm"/><text x="66" y="112" font-size="11.5" class="s-ink">validation 1,398: choose settings</text>
+  <rect x="20" y="128" width="37.5" height="22" class="f-recbg k-rec"/><text x="66" y="144" font-size="11.5" class="s-ink">test 1,398: score once, 930 questions</text>
+  <text x="18" y="176" font-size="11.5" class="s-ink2">options correct on test (bar = 0 to 100%)</text>
+  <rect x="120" y="186" width="240" height="14" class="f-tint"/><rect x="120" y="186" width="179.5" height="14" class="f-hand"/>
+  <text x="18" y="198" font-size="11.5" class="s-ink">v6 74.8%</text>
+  <rect x="120" y="208" width="240" height="14" class="f-tint"/><rect x="120" y="208" width="194.9" height="14" class="f-rec"/>
+  <text x="18" y="220" font-size="11.5" class="s-ink">no-sim 81.2%</text>
+  <rect x="120" y="230" width="240" height="14" class="f-tint"/><rect x="120" y="230" width="211.4" height="14" class="f-sim"/>
+  <text x="18" y="242" font-size="11.5" class="s-ink">v7 88.1%</text>
+  <text x="18" y="274" font-size="12.5" class="s-ink">"no-sim" deletes the object and trusts the video.</text>
+  <text x="18" y="292" font-size="12.5" class="s-ink">The gap to 88.1% is what simulating adds.</text>
+</g>
+</svg>
+</div>
+<figcaption><b>Figure 1.</b> CausalVis, from video to answer. Top: the flow for one question. Panels (a)–(l): each module. Colours show who decides in each step: brown the real video, cyan the world model, purple the language model, grey rules and code we wrote. The world model decides how things move and bounce; the choice of when to simulate, whether something counts as a collision, and the final answer are made by rules or by the language model.</figcaption>
+</figure>
+</section>
+
+<section class="col">
+<h2>Module by module: what, how, why, and what else we could have done</h2>
+<p>For every part we say what it does, how it works, why we built it that way, and a table of the other choices we had and why we did not take them. "Tried" means we built it and measured it. "Not tried" means we decided from reasons or limits, and we say which.</p>
+
+<div class="module">
+<h3>1. The videos and object masks</h3>
+<div class="who"><span class="chip c-rec">the recording</span></div>
+<p><b>What it does.</b> Gives us the raw material: CLEVRER's 20,000 short videos (made with a physics simulator called Bullet) and, for every frame, an outline ("mask") of each object with its colour, material and shape.</p>
+<p><b>How.</b> We use the object proposals that the CLEVRER authors released. They were made by a detector network (Mask R-CNN) that finds objects in each frame. We decode the outlines ourselves in plain numpy.</p>
+<p><b>Why.</b> Training our own detector needs a graphics card (GPU) and we have none. The released proposals are detector outputs, not the hidden true answers, so using them is fair, and earlier methods like NS-DR used them too.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Train our own detector</td><td>Find objects ourselves from pixels</td><td>Not tried. Needs a GPU; zero budget; the released one is already good on this synthetic data.</td></tr>
+<tr><td>Learn straight from pixels, end to end</td><td>One big network watches the video and answers</td><td>Not tried. Needs huge compute and hides the physics inside the network, so nothing could be checked (ALOE does this, see later).</td></tr>
+<tr><td>Use CLEVRER's true object positions</td><td>Perfect positions for free</td><td>Not used at test time. That would be using the answer sheet; the score would not mean anything.</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>2. Finding the camera and lifting objects into 3D</h3>
+<div class="who"><span class="chip c-hand">our fitting code</span></div>
+<p><b>What it does.</b> Turns flat outlines in the picture into real 3D positions on the table, in the same units for every video.</p>
+<p><b>How.</b> CLEVRER is synthetic: only 3 shapes, one size, and a flat table. So instead of guessing depth, we "invert the renderer": we place a known 3D shape on the table, draw what its outline would look like through the camera, and move it until that outline matches the mask. We first did the same for the camera itself. A cube can also be turned (its "yaw"); since a cube only changes its turning at a collision, we fit its turn as straight lines between collisions.</p>
+<p><b>Why.</b> It is exact for this world and needs no training. Measured: outlines overlap 0.95 with the recovered camera; turn jitter fell from 4.4° to 0.0°.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Use CLEVR's published camera</td><td>Take the camera numbers from the older CLEVR dataset</td><td>Tried. It is not CLEVRER's camera: outline overlap only 0.57, and 3D came out worse than 2D.</td></tr>
+<tr><td>Depth-guessing network (e.g. MiDaS)</td><td>Predict how far each pixel is</td><td>Not tried. Needs a GPU, gives approximate depth, while exact fitting is possible here.</td></tr>
+<tr><td>Stay in 2D pixels</td><td>Skip 3D completely</td><td>Tried. 68.0% vs 74.2% with 3D (a real difference, z = 5.5).</td></tr>
+<tr><td>Measure cube turn per frame</td><td>Fit each frame on its own</td><td>Tried. Too noisy (4.4° typical, 16.5° bad cases).</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>3. Object tracks</h3>
+<div class="who"><span class="chip c-rec">the recording</span> <span class="chip c-hand">our code</span></div>
+<p><b>What it does.</b> For each object and each of the 128 frames: position, velocity, whether it is on the table, its size, colour, material and shape.</p>
+<p><b>How.</b> Velocity is the average movement over 3 frames. An object's identity is its colour <i>plus</i> material <i>plus</i> shape. When two detections could be confused, we refuse to guess and drop the detection.</p>
+<p><b>Why.</b> We measured that 21% of videos contain two objects with the same colour and shape that differ only in material (for example a blue rubber sphere and a blue metal sphere). Matching by colour alone would silently swap them.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Match objects by colour only</td><td>Simpler matching</td><td>Measured wrong in 21% of videos.</td></tr>
+<tr><td>Let the model learn object size</td><td>Size as a learned number</td><td>Tried. Training shrank every object by exactly 30% as a shortcut. Size is now measured, never learned.</td></tr>
+<tr><td>Smoothing tracker (Kalman filter)</td><td>Smoother positions</td><td>Not tried. The synthetic video is clean; 3-frame averaging was enough.</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>4. The world model: one learned energy</h3>
+<div class="who"><span class="chip c-sim">the world model</span></div>
+<p><b>What it does.</b> Knows how objects push each other.</p>
+<p><b>How.</b> It learns only one thing: an energy <b>V</b> between two objects, which depends on the gap between their surfaces and on what they are made of. The push (force) is the slope of that energy, computed by calculus automatically. A small network reads each object's material and shape; mass starts from a sensible guess (metal 1.5, rubber 1.0) and may be adjusted a little. In total the model has <b>51,909</b> learned numbers, tiny by today's standards.</p>
+<p><b>Why.</b> Because both objects share one energy, the push on A is always exactly the opposite of the push on B. So momentum is conserved by the maths itself (measured drift 0.00000016 over 500 steps), not because the model happened to learn it. That makes the physics trustworthy and checkable.</p>
+<div class="word"><b>WORD · Graph neural network (GNN).</b> A network that looks at objects and their pairs, and passes messages between them. NS-DR's "PropNet" is one. It can learn anything, including physics that breaks the rules.</div>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>General network that predicts the next position (GNN)</td><td>Learn motion freely, like NS-DR and DCL</td><td>Not our choice. No guarantee of conservation, so small errors add up; our structure forbids a whole class of mistakes.</td></tr>
+<tr><td>A real physics engine with a few fitted numbers</td><td>What VRDP does: copy the exact physics law, fit mass and friction</td><td>Not our choice. Very accurate on CLEVRER, but only because you already know the exact law of that world. We wanted the model to learn the interaction itself.</td></tr>
+<tr><td>Cube orientation and turning forces</td><td>Let cubes rotate and push corners</td><td>Tried. Training blew up (loss jumped from 0.0003 to 5.8); score fell to 71.5%. Corners are not smooth, and the energy needs smoothness.</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>5. Moving one frame forward, with friction</h3>
+<div class="who"><span class="chip c-sim">the world model</span></div>
+<p><b>What it does.</b> Advances every simulated object by one frame.</p>
+<p><b>How.</b> A "leapfrog" step: half a push, move, half a push. Around it, half a step of friction on each side. Friction is learned per material. Momentum lost to friction is written down as "given to the table".</p>
+<p><b>Why.</b> Leapfrog stays stable over long runs, where the simplest method (Euler) slowly gains or loses energy. Friction was needed because CLEVRER objects really slow down (0.85% per frame), which a pure energy model cannot express. Adding it cut 40-frame prediction error by 25%. The model also found by itself that spheres slow down least, which is right, because they roll.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Simple Euler step</td><td>Position += speed each frame</td><td>Not our choice. Known to drift in energy over long runs.</td></tr>
+<tr><td>No friction</td><td>Pure energy model</td><td>Tried. Objects never slow; 25% more prediction error at 40 frames.</td></tr>
+<tr><td>One fixed friction number</td><td>Same slowing for everything</td><td>Superseded. The model starts from the measured 0.85% and learns how each material differs.</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>6. Voxel contact and the bounce</h3>
+<div class="who"><span class="chip c-sim">the world model's contact step</span></div>
+<p><b>What it does.</b> When two objects touch, finds exactly where and in which direction, and applies the bounce.</p>
+<p><b>How.</b> Your idea. Space is divided into tiny boxes (voxels) 0.02 units wide. Each object marks the boxes of its surface. Where two objects' boxes meet is the contact point. The direction (normal) is read from the shape of the touching patch: we find the direction in which that patch is thinnest, which for a flat face is straight out of the face. The speed is split into the part along the normal (exchanged, like a textbook bounce) and the part across it (kept). The bounce uses the school formula with bounciness 0.8 for metal and 0.5 for rubber.</p>
+<p><b>Why.</b> A ball hitting a flat face must bounce straight back, wherever it hits. The old method (the line between the two centres) was wrong by up to 34° there. To make it fast, we keep only surface boxes and store each object's box pattern once, then just shift it: 77 ms down to about 4 ms per check.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Soft spring only</td><td>Let the energy push them apart gradually</td><td>Tried. Bounce direction off by 23.5° (spheres) to 37.9° (cubes).</td></tr>
+<tr><td>Line between centres</td><td>Bounce along the centre-to-centre line</td><td>Tried. Exact for spheres, up to 34° wrong on faces. Bounce error 21.0°.</td></tr>
+<tr><td>Snap to the nearest cube face</td><td>Use the face direction</td><td>Tried. Worse near edges: 26.8° vs 21.4°.</td></tr>
+<tr><td>Exact geometry (GJK/EPA, as in game engines)</td><td>Mathematically exact closest points</td><td>Not tried. More work; voxels follow your design and work for any shape.</td></tr>
+<tr><td>Normal from centres of the two patches</td><td>Our first voxel version</td><td>Tried and found broken. When objects overlap it flipped the direction 180° in 7 of 39 test cases. Replaced by the "thinnest direction" method (worst 7.5°).</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>7. How the world model learned</h3>
+<div class="who"><span class="chip c-sim">learns from motion only</span></div>
+<p><b>What it does.</b> Adjusts the 51,909 numbers so predictions match real motion.</p>
+<p><b>How.</b> Take a real moment from a training video, let the model run 20 frames by itself (starting with 3 and slowly growing to 20), measure the distance between predicted and real paths, adjust, repeat. The best version on validation is kept. The last step (v6) ran voxel bounces inside every training step; the bounce direction is fixed geometry, only its strength passes learning signals back. It never sees a single question or answer.</p>
+<p><b>Why.</b> Learning from motion keeps the model general: it learns physics, not the quiz. Keeping the bounce direction fixed stops the model from "cheating" by bending contact directions to lower its error.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Extra weight on contact frames</td><td>Pay more attention to collisions</td><td>Tried (v3.3, bundled with other changes). Worse on every measure.</td></tr>
+<tr><td>Train on questions and answers</td><td>Tune the model to the quiz, like ALOE and VRDP's concept part</td><td>Not our choice. Needs GPU, and the score would no longer show whether the physics is right.</td></tr>
+<tr><td>Let the model learn the bounce direction</td><td>More freedom</td><td>Not our choice. It could learn to point contacts wherever the error is lowest instead of where the surfaces are.</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>8. Building the "what if" world</h3>
+<div class="who"><span class="chip c-hand">our rule</span> <span class="chip c-sim">world model positions</span> <span class="chip c-rec">recording</span></div>
+<p><b>What it does.</b> This is the heart of the system and the change that moved the score from 74.8% to 88.1%. It removes one object and replays the whole scene once.</p>
+<p><b>How.</b> Every object is in one of three states: <i>not here yet</i>, <i>following the real video</i>, or <i>simulated</i>. Objects appear when they appear in the video. An object follows its real motion until the removal can reach it:</p>
+<ul class="plain">
+<li><b>Lost contact:</b> in the video it was about to touch something that no longer behaves the same (the removed object, or any object already being simulated). It is simulated from 12 frames before that touch.</li>
+<li><b>New contact:</b> a simulated object comes close to it.</li>
+<li><b>Video ended:</b> after frame 127, everything is simulated for 30 more frames, because CLEVRER also counts collisions just after the video ends.</li>
+</ul>
+<p><b>Why.</b> Before the removal's effect arrives, an object's "what if" path <i>is</i> its real path. Simulating it anyway only adds error. This is causality, not a shortcut, and no collision answers are read. The past-the-end extension was confirmed first: 87% of the missed pairs collide when simulated past the end (typically 14 frames), against 17% of pairs that truly don't collide.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Separate short window for each asked pair</td><td>v5/v6: simulate each pair "a few frames before" its closest moment</td><td>Tried. Missed 610 collisions by looking at the wrong frames or refusing to simulate late objects. 74.8%.</td></tr>
+<tr><td>Simulate everything from the first frame</td><td>Only starting positions, no real motion afterwards</td><td>Tried. 65.3% on validation: long free runs drift too far.</td></tr>
+<tr><td>Copy collisions from CLEVRER's labels</td><td>Use the answer sheet for untouched pairs</td><td>Tried once (v3), scored 86.9%, rejected: 82% of answers were copied, not predicted.</td></tr>
+<tr><td>Let the language model pick when to start</td><td>Your first idea</td><td>Not our choice. The question text has no timing in it; timing is physics.</td></tr>
+<tr><td>Symbolic cause-and-effect reasoning (CRCG)</td><td>A logic program works out who is affected</td><td>Not tried. Needs a logic engine and event facts; our rule reads the simulation directly.</td></tr>
+<tr><td>How far past the end: 0, 10, 20, 45, 60 frames</td><td>Different amounts of future</td><td>Measured on validation: +30 was best (89.0%); longer invents collisions.</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>9. Deciding whether two objects collided</h3>
+<div class="who"><span class="chip c-hand">rule we wrote, tuned on validation</span></div>
+<p><b>What it does.</b> Reads the replayed world and writes down every collision with its frame.</p>
+<p><b>How.</b> A collision is counted when the gap between the surfaces drops below 0.03 while the objects move closer, using object sizes multiplied by 1.2. It is not counted again until they separate. The voxel-sensor reading is saved too.</p>
+<p><b>Why.</b> Our 3D objects come out about 20% too small, because the masks' edges are slightly cut off. The ×1.2 calibration was measured on validation against CLEVRER's collision list: detection of real collisions rose from 79% to 98%.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Measured sizes, gap under 0.02</td><td>No calibration</td><td>Tried. 84.6% on validation vs 89.0%.</td></tr>
+<tr><td>Voxel sensor: surfaces within 6 boxes</td><td>Your sensor idea as the detector</td><td>Tried. 83.0% on validation. Correct idea, but it inherits the too-small objects.</td></tr>
+<tr><td>Voxel sensor: sharing a box</td><td>Strict touching</td><td>Tried. 66.1%: our objects rarely share boxes even when they really collided.</td></tr>
+<tr><td>A learned collision detector</td><td>A small network that says "collision"</td><td>Not tried. Needs collision labels for training; kept simple.</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>10. The stored future</h3>
+<div class="who"><span class="chip c-hand">our code</span></div>
+<p><b>What it does.</b> Saves the whole replayed world: every position of every object in every frame, which objects were simulated from when and why, and every collision.</p>
+<p><b>How.</b> Three forms of one world: a summary file, a full frame-by-frame file (used to draw the 3D GIF), and a plain-text version for the language model.</p>
+<p><b>Why.</b> You asked for the predicted future to be kept in full detail. It also means every answer can be traced back to a line, and all options of one question come from the same world, so they can never contradict each other.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Keep only yes/no per option</td><td>What v5 did</td><td>Replaced. Nothing to explain, nothing to draw.</td></tr>
+<tr><td>A new simulation for every option</td><td>Re-run per sub-question</td><td>Not our choice. Wastes time and lets options disagree about the same world.</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>11. The language model</h3>
+<div class="who"><span class="chip c-lm">the language model</span></div>
+<p><b>What it does.</b> Two jobs: read the question and name the removed object; read the stored world and answer each option, quoting the lines it used.</p>
+<p><b>How.</b> Groq's free service with the openai/gpt-oss-120b model (Groq retired the Llama 3.3 model we first used, so the code picks an available model). Answers follow two steps: does the collision happen in the store, then flip it if the question says "will NOT happen". That second step fixed a real bug where it flipped every answer on such questions.</p>
+<p><b>Why.</b> Free, no training needed, and it reads any wording. On 60 test questions it named the right object 60 times out of 60 and scored 86.2%, the same as a plain lookup of the store.</p>
+<div class="word"><b>HONEST NOTE.</b> The headline 88.1% (all 930 questions) identifies objects using CLEVRER's question programs, not the language model, because running 930 questions through a free service is slow. The language model matched those programs on 60 of 60 questions we checked. NS-DR, DCL and VRDP use their own trained parsers.</div>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Trained question parser</td><td>What NS-DR and VRDP use</td><td>Not tried. Needs training data and time.</td></tr>
+<tr><td>Hand-written templates (if/else)</td><td>Match fixed sentence patterns</td><td>Rejected by you; breaks on new wording.</td></tr>
+<tr><td>Claude or another paid API</td><td>Stronger reader</td><td>Zero budget.</td></tr>
+<tr><td>A small model running on the laptop</td><td>Offline</td><td>Too slow and too weak on a CPU with 7.9 GB memory.</td></tr>
+<tr><td>A vision model watching the pixels</td><td>Look at frames</td><td>Not needed: the store holds more precise information than pixels.</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>12. The 3D video (GIF)</h3>
+<div class="who"><span class="chip c-hand">our code</span></div>
+<p><b>What it does.</b> Draws the predicted world at 960×640 with the camera circling the table, and marks each voxel contact point in red.</p>
+<p><b>How.</b> Our own small renderer: objects are drawn back to front (the "painter's algorithm"), metal gets a shiny highlight so it can be told apart from rubber.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Blender</td><td>Photo-quality renders</td><td>Not tried. Heavy install, very slow on this CPU.</td></tr>
+<tr><td>matplotlib 3D</td><td>Quick plots</td><td>Not tried. Draws overlapping objects in the wrong order.</td></tr>
+</table></div>
+</div>
+
+<div class="module">
+<h3>13. Keeping the score honest</h3>
+<div class="who"><span class="chip c-hand">the method</span></div>
+<p><b>What it does.</b> Makes sure the number means something.</p>
+<p><b>How.</b> Physics is learned on the training videos, every setting (detector, sizes ×1.2, +30 frames) is chosen on validation, and test is scored exactly once. We always compare with a simple baseline and check that differences are not luck.</p>
+<p><b>Why.</b> We nearly fooled ourselves once: a version looked better on validation only because it had been picked as the best of 30 tries on validation. On test it was worse.</p>
+<div class="tbl"><table class="opt"><tr><th>Other option</th><th>What it would do</th><th>Why we didn't</th></tr>
+<tr><td>Report the 86.9% light-cone number</td><td>Higher-looking score</td><td>Rejected: most answers were copied from labels.</td></tr>
+<tr><td>Tune settings on test</td><td>Squeeze out a point</td><td>Never. (Test would have preferred +45 frames, 88.3%; we kept +30 as chosen on validation.)</td></tr>
+<tr><td>Submit to CLEVRER's official test server</td><td>A score directly comparable with papers</td><td>Not done yet. It needs the official test videos processed and a submission account. It is the right next step.</td></tr>
+</table></div>
+</div>
+</section>
+
+<section class="col">
+<h2>Every version, what changed, and its score</h2>
+<p>All scores below are on the same 930 test questions (the same 500 test videos; we checked that older and newer versions used the identical set). "Options" and "questions" are explained in the word list at the top. The first row is shown only so you know why it is <b>not</b> counted.</p>
+</section>
+
+<div class="tbl">
+<table>
+<tr><th>Version</th><th>What was different from the one before</th><th class="n">Options</th><th class="n">Questions</th><th>What happened to the physics</th></tr>
+<tr class="void"><td>v3 "light cone"</td><td>Copied collisions from CLEVRER's answer list for pairs it did not simulate (82% of options)</td><td class="n">86.9%</td><td class="n">—</td><td>Not a measurement of the model. Rejected.</td></tr>
+<tr><td>v3.2</td><td>First honest model: learned energy, flat 2D pixel tracks, learned object size</td><td class="n">68.0%</td><td class="n">21.7%</td><td>Size shrank 30% as a shortcut; 40-frame error 0.0684</td></tr>
+<tr><td>v3.5</td><td>+ learned friction</td><td class="n">67.3%</td><td class="n">20.4%</td><td>40-frame error 0.0516 (−25%); score unchanged</td></tr>
+<tr><td>v3.6</td><td>+ real 3D tracks from the fitted camera</td><td class="n">74.2%</td><td class="n">29.7%</td><td>Contact distances now correct; the only physics step that moved the score</td></tr>
+<tr><td>v3.7</td><td>Object size fixed to the measured size</td><td class="n">74.1%</td><td class="n">—</td><td>Physics matches the video; score unchanged</td></tr>
+<tr><td>v5b-yaw</td><td>+ cube turning and turning forces</td><td class="n">71.5%</td><td class="n">—</td><td>Training blew up at epoch 23; worse</td></tr>
+<tr><td>v3.8</td><td>+ textbook bounce at contact, trained in</td><td class="n">73.0%</td><td class="n">—</td><td>Bounce direction error 30.3° → 21.0°; score unchanged</td></tr>
+<tr><td>v5b</td><td>3D, measured size, friction, 11,182 training videos</td><td class="n">74.5%</td><td class="n">30.3%</td><td>Validation 20-frame error 0.0264</td></tr>
+<tr><td>v6</td><td>+ voxel contacts inside every training step</td><td class="n">74.8%</td><td class="n">30.9%</td><td>Error 0.0230 (identical training without voxels: 0.0250)</td></tr>
+<tr><td>v7 baseline</td><td>New "what if" world builder, but no simulation at all: delete the object, keep the video</td><td class="n">81.2%</td><td class="n">48.7%</td><td>No physics used; shows how much the fixed logic alone gives</td></tr>
+<tr class="us"><td>v7</td><td>One "what if" world per question, world model on, 30 frames past the end</td><td class="n">88.1%</td><td class="n">66.6%</td><td>Same v6 world model; the world is now built correctly</td></tr>
+</table>
+</div>
+
+<figure>
+<div class="scroll">
+<svg viewBox="0 0 800 360" role="img" aria-label="Dot chart of test scores by version. Options correct stays between 67 and 75 percent from v3.2 to v6, then jumps to 81.2 for the no-simulation baseline and 88.1 for v7. Whole questions correct rises from about 21 to 31 percent, then 48.7 and 66.6.">
+  <g class="k-line" stroke-width="1">
+    <line x1="180" y1="36" x2="180" y2="318"/><line x1="284" y1="36" x2="284" y2="318"/><line x1="388" y1="36" x2="388" y2="318"/>
+    <line x1="492" y1="36" x2="492" y2="318"/><line x1="596" y1="36" x2="596" y2="318"/><line x1="700" y1="36" x2="700" y2="318"/>
+  </g>
+  <g font-size="12" text-anchor="middle" class="s-ink2"><text x="180" y="336">0%</text><text x="284" y="336">20%</text><text x="388" y="336">40%</text><text x="492" y="336">60%</text><text x="596" y="336">80%</text><text x="700" y="336">100%</text></g>
+  <line x1="461.3" y1="30" x2="461.3" y2="318" class="k-bad" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="466" y="26" font-size="11.5" class="s-ink2">never predict a collision: 54.1% of options</text>
+  <g font-size="12.5" text-anchor="end" class="s-ink">
+    <text x="170" y="54">v3.2 (2D)</text><text x="170" y="82">v3.5 friction</text><text x="170" y="110">v3.6 3D</text><text x="170" y="138">v3.7 size fixed</text>
+    <text x="170" y="166">v5b-yaw turning</text><text x="170" y="194">v3.8 bounce</text><text x="170" y="222">v5b</text><text x="170" y="250">v6 voxel training</text>
+    <text x="170" y="278" font-weight="700">v7 baseline</text><text x="170" y="306" font-weight="700">v7</text>
+  </g>
+  <!-- questions correct (hollow) -->
+  <g class="f-panel k-sim" stroke-width="2">
+    <circle cx="292.8" cy="50" r="5.5"/><circle cx="286.1" cy="78" r="5.5"/><circle cx="334.4" cy="106" r="5.5"/>
+    <circle cx="337.6" cy="218" r="5.5"/><circle cx="340.7" cy="246" r="5.5"/><circle cx="433.2" cy="274" r="5.5"/><circle cx="526.3" cy="302" r="5.5"/>
+  </g>
+  <!-- options correct (filled) -->
+  <g class="f-sim">
+    <circle cx="533.6" cy="50" r="6"/><circle cx="530.0" cy="78" r="6"/><circle cx="565.8" cy="106" r="6"/><circle cx="565.3" cy="134" r="6"/>
+    <circle cx="551.8" cy="162" r="6"/><circle cx="559.6" cy="190" r="6"/><circle cx="567.4" cy="218" r="6"/><circle cx="569.0" cy="246" r="6"/>
+    <circle cx="602.2" cy="274" r="6"/><circle cx="638.1" cy="302" r="6"/>
+  </g>
+  <g font-size="12" class="s-ink mono"><text x="712" y="54">68.0 / 21.7</text><text x="712" y="82">67.3 / 20.4</text><text x="712" y="110">74.2 / 29.7</text><text x="712" y="138">74.1 / —</text><text x="712" y="166">71.5 / —</text><text x="712" y="194">73.0 / —</text><text x="712" y="222">74.5 / 30.3</text><text x="712" y="250">74.8 / 30.9</text><text x="712" y="278">81.2 / 48.7</text><text x="712" y="306" font-weight="700">88.1 / 66.6</text></g>
+</svg>
+</div>
+<figcaption><b>Figure 2.</b> Test score for each version. Filled dot: options correct. Hollow dot: whole questions correct. Numbers on the right are options / questions. For six versions in a row, real physics improvements left the score flat near 74%. The jump came when the "what if" world was built correctly (v7).</figcaption>
+</figure>
+
+<section class="col">
+<h3>Why physics improvements barely moved the score for so long</h3>
+<p>The questions only ask "did these two touch?" A yes/no answer does not change unless a prediction was sitting right at the edge. Making paths 25% more accurate or bounces 9° more correct rarely flips a yes into a no. Worse, the old evaluator often looked at the wrong frames (before the collision, or before an object entered, or not past the end of the video), so no physics could fix those. A full diagnosis of all 3,328 options showed that 610 of 799 missed collisions came from that logic, not from physics.</p>
+
+<h3>The physics measurements, separately</h3>
+</section>
+<div class="tbl">
+<table>
+<tr><th>What we measured</th><th class="n">Before</th><th class="n">After</th><th>Which change did it</th></tr>
+<tr><td>Prediction error after 40 frames (2D tracks)</td><td class="n">0.0684</td><td class="n">0.0516</td><td>Friction</td></tr>
+<tr><td>How much better than "objects move in straight lines"</td><td class="n">1.18×</td><td class="n">1.57×</td><td>Friction</td></tr>
+<tr><td>Camera outline overlap</td><td class="n">0.57</td><td class="n">0.95</td><td>Camera fitting</td></tr>
+<tr><td>Cube turn jitter per frame</td><td class="n">4.4°</td><td class="n">0.0°</td><td>"Turn only changes at collisions" rule</td></tr>
+<tr><td>Bounce direction error</td><td class="n">30.3°</td><td class="n">21.0°</td><td>Textbook bounce</td></tr>
+<tr><td>Voxel contact directions more than 10° wrong (39 known cases)</td><td class="n">22</td><td class="n">0</td><td>"Thinnest direction" normal</td></tr>
+<tr><td>Real collisions our measurement can see at all</td><td class="n">79.3%</td><td class="n">98.3%</td><td>Sizes ×1.2</td></tr>
+<tr><td>20-frame validation error (3D)</td><td class="n">0.0264</td><td class="n">0.0230</td><td>Voxels inside training (control: 0.0250)</td></tr>
+<tr><td>Momentum drift over 500 steps</td><td class="n">—</td><td class="n">0.00000016</td><td>Energy structure (by design)</td></tr>
+<tr><td>Time for one voxel contact check</td><td class="n">77 ms</td><td class="n">≈4 ms</td><td>Surface-only boxes, stored shapes</td></tr>
+</table>
+</div>
+
+<section class="col">
+<h2>The hard parts of getting here</h2>
+<ul class="plain">
+<li><b>A wrong diagnosis lasted three weeks.</b> Everyone believed the training only looked one frame ahead. Nobody opened the training loop; it already looked 20 frames ahead. The fix that was planned would have fixed nothing.</li>
+<li><b>The model cheated.</b> Allowed to learn object size, it shrank every object by exactly 30%, because that made collisions rarer and the average error smaller.</li>
+<li><b>Three changes in one experiment.</b> It got worse and we could not tell which change caused it. Since then: one change per experiment, always with a control run.</li>
+<li><b>We almost reported a fake win.</b> A version looked better on validation only because it was the best of 30 tries there. On test it was worse.</li>
+<li><b>The camera everyone uses was wrong for this dataset.</b> Our first 3D attempt was worse than 2D until we recovered the real camera.</li>
+<li><b>Cube turning broke training</b>, because corners are sharp and the energy needs smooth shapes.</li>
+<li><b>A switch that did nothing.</b> The voxel option printed "voxel mode" but that code never ran in the path being scored. Only a digit-for-digit identical score gave it away.</li>
+<li><b>The first voxel normal was backwards</b> when objects overlapped a little, which is exactly what happens at real collisions.</li>
+<li><b>CLEVRER counts collisions after the video ends.</b> This is not stated for counterfactual questions; we found it only by measuring why 167 pairs were missed.</li>
+<li><b>The language model flipped "will NOT happen" answers</b> until its instructions were split into two steps.</li>
+<li><b>Limits:</b> one laptop CPU (a single training run took 8 hours), no GPU, zero budget, a free AI model that got retired mid-project, and a Windows shell that silently broke scripts containing backslashes.</li>
+</ul>
+
+<h2>Where it fails now</h2>
+<p>On test, v7 got <b>393</b> of 3,332 options wrong. Here is where they are.</p>
+</section>
+<div class="tbl">
+<table>
+<tr><th>Kind of mistake</th><th class="n">Count</th><th>What is going on</th></tr>
+<tr><td>Missed a collision between objects the model simulated</td><td class="n">158</td><td>The removal changes paths, and the new collision needs a chain of bounces to come out right. Our learned model drifts along the chain. Of all 204 missed collisions, 153 are collisions that never happen in the real video, so the model had to invent them correctly.</td></tr>
+<tr><td>Missed a collision between objects following the real video</td><td class="n">46</td><td>The collision check missed a real touch, mostly because our 3D objects are still slightly off in size or position.</td></tr>
+<tr><td>Invented a collision between simulated objects</td><td class="n">120</td><td>A predicted path drifted into another object.</td></tr>
+<tr><td>Invented a collision between objects following the real video</td><td class="n">69</td><td>The generous ×1.2 size counts some near misses as touches.</td></tr>
+<tr><td>…of all invented ones, found only after the video ended</td><td class="n">51</td><td>Predicting 30 frames into an unseen future is uncertain.</td></tr>
+</table>
+</div>
+<section class="col">
+<p><b>Other honest limits.</b></p>
+<ul class="plain">
+<li><b>Whole questions: 66.6%.</b> One wrong option spoils a whole question, and 461 of the earlier wrong questions missed by a single option.</li>
+<li><b>Much of the score comes from reading the video correctly.</b> The no-simulation baseline already reaches 81.2%. The world model adds +6.9 options and +17.9 questions on top. That is a real difference (z = 10.5), but it is the smaller part.</li>
+<li><b>Your voxel sensor is right in idea but limited by our 3D objects.</b> As the collision check it scores 82.8%, because the reconstructed objects are about 20% too small.</li>
+<li><b>Two settings were calibrated with labels on validation:</b> the ×1.2 size was measured against CLEVRER's collision list, and +30 frames was chosen by validation score. Neither touched the test set.</li>
+<li><b>Only tested on CLEVRER.</b> Whether it works on other scenes is not yet shown.</li>
+<li><b>Cubes do not rotate in the simulation</b> (that attempt failed).</li>
+<li><b>Not the official test set</b> (see the comparison below).</li>
+</ul>
+</section>
+
+<section class="col">
+<h2>Against the best published research</h2>
+<p>Counterfactual questions only. The published numbers are copied from the papers' own tables (VRDP's Table 1 and the CRCG paper's Table 1, which agree with each other). "vs ours" is our score minus theirs: a plus means we are ahead.</p>
+</section>
+<div class="tbl">
+<table>
+<tr><th>Method</th><th>What kind of system</th><th class="n">Options</th><th class="n">Questions</th><th class="n">vs ours (options / questions)</th></tr>
+<tr><td>NS-DR (CLEVRER paper)</td><td>Detector + learned dynamics (PropNet) + question parser + program executor</td><td class="n">74.1%</td><td class="n">42.2%</td><td class="n">+14.0 / +24.4</td></tr>
+<tr><td>DCL</td><td>Like NS-DR, learns visual concepts from question-answer pairs</td><td class="n">80.4%</td><td class="n">46.5%</td><td class="n">+7.7 / +20.1</td></tr>
+<tr class="us"><td>CausalVis v7 (ours)</td><td>3D tracks + physics world model + "what if" world + language model</td><td class="n">88.1%</td><td class="n">66.6%</td><td class="n">—</td></tr>
+<tr><td>VRDP, no extra labels</td><td>Physics engine with fitted numbers + concept learner + program executor</td><td class="n">89.9%</td><td class="n">75.7%</td><td class="n">−1.8 / −9.1</td></tr>
+<tr><td>CRCG on NS-DR (approx.)</td><td>NS-DR + logic reasoning about who is affected</td><td class="n">90.7%</td><td class="n">78.3%</td><td class="n">−2.6 / −11.7</td></tr>
+<tr><td>ALOE</td><td>One end-to-end network with attention, trained on answers</td><td class="n">91.4%</td><td class="n">75.6%</td><td class="n">−3.3 / −9.0</td></tr>
+<tr><td>VRDP, extra labels (†)</td><td>As above, with a detector trained on labels</td><td class="n">92.5%</td><td class="n">80.7%</td><td class="n">−4.4 / −14.1</td></tr>
+<tr><td>ODDN-Aloe</td><td>ALOE-based</td><td class="n">93.0%</td><td class="n">80.1%</td><td class="n">−4.9 / −13.5</td></tr>
+<tr><td>VRDP, more labels (†‡)</td><td>As above, with more labelled supervision</td><td class="n">94.8%</td><td class="n">84.3%</td><td class="n">−6.7 / −17.7</td></tr>
+<tr><td>CRCG on VRDP (2024)</td><td>VRDP + logic reasoning about who is affected</td><td class="n">96.1%</td><td class="n">87.8%</td><td class="n">−8.0 / −21.2</td></tr>
+</table>
+</div>
+<section class="col">
+<div class="word"><b>READ THIS BEFORE QUOTING THE TABLE.</b> The papers were scored on CLEVRER's official hidden test set (5,000 videos, scored by the organisers' server). We were scored on 930 questions from 500 videos of the public validation set that we held out and never tuned on. So this is an <b>approximate</b> comparison, not an official one. Also, for the 930-question score, objects named in each option were identified using CLEVRER's question programs, while the papers use their own trained parsers. The language model version did the same job correctly on 60 of 60 questions. To claim an official place, the next step is to run the official test videos and submit.</div>
+
+<h3>So, do we beat the top papers?</h3>
+<p class="verdict">We beat two, not the best.</p>
+<p><b>Ahead of NS-DR</b> (the method from the CLEVRER paper itself) by 14.0 points on options and 24.4 on whole questions, and <b>ahead of DCL</b> by 7.7 and 20.1. <b>Behind VRDP, ALOE and CRCG.</b> The closest one, VRDP without extra labels, is 1.8 points ahead on options but 9.1 ahead on whole questions. The best, CRCG on VRDP, is 8.0 and 21.2 points ahead.</p>
+
+<h3>Why we are ahead of NS-DR and DCL</h3>
+<ul class="plain">
+<li><b>We use the real video for as long as it is still true.</b> Each object follows its recorded motion until the removal can reach it. Simulating it anyway only adds error. The CRCG paper showed the same idea lifts NS-DR itself from 74.1% to 90.7%, so this is clearly the biggest reason.</li>
+<li><b>We simulate past the end of the video</b>, which CLEVRER's answers count.</li>
+<li><b>Physics with guarantees:</b> energy-based pushes that conserve momentum, learned friction, and correct 3D contact distances.</li>
+<li><b>One consistent world per question</b>, so the options can never contradict each other.</li>
+</ul>
+
+<h3>Why VRDP, ALOE and CRCG are still ahead</h3>
+<ul class="plain">
+<li><b>VRDP's physics is an exact copy of CLEVRER's law.</b> It fits a few numbers inside a real physics engine, so long chains of bounces barely drift. Our learned model drifts, which is where most of our remaining errors are (158 missed collisions between simulated objects).</li>
+<li><b>They learn from question-answer pairs.</b> ALOE is trained directly on the answers, and VRDP's concept part learns from them too. Our world model never saw a question.</li>
+<li><b>CRCG = VRDP's accurate engine plus the "use the video until affected" idea.</b> It combines both strengths.</li>
+<li><b>Our reconstructed objects are about 20% too small</b>, which costs collisions until corrected.</li>
+</ul>
+
+<h3>How ours is different from the others</h3>
+<ul class="plain">
+<li><b>The world model learns only from motion,</b> never from questions or answers. The score is a test of physics plus logic, not of learning the quiz.</li>
+<li><b>Momentum conservation is guaranteed by the model's structure,</b> and friction is written down as momentum given to the table, so the physics can be audited like accounts.</li>
+<li><b>Tiny and free:</b> 51,909 learned numbers, trained on a laptop CPU, with a free language model. Top methods use GPUs and much larger networks.</li>
+<li><b>Voxel contact points:</b> each collision has a real 3D contact point and direction, not just two centres.</li>
+<li><b>A general language model instead of a trained parser,</b> so questions do not have to follow CLEVRER's exact wording.</li>
+<li><b>Every answer points to a line in the stored world</b> (for example "frame 65: gray sphere hits cyan cube"), and the whole predicted future can be watched as a 3D GIF.</li>
+<li><b>Who gets simulated is decided by reading the simulation as it runs,</b> not by a separate logic program as in CRCG.</li>
+</ul>
+
+<h3>What gave us good counterfactual answers, and could others do it?</h3>
+<p>Three things: using the real video until the removal reaches an object, simulating past the end, and correcting object size for the collision check. <b>None of these is something others could not do.</b> CRCG already published the first one in 2024, and VRDP's engine simulates the full length anyway. What is ours is getting a good score with a small learned physics model that was never trained on answers, running on a laptop at zero cost.</p>
+
+<h2>Who actually makes the decisions?</h2>
+<p class="verdict">Our world model: no, not all of them.</p>
+<p>The world model decides how every simulated object moves, slows down and bounces. The other decisions are made by rules we wrote (when an object starts being simulated, what counts as a collision) and by the language model (which object is removed, the final reading). The top neuro-symbolic papers are built the same way. Only ALOE puts every decision inside one network.</p>
+</section>
+<div class="tbl">
+<table>
+<tr><th>Decision</th><th>Ours</th><th>NS-DR</th><th>DCL</th><th>VRDP</th><th>CRCG</th><th>ALOE</th></tr>
+<tr><td>Understand the question</td><td><span class="chip c-lm">free LM</span> (930-question score: CLEVRER programs)</td><td>trained parser</td><td>trained parser</td><td>trained parser</td><td>parser of its base system</td><td>inside the network</td></tr>
+<tr><td>Move objects in the "what if" world</td><td><span class="chip c-sim">world model</span></td><td>learned dynamics (PropNet)</td><td>learned dynamics</td><td>physics engine, re-runs the simulation</td><td>its base system's simulator</td><td>no explicit simulation</td></tr>
+<tr><td>Which objects are affected</td><td><span class="chip c-hand">our rule</span> reading the simulation</td><td>—</td><td>—</td><td>everything re-simulated</td><td>logic program (Answer Set Programming)</td><td>inside the network</td></tr>
+<tr><td>Final yes / no</td><td><span class="chip c-hand">collision rule + lookup</span> or <span class="chip c-lm">LM</span></td><td>program executor</td><td>program executor</td><td>program executor</td><td>program executor</td><td>the network</td></tr>
+<tr><td>Trained on question-answer pairs?</td><td>no</td><td>parser learns programs; dynamics learns motion</td><td>yes (concepts)</td><td>yes (concept learner)</td><td>through its base system</td><td>yes</td></tr>
+</table>
+</div>
+<section class="col">
+<p class="note">"—" means the paper's description we checked does not state it clearly, so we do not guess.</p>
+<p><b>What this means for "are we better than the top leagues?"</b> NS-DR, DCL, VRDP and CRCG also let a separate program make the final decision, with a trained parser reading the question. Our language model plays the role of their parser, and our collision rule plus lookup plays the role of their program executor. So we are compared inside the same family. ALOE is the only one whose network decides everything, but it has no physics simulator you could inspect, and it learned from the answers.</p>
+
+<h2>Can the world model decide things itself, or even talk?</h2>
+<p class="verdict">Yes, it is possible.</p>
+<p>First, one surprise: our world model has very little hidden "latent space". Its thoughts are mostly already readable, because its state is positions, speeds and energy. So "going inside" is easier for us than for a big network. Here are the realistic ways, from easiest to hardest.</p>
+<ol class="plain">
+<li><b>Let its own bounce be the decision.</b> When surfaces meet, the model already applies a bounce (an impulse). "A collision happened" could simply mean "the model applied a bounce", which removes our hand-written collision rule. It works once object sizes are corrected.</li>
+<li><b>Twin worlds.</b> Run the real world and the "what if" world side by side with the same model. Any object whose two predicted paths start to separate is "affected". The model itself then decides who must be simulated, replacing our rule. This comes from a classic idea for counterfactuals called twin networks (Balke and Pearl, 1994).</li>
+<li><b>Look inside with small readers ("probes").</b> Train tiny readers on the model's hidden numbers to answer "will these two collide soon?" A famous study (Othello-GPT) found a hidden game board inside a network this way, and could even edit it to change what the network did. Our model has only a few hidden numbers (64 per object and a 128-number layer in the energy network), so it is easy to probe. For big networks, a newer tool called sparse autoencoders splits the hidden numbers into understandable pieces.</li>
+<li><b>Make it talk through an adapter.</b> Turn the world model's state into word-like vectors that a language model can read, and train on question-answer pairs, as PaLM-E did with robot sensor states. Then the language model reads the world model directly instead of a text file. It needs a GPU for training, though free Colab could handle a small language model.</li>
+<li><b>An idea we did not find anywhere: an "energy diary".</b> The model writes one sentence every time momentum or energy passes between two objects, or to the table. Momentum must always balance, like a bank account, so a wrong sentence would break the balance. That gives a built-in lie detector for explanations. We did not find this in our search, but that does not prove nobody has done it.</li>
+</ol>
+
+<h2>Sources</h2>
+<ul class="plain note">
+<li><a href="https://openreview.net/forum?id=HkxYzANYDB">CLEVRER: Collision Events for Video Representation and Reasoning (ICLR 2020)</a> and <a href="https://ar5iv.labs.arxiv.org/html/1910.01442">full text</a></li>
+<li><a href="https://github.com/chuangg/CLEVRER">CLEVRER / NS-DR code and released proposals</a></li>
+<li><a href="https://arxiv.org/pdf/2110.15358">VRDP: Dynamic Visual Reasoning by Learning Differentiable Physics Models from Video and Language (NeurIPS 2021)</a>; <a href="https://github.com/dingmyu/VRDP">code</a></li>
+<li><a href="https://ar5iv.labs.arxiv.org/html/2103.16564">DCL: Grounding Physical Concepts of Objects and Events Through Dynamic Visual Reasoning</a></li>
+<li><a href="https://arxiv.org/abs/2012.08508">ALOE: Attention over learned object embeddings enables complex visual reasoning</a></li>
+<li><a href="https://arxiv.org/html/2506.10753">CRCG: Think before You Simulate: Symbolic Reasoning to Orchestrate Neural Computation for Counterfactual Question Answering</a>; <a href="https://openaccess.thecvf.com/content/WACV2024/papers/Ishay_Think_Before_You_Simulate_Symbolic_Reasoning_To_Orchestrate_Neural_Computation_WACV_2024_paper.pdf">WACV 2024 version</a></li>
+<li><a href="https://arxiv.org/abs/2210.13382">Emergent World Representations (Othello-GPT), ICLR 2023</a></li>
+<li><a href="https://arxiv.org/abs/2303.03378">PaLM-E: An Embodied Multimodal Language Model</a></li>
+<li><a href="https://arxiv.org/abs/2309.08600">Sparse Autoencoders Find Highly Interpretable Features in Language Models</a></li>
+<li><a href="https://www.nature.com/articles/s42256-023-00611-x">Estimating categorical counterfactuals via deep twin networks</a> (explains Balke and Pearl's twin networks)</li>
+<li><a href="https://arxiv.org/abs/1909.12000">CoPhy: Counterfactual Learning of Physical Dynamics (ICLR 2020)</a></li>
+</ul>
+<p class="note">Project numbers come from the project's own logs: <code>v7/runs/</code>, <code>v6/cmp/diagnosis.txt</code> and the results history in <code>CLAUDE.md</code>.</p>
+</section>
+</div>
+
+</body>
+</html>
