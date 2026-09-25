@@ -1,0 +1,10 @@
+Scene from video 10020.
+Intervention: removed cyan metal cube.
+Objects present: green metal cylinder (radius 0.05833); blue metal cylinder (radius 0.05833); brown rubber sphere (radius 0.05833)
+Simulated 128 frames.
+No collisions occur in this world.
+Focused re-simulations (each pair restarted from its true state a few frames before its closest approach; more reliable than the long rollout for whether that pair touches):
+  green metal cylinder & blue metal cylinder (from frame 9): do not collide
+  green metal cylinder & brown rubber sphere (from frame 9): do not collide
+  blue metal cylinder & brown rubber sphere (from frame 24): do not collide
+Momentum transferred to the table by friction: 0.03255.

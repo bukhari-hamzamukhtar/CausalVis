@@ -1,0 +1,39 @@
+{
+ "question": "If the metal cube is removed, which event will happen?",
+ "provider": "groq",
+ "model": "openai/gpt-oss-120b",
+ "answers": {
+  "answers": [
+   {
+    "index": 0,
+    "happens": true,
+    "label": "correct",
+    "evidence": "frame 70: gray metal sphere hits blue metal cylinder"
+   },
+   {
+    "index": 1,
+    "happens": true,
+    "label": "correct",
+    "evidence": "frame 65: gray metal sphere hits cyan rubber cube"
+   },
+   {
+    "index": 2,
+    "happens": false,
+    "label": "wrong",
+    "evidence": "no collision involving brown metal cylinder and cyan rubber cube in the record"
+   },
+   {
+    "index": 3,
+    "happens": false,
+    "label": "wrong",
+    "evidence": "no collision involving gray rubber sphere and brown metal cylinder in the record"
+   }
+  ]
+ },
+ "truth": [
+  "correct",
+  "correct",
+  "wrong",
+  "wrong"
+ ]
+}

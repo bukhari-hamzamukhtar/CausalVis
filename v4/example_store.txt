@@ -1,0 +1,6 @@
+Scene from video 10000.
+Intervention: removed yellow metal cube.
+Objects present: brown metal cube (radius 0.07657); blue rubber cylinder (radius 0.0729); gray metal sphere (radius 0.04897)
+Simulated 128 frames.
+No collisions occur in this world.
+Momentum transferred to the table by friction: 0.00522.

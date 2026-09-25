@@ -1,0 +1,11 @@
+Scene from video 10002.
+Intervention: removed green metal cube.
+Objects present: gray metal sphere (radius 0.05833); blue metal cylinder (radius 0.05833); gray rubber sphere (radius 0.05833); brown metal cylinder (radius 0.05833); cyan rubber cube (radius 0.06472)
+Simulated 128 frames.
+Collisions in this world:
+  frame 65: gray metal sphere hits cyan rubber cube
+  frame 70: gray metal sphere hits blue metal cylinder
+
+VOXEL CONTACT EVENTS in the predicted future (frame: object hits object at 3D contact point in world units, contact normal, impulse):
+  frame 68: gray metal sphere hits cyan rubber cube at (-1.47, 0.39, 0.35), normal (+0.97, +0.26), J=0.0155
+  frame 72: gray metal sphere hits blue metal cylinder at (-1.43, 1.10, 0.35), normal (+0.54, -0.84), J=0.0269

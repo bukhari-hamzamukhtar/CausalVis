@@ -1,0 +1,164 @@
+==============================================================================
+CHOICES 3328   CORRECT  74.8% (2488/3328)   (benchmark log says 74.8% = 2488/3328)
+==============================================================================
+
+BY QUESTION POLARITY
+   'which event WILL happen'                     75.2% (1228/1633)   missed  387  invented  18
+   'which event will NOT happen'                 74.3% (1260/1695)   missed  412  invented  23
+
+BY WHAT THE TRUE ANSWER IS (physically)
+   pair really collides after removal            47.7% (730/1529)    missed  799  invented   0
+   pair really does NOT collide                  97.7% (1758/1799)   missed    0  invented  41
+
+BY HOW THE PAIR RELATES TO THE REMOVED OBJECT
+   factual: pair unaffected by removal           80.7% (1519/1882)   missed  342  invented  21
+   counterfactual: pair affected by removal      67.0% (969/1446)    missed  457  invented  20
+
+COUNTERFACTUAL PAIRS: what the removal does to them
+   collided in video, still collide              20.1% (71/353)      missed  282  invented   0
+   collided in video, removal PREVENTS it        98.8% (79/80)       missed    0  invented   1
+   no collision in video, removal CAUSES one     34.9% (94/269)      missed  175  invented   0
+   no collision in video, still none             97.4% (725/744)     missed    0  invented  19
+
+COUNTERFACTUAL PAIRS: when their video collision happened vs the simulation start
+   video collision BEFORE sim start (only)        1.6% (4/248)       missed  244  invented   0
+   video collision at/after sim start            78.9% (146/185)     missed   38  invented   1
+   no video collision                            80.8% (819/1013)    missed  175  invented  19
+
+FACTUAL PAIRS: video vs truth
+   collided in video, collide in truth           81.1% (554/683)     missed  129  invented   0
+   collided in video, NOT in truth (cone wrong)   0.0% (0/1)         missed    0  invented   1
+   no collision in video, collide in truth (cone wrong)   4.9% (11/224)      missed  213  invented   0
+   no collision in video, none in truth          97.9% (954/974)     missed    0  invented  20
+
+COUNTERFACTUAL PAIRS BY SIMULATION LENGTH
+   <= 30 frames                                  64.8% (107/165)     missed   57  invented   1
+   31-60 frames                                  57.9% (158/273)     missed  113  invented   2
+   61-90 frames                                  66.1% (306/463)     missed  151  invented   6
+   > 90 frames                                   73.0% (398/545)     missed  136  invented  11
+
+BY PAIR SHAPES (simulated pairs)
+   cube + cube                                   74.0% (196/265)     missed   67  invented   2
+   cube + cylinder                               74.5% (521/699)     missed  173  invented   5
+   cube + sphere                                 73.1% (519/710)     missed  180  invented  11
+   cylinder + cylinder                           76.6% (304/397)     missed   87  invented   6
+   cylinder + sphere                             75.0% (640/853)     missed  200  invented  13
+   sphere + sphere                               76.2% (308/404)     missed   92  invented   4
+
+BY SHAPE OF THE REMOVED OBJECT
+   cube                                          74.7% (701/939)     missed  234  invented   4
+   sphere                                        74.8% (915/1224)    missed  292  invented  17
+   cylinder                                      74.8% (872/1165)    missed  273  invented  20
+
+BY NUMBER OF OBJECTS IN THE SCENE
+   3                                             50.0% (2/4)         missed    2  invented   0
+   4                                             66.4% (452/681)     missed  221  invented   8
+   5                                             76.8% (1073/1398)   missed  309  invented  16
+   6                                             77.2% (961/1245)    missed  267  invented  17
+
+BY WHETHER BOTH OBJECTS WERE ON THE TABLE WHEN SIMULATION STARTED
+   both present                                  77.5% (2258/2915)   missed  616  invented  41
+   one NOT yet present                           55.7% (230/413)     missed  183  invented   0
+
+==============================================================================
+WRONG ANSWERS: 840   missed a collision 799   invented one 41   other 0
+==============================================================================
+
+MISSED COLLISIONS -- cause (first that applies)
+   1 REFUSED (object not on table at start)                    183  (22.9%)   factual 79 / counterfactual 104
+   1b BEFORE START (video collision earlier than the sim start)  239  (29.9%)   factual 0 / counterfactual 239
+   2 LEFT TABLE in simulation                                   34  ( 4.3%)   factual 7 / counterfactual 27
+   3 CONE (removal changed this pair, cone said unaffected)    188  (23.5%)   factual 188 / counterfactual 0
+   4 NOT SEEN even in the real recording                        30  ( 3.8%)   factual 30 / counterfactual 0
+   5 RULE (sensor saw contact, rule did not count it)           21  ( 2.6%)   factual 17 / counterfactual 4
+   6 NEAR MISS (simulation within 10 voxels)                    10  ( 1.3%)   factual 7 / counterfactual 3
+   7 FAR MISS (simulation never came close)                     94  (11.8%)   factual 14 / counterfactual 80
+
+   examples: 1 REFUSED (object not on table at start)
+      video 10060  "Which event will not happen without the green cylinder?"  -> "The cube collides with the gray cylinder"  truth=wrong model=correct  path=in_cone  s=51 end=127  sim voxel gap min=None  rec voxel gap min=24.76  video collisions at []  entered at 7/78
+      video 10060  "Which event will not happen without the green cylinder?"  -> "The cube collides with the gray cylinder"  truth=wrong model=correct  path=in_cone  s=51 end=127  sim voxel gap min=None  rec voxel gap min=24.76  video collisions at []  entered at 7/78
+      video 10080  "Which of the following will not happen if the cyan sphere is removed?"  -> "The yellow object collides with the blue object"  truth=wrong model=correct  path=in_cone  s=5 end=127  sim voxel gap min=None  rec voxel gap min=99.0  video collisions at []  entered at 0/79
+
+   examples: 1b BEFORE START (video collision earlier than the sim start)
+      video 10020  "What will happen without the sphere?"  -> "The cube and the green object collide"  truth=correct model=wrong  path=in_cone  s=89 end=127  sim voxel gap min=99.0  rec voxel gap min=99.0  video collisions at [21]  entered at 0/0
+      video 10150  "If the purple sphere is removed, which of the following will not happen?"  -> "The cyan sphere and the blue sphere collide"  truth=wrong model=correct  path=in_cone  s=63 end=127  sim voxel gap min=12.73  rec voxel gap min=5.83  video collisions at [43]  entered at 15/0
+      video 10190  "Without the yellow cylinder, which event will happen?"  -> "The gray object collides with the metal cube"  truth=correct model=wrong  path=in_cone  s=48 end=127  sim voxel gap min=24.19  rec voxel gap min=9.22  video collisions at [35]  entered at 12/0
+
+   examples: 2 LEFT TABLE in simulation
+      video 10260  "If the gray object is removed, what will not happen?"  -> "The sphere and the rubber object collide"  truth=wrong model=correct  path=in_cone  s=1 end=127  sim voxel gap min=99.0  rec voxel gap min=99.0  video collisions at []  entered at 0/0
+      video 10410  "If the red metal sphere is removed, which of the following will not happen?"  -> "The green sphere and the cyan object collide"  truth=wrong model=correct  path=in_cone  s=24 end=127  sim voxel gap min=99.0  rec voxel gap min=26.0  video collisions at []  entered at 17/15
+      video 12230  "What will happen without the metal cylinder?"  -> "The sphere collides with the blue cube"  truth=correct model=wrong  path=outside_cone  s=112 end=127  sim voxel gap min=99.0  rec voxel gap min=99.0  video collisions at []  entered at 76/70
+
+   examples: 3 CONE (removal changed this pair, cone said unaffected)
+      video 10120  "Without the yellow object, which of the following will happen?"  -> "The cylinder and the sphere collide"  truth=correct model=wrong  path=outside_cone  s=112 end=127  sim voxel gap min=99.0  rec voxel gap min=99.0  video collisions at []  entered at 0/49
+      video 10170  "Without the sphere, which of the following will not happen?"  -> "The cube and the brown object collide"  truth=wrong model=correct  path=outside_cone  s=112 end=127  sim voxel gap min=22.0  rec voxel gap min=99.0  video collisions at []  entered at 0/54
+      video 10210  "Which event will not happen without the yellow object?"  -> "The blue cylinder collides with the purple object"  truth=wrong model=correct  path=outside_cone  s=112 end=127  sim voxel gap min=99.0  rec voxel gap min=99.0  video collisions at []  entered at 54/47
+
+   examples: 4 NOT SEEN even in the real recording
+      video 11310  "Which event will happen without the sphere?"  -> "The metal object collides with the cyan cylinder"  truth=correct model=wrong  path=outside_cone  s=49 end=79  sim voxel gap min=23.26  rec voxel gap min=12.04  video collisions at [48]  entered at 0/0
+      video 11630  "What will not happen without the blue object?"  -> "The red cube and the purple object collide"  truth=wrong model=correct  path=outside_cone  s=22 end=52  sim voxel gap min=16.28  rec voxel gap min=6.0  video collisions at [37]  entered at 0/0
+      video 13000  "If the gray object is removed, which event will happen?"  -> "The yellow cube collides with the rubber cylinder"  truth=correct model=wrong  path=outside_cone  s=35 end=65  sim voxel gap min=99.0  rec voxel gap min=6.71  video collisions at [50]  entered at 22/0
+
+   examples: 5 RULE (sensor saw contact, rule did not count it)
+      video 10800  "If the blue sphere is removed, which event will happen?"  -> "The cyan sphere collides with the gray object"  truth=correct model=wrong  path=in_cone  s=52 end=113  sim voxel gap min=2.24  rec voxel gap min=1.41  video collisions at [52]  entered at 0/1
+      video 11200  "Which event will happen if the purple object is removed?"  -> "The yellow rubber object collides with the sphere"  truth=correct model=wrong  path=outside_cone  s=74 end=104  sim voxel gap min=3.0  rec voxel gap min=2.0  video collisions at [68]  entered at 10/0
+      video 11220  "Which of the following will happen if the gray object is removed?"  -> "The rubber sphere and the cylinder collide"  truth=correct model=wrong  path=outside_cone  s=99 end=127  sim voxel gap min=2.83  rec voxel gap min=1.0  video collisions at [94]  entered at 36/0
+
+   examples: 6 NEAR MISS (simulation within 10 voxels)
+      video 12810  "What will not happen if the red cube is removed?"  -> "The cyan cube collides with the cylinder"  truth=wrong model=correct  path=outside_cone  s=92 end=122  sim voxel gap min=4.12  rec voxel gap min=2.0  video collisions at [87]  entered at 14/0
+      video 13040  "Without the gray cylinder, which of the following will not happen?"  -> "The red sphere and the red cylinder collide"  truth=wrong model=correct  path=outside_cone  s=112 end=127  sim voxel gap min=5.0  rec voxel gap min=3.0  video collisions at [103]  entered at 0/0
+      video 11610  "If the yellow sphere is removed, which of the following will happen?"  -> "The cube and the red sphere collide"  truth=correct model=wrong  path=outside_cone  s=82 end=112  sim voxel gap min=5.0  rec voxel gap min=0.0  video collisions at [53]  entered at 8/0
+
+   examples: 7 FAR MISS (simulation never came close)
+      video 10190  "Without the yellow cylinder, which event will happen?"  -> "The gray object collides with the green cube"  truth=correct model=wrong  path=in_cone  s=62 end=127  sim voxel gap min=99.0  rec voxel gap min=99.0  video collisions at []  entered at 12/35
+      video 10430  "If the purple object is removed, which of the following will not happen?"  -> "The cyan rubber sphere collides with the cyan cylinder"  truth=wrong model=correct  path=in_cone  s=95 end=127  sim voxel gap min=19.1  rec voxel gap min=99.0  video collisions at []  entered at 6/0
+      video 10640  "What will happen if the blue sphere is removed?"  -> "The red sphere and the metal cube collide"  truth=correct model=wrong  path=in_cone  s=57 end=127  sim voxel gap min=99.0  rec voxel gap min=99.0  video collisions at []  entered at 0/38
+
+INVENTED COLLISIONS -- cause (first that applies)
+   1 CONE (removal prevented it, cone said unaffected)           1  ( 2.4%)   factual 1 / counterfactual 0
+   2 PREVENTED (model missed that removal stops it)              1  ( 2.4%)   factual 0 / counterfactual 1
+   3 SENSOR SAYS NO, rule said yes                              16  (39.0%)   factual 10 / counterfactual 6
+   4 GRAZE / invented                                           23  (56.1%)   factual 10 / counterfactual 13
+
+   examples: 1 CONE (removal prevented it, cone said unaffected)
+      video 12650  "Which event will not happen without the brown sphere?"  -> "The cube and the purple object collide"  truth=correct model=wrong  path=outside_cone  s=95 end=125  sim voxel gap min=2.0  rec voxel gap min=16.28  video collisions at [124]  entered at 13/24
+
+   examples: 2 PREVENTED (model missed that removal stops it)
+      video 14930  "Which of the following will happen if the brown cylinder is removed?"  -> "The yellow cylinder collides with the sphere"  truth=wrong model=correct  path=in_cone  s=45 end=127  sim voxel gap min=3.0  rec voxel gap min=0.0  video collisions at [79]  entered at 41/0
+
+   examples: 3 SENSOR SAYS NO, rule said yes
+      video 12760  "Without the brown metal cylinder, which of the following will happen?"  -> "The yellow object and the green object collide"  truth=wrong model=correct  path=outside_cone  s=112 end=127  sim voxel gap min=4.24  rec voxel gap min=5.83  video collisions at []  entered at 27/0
+      video 13210  "Which event will not happen if the purple object is removed?"  -> "The green cube and the brown object collide"  truth=correct model=wrong  path=outside_cone  s=106 end=127  sim voxel gap min=4.47  rec voxel gap min=12.08  video collisions at []  entered at 0/0
+      video 14010  "Which of the following will not happen if the rubber cylinder is removed?"  -> "The cyan sphere and the rubber sphere collide"  truth=correct model=wrong  path=outside_cone  s=105 end=127  sim voxel gap min=5.66  rec voxel gap min=1.41  video collisions at []  entered at 13/42
+
+   examples: 4 GRAZE / invented
+      video 10040  "If the rubber cylinder is removed, what will happen?"  -> "The cyan object collides with the red cylinder"  truth=wrong model=correct  path=outside_cone  s=34 end=64  sim voxel gap min=3.0  rec voxel gap min=24.52  video collisions at []  entered at 0/10
+      video 10080  "Which of the following will not happen if the cyan sphere is removed?"  -> "The yellow cylinder collides with the cyan cylinder"  truth=correct model=wrong  path=in_cone  s=5 end=127  sim voxel gap min=3.0  rec voxel gap min=99.0  video collisions at []  entered at 0/0
+      video 10230  "What will not happen without the brown object?"  -> "The cube collides with the sphere"  truth=correct model=wrong  path=in_cone  s=61 end=127  sim voxel gap min=3.0  rec voxel gap min=7.21  video collisions at []  entered at 0/0
+
+==============================================================================
+IF THE VOXEL SENSOR MADE THE 'DID THEY TOUCH' CALL INSTEAD OF THE CENTRE RULE
+==============================================================================
+   touch = surfaces within 0 voxels :  57.5% (1913/3328)   (centre rule:  74.8% (2488/3328))
+   touch = surfaces within 1 voxels :  60.7% (2021/3328)   (centre rule:  74.8% (2488/3328))
+   touch = surfaces within 2 voxels :  64.3% (2141/3328)   (centre rule:  74.8% (2488/3328))
+   touch = surfaces within 3 voxels :  70.5% (2345/3328)   (centre rule:  74.8% (2488/3328))
+   touch = surfaces within 6 voxels :  76.1% (2531/3328)   (centre rule:  74.8% (2488/3328))
+
+CEILING: sensor / rule on the REAL RECORDED motion, factual pairs only (no model)
+   recording + sensor within 0 voxels:  62.4% (1174/1882)
+   recording + sensor within 1 voxels:  65.7% (1236/1882)
+   recording + sensor within 3 voxels:  71.9% (1353/1882)
+   recording + sensor within 6 voxels:  78.0% (1468/1882)
+   recording + centre rule          :  79.0% (1486/1882)
+   model (same pairs)               :  80.7% (1519/1882)
+
+   annotated collisions in factual windows: how close do our 3D objects get in the REAL motion?
+      within  0 voxels:  29.1% (199/684)
+      within  1 voxels:  38.3% (262/684)
+      within  3 voxels:  55.4% (379/684)
+      within  6 voxels:  72.1% (493/684)
+      within 10 voxels:  88.5% (605/684)
+      within 20 voxels:  99.4% (680/684)
+
+PER QUESTION:  30.9% (287/930) fully right. Of the 643 wrong questions, 461 have exactly ONE wrong choice.

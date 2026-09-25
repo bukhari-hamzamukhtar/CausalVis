@@ -1,0 +1,12 @@
+Scene from video 10000.
+Intervention: removed yellow metal cube.
+Objects present: brown metal cube (radius 0.06472); blue rubber cylinder (radius 0.05833); gray metal sphere (radius 0.05833)
+Simulated 128 frames.
+Collisions in this world:
+  frame 40: brown metal cube hits blue rubber cylinder
+Objects that leave: gray metal sphere at frame 20
+Focused re-simulations (each pair restarted from its true state a few frames before its closest approach; more reliable than the long rollout for whether that pair touches):
+  brown metal cube & blue rubber cylinder (from frame 19): collide at frame 40
+  brown metal cube & gray metal sphere (from frame 75): do not collide
+  blue rubber cylinder & gray metal sphere (from frame 70): collide at frame 84
+Momentum transferred to the table by friction: 0.01290.

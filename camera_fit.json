@@ -1,0 +1,29 @@
+{
+  "camera": {
+    "loc": [
+      2.418600000000001,
+      -6.3576,
+      4.743699999999999
+    ],
+    "target": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "lens_mm": 34.21875,
+    "sensor_mm": 32.0,
+    "width": 480,
+    "height": 320,
+    "shape_factor": {
+      "sphere": 1.0,
+      "cube": 0.85,
+      "cylinder": 0.9
+    },
+    "max_extent": 9.0
+  },
+  "sizes": {
+    "cube": 0.30499999999999994,
+    "sphere": 0.35,
+    "cylinder": 0.35
+  }
+}

@@ -1,0 +1,141 @@
+{
+ "motion": {
+  "cube/metal": {
+   "chosen": "coul",
+   "param": 8e-05,
+   "train_err20": 0.024367827317639524,
+   "alternatives": {
+    "const": {
+     "param": 0.0,
+     "train_err20": 0.03035471393589353
+    },
+    "exp": {
+     "param": 0.012,
+     "train_err20": 0.02492507559270899
+    },
+    "coul": {
+     "param": 8e-05,
+     "train_err20": 0.024367827317639524
+    }
+   },
+   "n_train": 2914
+  },
+  "cube/rubber": {
+   "chosen": "coul",
+   "param": 8e-05,
+   "train_err20": 0.0230796480680793,
+   "alternatives": {
+    "const": {
+     "param": 0.0,
+     "train_err20": 0.029388015098362613
+    },
+    "exp": {
+     "param": 0.012,
+     "train_err20": 0.024055953268246857
+    },
+    "coul": {
+     "param": 8e-05,
+     "train_err20": 0.0230796480680793
+    }
+   },
+   "n_train": 2761
+  },
+  "cylinder/metal": {
+   "chosen": "coul",
+   "param": 8e-05,
+   "train_err20": 0.02260035454154268,
+   "alternatives": {
+    "const": {
+     "param": 0.0,
+     "train_err20": 0.029245822688596605
+    },
+    "exp": {
+     "param": 0.011,
+     "train_err20": 0.023492778464219734
+    },
+    "coul": {
+     "param": 8e-05,
+     "train_err20": 0.02260035454154268
+    }
+   },
+   "n_train": 3041
+  },
+  "cylinder/rubber": {
+   "chosen": "coul",
+   "param": 8e-05,
+   "train_err20": 0.022566439453279637,
+   "alternatives": {
+    "const": {
+     "param": 0.0,
+     "train_err20": 0.0288262201796175
+    },
+    "exp": {
+     "param": 0.011,
+     "train_err20": 0.02336097107337581
+    },
+    "coul": {
+     "param": 8e-05,
+     "train_err20": 0.022566439453279637
+    }
+   },
+   "n_train": 2803
+  },
+  "sphere/metal": {
+   "chosen": "exp",
+   "param": 0.003,
+   "train_err20": 0.030774203299857805,
+   "alternatives": {
+    "const": {
+     "param": 0.0,
+     "train_err20": 0.03138115440233319
+    },
+    "exp": {
+     "param": 0.003,
+     "train_err20": 0.030774203299857805
+    },
+    "coul": {
+     "param": 1.5000000000000002e-05,
+     "train_err20": 0.031045058171893396
+    }
+   },
+   "n_train": 2218
+  },
+  "sphere/rubber": {
+   "chosen": "exp",
+   "param": 0.002,
+   "train_err20": 0.02280872050746644,
+   "alternatives": {
+    "const": {
+     "param": 0.0,
+     "train_err20": 0.023156151503000124
+    },
+    "exp": {
+     "param": 0.002,
+     "train_err20": 0.02280872050746644
+    },
+    "coul": {
+     "param": 1.5000000000000002e-05,
+     "train_err20": 0.022905618687029068
+    }
+   },
+   "n_train": 2154
+  }
+ },
+ "collision": {
+  "mass_ratio": 1.0,
+  "e": {
+   "mm": 0.2,
+   "mr": 0.2,
+   "rr": 0.2
+  },
+  "mu": 0.05,
+  "normal": "line of centres"
+ },
+ "contact_sizes": {
+  "sphere": 0.05844559332708417,
+  "cylinder": 0.06020586684064497,
+  "cube": 0.07179114072782668
+ },
+ "contact_gap": 0.01,
+ "fitted_on": "TRAIN: 1500 clips, 15891 free-motion segments, 2932 isolated collisions"
+}
