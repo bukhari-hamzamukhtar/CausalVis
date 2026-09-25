@@ -1,0 +1,16 @@
+system,subset,options_pct,questions_pct,n_options,n_questions
+no physics,E,87.5,59.9,4688,1263
+no physics,M,95.6,86.2,2005,600
+no physics,H,60.0,5.3,2657,756
+straight lines,E,91.5,74.3,4688,1263
+straight lines,M,93.1,79.7,2005,600
+straight lines,H,83.9,55.7,2657,756
+straight + friction,E,91.9,75.7,4688,1263
+straight + friction,M,93.3,80.0,2005,600
+straight + friction,H,84.9,59.3,2657,756
+learned (CausalVis),E,92.6,76.6,4688,1263
+learned (CausalVis),M,94.4,82.8,2005,600
+learned (CausalVis),H,83.6,56.6,2657,756
+textbook laws,E,93.2,78.3,4688,1263
+textbook laws,M,94.4,82.8,2005,600
+textbook laws,H,86.0,63.2,2657,756

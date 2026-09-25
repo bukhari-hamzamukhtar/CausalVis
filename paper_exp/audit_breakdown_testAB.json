@@ -1,0 +1,36 @@
+{
+ "6": {
+  "right|recorded, confirmed": 4643,
+  "right|simulated: no collision: simulated": 2202,
+  "right|simulated: collides: after video end": 564,
+  "right|simulated: collides: simulated, in video": 660,
+  "wrong|simulated: collides: simulated, in video": 164,
+  "wrong|simulated: no collision: simulated": 254,
+  "wrong|detector reports a collision the annotation lacks": 193,
+  "wrong|recorded collision real, key says removal changes it": 3,
+  "right|recorded, pair has an annotated collision further away": 278,
+  "right|recorded, no annotated collision of the pair": 52,
+  "wrong|simulated: collides: after video end": 139,
+  "wrong|key says collide after the video ends": 72,
+  "wrong|detector misses an annotated collision": 37,
+  "right|simulated: no object / removed": 55,
+  "wrong|simulated: no object / removed": 34
+ },
+ "15": {
+  "right|recorded, confirmed": 4881,
+  "right|simulated: no collision: simulated": 2202,
+  "right|simulated: collides: after video end": 564,
+  "right|simulated: collides: simulated, in video": 660,
+  "wrong|simulated: collides: simulated, in video": 164,
+  "wrong|simulated: no collision: simulated": 254,
+  "wrong|detector reports a collision the annotation lacks": 188,
+  "wrong|recorded collision real, key says removal changes it": 8,
+  "right|recorded, no annotated collision of the pair": 52,
+  "wrong|simulated: collides: after video end": 139,
+  "wrong|key says collide after the video ends": 72,
+  "right|recorded, pair has an annotated collision further away": 40,
+  "wrong|detector misses an annotated collision": 37,
+  "right|simulated: no object / removed": 55,
+  "wrong|simulated: no object / removed": 34
+ }
+}

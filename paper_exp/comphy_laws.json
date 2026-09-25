@@ -1,0 +1,28 @@
+{
+ "friction": {
+  "sphere": [
+   0.0,
+   0.1576882130180177
+  ],
+  "cube": [
+   0.23967073376779813,
+   0.15222459555294707
+  ],
+  "cylinder": [
+   0.23159458931684407,
+   0.1571739562679377
+  ]
+ },
+ "k": 0.13803270015673094,
+ "contact": {
+  "cube|sphere": 0.43482388895027724,
+  "cylinder|sphere": 0.40645079447294347,
+  "cube|cube": 0.46414978224003917,
+  "cylinder|cylinder": 0.40420879117461295,
+  "cube|cylinder": 0.4339942336474505,
+  "sphere|sphere": 0.41144120527569017
+ },
+ "restitution": 0.16573887569264617,
+ "videos": 1500,
+ "note": "restitution fitted (median, TRAIN); contact = 0.95 x median annotated-collision distance, chosen by a TRAIN replay grid (e in 0.2..1.0, scale 0.95/1.0: e 0.2 & 0.95 best)"
+}

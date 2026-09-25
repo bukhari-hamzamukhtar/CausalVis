@@ -1,0 +1,42 @@
+{
+ "VAL-A": {
+  "videos": 500,
+  "missing_tracks": 0,
+  "recall": 0.9944,
+  "precision": 0.9968,
+  "exact_inventory": 0.958,
+  "entry_err_mean": 1.077,
+  "exit_err_mean": 0.138,
+  "coverage_in_view": 0.9864
+ },
+ "TEST-A": {
+  "videos": 500,
+  "missing_tracks": 0,
+  "recall": 0.9984,
+  "precision": 0.9968,
+  "exact_inventory": 0.976,
+  "entry_err_mean": 1.054,
+  "exit_err_mean": 0.203,
+  "coverage_in_view": 0.9849
+ },
+ "TEST-B": {
+  "videos": 898,
+  "missing_tracks": 0,
+  "recall": 0.9962,
+  "precision": 0.9942,
+  "exact_inventory": 0.9521,
+  "entry_err_mean": 0.971,
+  "exit_err_mean": 0.139,
+  "coverage_in_view": 0.9856
+ },
+ "VAL-B": {
+  "videos": 898,
+  "missing_tracks": 0,
+  "recall": 0.9964,
+  "precision": 0.9953,
+  "exact_inventory": 0.9588,
+  "entry_err_mean": 1.018,
+  "exit_err_mean": 0.114,
+  "coverage_in_view": 0.986
+ }
+}

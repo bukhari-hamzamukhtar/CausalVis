@@ -1,0 +1,6 @@
+{
+ "radius": 0.55,
+ "wall": 4.5,
+ "combine": "product",
+ "wall_e": 1.0
+}

@@ -1,0 +1,22 @@
+{
+ "descriptive": {
+  "detector": "cal",
+  "refine": 6,
+  "precision": 0.7879453391898487,
+  "recall": 0.9508244994110718,
+  "tp": 3229,
+  "fp": 869,
+  "fn": 167,
+  "median_offset": 0.0
+ },
+ "explanatory": {
+  "detector": "cal",
+  "refine": 6,
+  "precision": 0.7879453391898487,
+  "recall": 0.9508244994110718,
+  "tp": 3229,
+  "fp": 869,
+  "fn": 167,
+  "median_offset": 0.0
+ }
+}

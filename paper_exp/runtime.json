@@ -1,0 +1,23 @@
+{
+ "learned": {
+  "start_up_plus_5": 16.8,
+  "start_up_plus_45": 106.2,
+  "seconds_per_question": 2.24
+ },
+ "laws": {
+  "start_up_plus_5": 16.5,
+  "start_up_plus_45": 70.9,
+  "seconds_per_question": 1.36
+ },
+ "straight": {
+  "start_up_plus_5": 13.8,
+  "start_up_plus_45": 69.8,
+  "seconds_per_question": 1.4
+ },
+ "no physics": {
+  "start_up_plus_5": 9.3,
+  "start_up_plus_45": 50.9,
+  "seconds_per_question": 1.04
+ },
+ "machine": "Intel i5-8350U, 4 cores, 7.9 GB, one process, torch 1 thread, nothing else running"
+}

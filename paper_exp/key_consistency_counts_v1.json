@@ -1,0 +1,552 @@
+{
+ "VAL-A": {
+  "counts": {
+   "presence|not responsible|collides without Z": 270,
+   "entrance|not responsible|collides without Z": 88,
+   "presence|responsible|no collision without Z": 37,
+   "presence|responsible|collides without Z": 29,
+   "entrance|responsible|no collision without Z": 13,
+   "entrance|responsible|collides without Z": 8,
+   "presence|not responsible|no collision without Z": 1
+  },
+  "n": 446,
+  "agree": 408,
+  "responsible": 87,
+  "responsible_but_collides": 37,
+  "not_responsible": 359,
+  "not_responsible_but_no_collision": 1,
+  "examples": [
+   {
+    "video": 10391,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the gray cube and the yellow sphere?",
+    "choice": "the presence of the cyan metal sphere",
+    "Z": "cyan_metal_sphere",
+    "pair": [
+     "gray_metal_cube",
+     "yellow_metal_sphere"
+    ]
+   },
+   {
+    "video": 10441,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the gray metal sphere and the cylinder?",
+    "choice": "the presence of the gray rubber sphere",
+    "Z": "gray_rubber_sphere",
+    "pair": [
+     "green_rubber_cylinder",
+     "gray_metal_sphere"
+    ]
+   },
+   {
+    "video": 10691,
+    "qid": "11",
+    "question": "Which of the following is responsible for the rubber cube's colliding with the cyan sphere?",
+    "choice": "the presence of the green sphere",
+    "Z": "green_rubber_sphere",
+    "pair": [
+     "cyan_rubber_sphere",
+     "red_rubber_cube"
+    ]
+   },
+   {
+    "video": 10891,
+    "qid": "11",
+    "question": "Which of the following is responsible for the cylinder's colliding with the cube?",
+    "choice": "the presence of the yellow object",
+    "Z": "yellow_rubber_sphere",
+    "pair": [
+     "cyan_rubber_cylinder",
+     "cyan_metal_cube"
+    ]
+   },
+   {
+    "video": 11311,
+    "qid": "12",
+    "question": "Which of the following is responsible for the collision between the metal sphere and the yellow sphere?",
+    "choice": "the presence of the metal cube",
+    "Z": "brown_metal_cube",
+    "pair": [
+     "yellow_rubber_sphere",
+     "red_metal_sphere"
+    ]
+   },
+   {
+    "video": 11471,
+    "qid": "12",
+    "question": "Which of the following is not responsible for the collision between the green object and the metal sphere?",
+    "choice": "the purple cube's entrance",
+    "Z": "purple_rubber_cube",
+    "pair": [
+     "green_rubber_cube",
+     "yellow_metal_sphere"
+    ]
+   },
+   {
+    "video": 11641,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the yellow sphere and the cylinder?",
+    "choice": "the yellow cube's entrance",
+    "Z": "yellow_metal_cube",
+    "pair": [
+     "yellow_metal_sphere",
+     "brown_metal_cylinder"
+    ]
+   },
+   {
+    "video": 11641,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the yellow sphere and the cylinder?",
+    "choice": "the presence of the yellow metal cube",
+    "Z": "yellow_metal_cube",
+    "pair": [
+     "yellow_metal_sphere",
+     "brown_metal_cylinder"
+    ]
+   },
+   {
+    "video": 11751,
+    "qid": "12",
+    "question": "Which of the following is responsible for the red rubber cylinder's colliding with the gray cylinder?",
+    "choice": "the presence of the red metal object",
+    "Z": "red_metal_cylinder",
+    "pair": [
+     "gray_rubber_cylinder",
+     "red_rubber_cylinder"
+    ]
+   },
+   {
+    "video": 11821,
+    "qid": "12",
+    "question": "Which of the following is not responsible for the yellow sphere's colliding with the green sphere?",
+    "choice": "the presence of the blue metal object",
+    "Z": "blue_metal_sphere",
+    "pair": [
+     "yellow_metal_sphere",
+     "green_metal_sphere"
+    ]
+   },
+   {
+    "video": 11901,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the gray sphere's colliding with the yellow object?",
+    "choice": "the red object's entering the scene",
+    "Z": "red_rubber_sphere",
+    "pair": [
+     "yellow_metal_sphere",
+     "gray_rubber_sphere"
+    ]
+   },
+   {
+    "video": 12071,
+    "qid": "12",
+    "question": "Which of the following is responsible for the collision between the blue sphere and the purple cube?",
+    "choice": "the presence of the red metal sphere",
+    "Z": "red_metal_sphere",
+    "pair": [
+     "blue_metal_sphere",
+     "purple_metal_cube"
+    ]
+   },
+   {
+    "video": 12231,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the metal sphere and the red object?",
+    "choice": "the brown cube's entering the scene",
+    "Z": "brown_metal_cube",
+    "pair": [
+     "purple_metal_sphere",
+     "red_metal_cube"
+    ]
+   },
+   {
+    "video": 12231,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the metal sphere and the red object?",
+    "choice": "the presence of the brown metal cube",
+    "Z": "brown_metal_cube",
+    "pair": [
+     "purple_metal_sphere",
+     "red_metal_cube"
+    ]
+   },
+   {
+    "video": 12241,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the metal cube and the blue object?",
+    "choice": "the presence of the rubber cube",
+    "Z": "cyan_rubber_cube",
+    "pair": [
+     "green_metal_cube",
+     "blue_rubber_cylinder"
+    ]
+   }
+  ]
+ },
+ "TEST-A": {
+  "counts": {
+   "entrance|not responsible|collides without Z": 85,
+   "presence|not responsible|collides without Z": 253,
+   "presence|responsible|no collision without Z": 42,
+   "entrance|responsible|no collision without Z": 16,
+   "entrance|responsible|collides without Z": 6,
+   "presence|responsible|collides without Z": 21
+  },
+  "n": 423,
+  "agree": 396,
+  "responsible": 85,
+  "responsible_but_collides": 27,
+  "not_responsible": 338,
+  "not_responsible_but_no_collision": 0,
+  "examples": [
+   {
+    "video": 10340,
+    "qid": "12",
+    "question": "Which of the following is not responsible for the blue sphere's colliding with the red object?",
+    "choice": "the cube's entrance",
+    "Z": "purple_metal_cube",
+    "pair": [
+     "red_metal_sphere",
+     "blue_metal_sphere"
+    ]
+   },
+   {
+    "video": 10340,
+    "qid": "12",
+    "question": "Which of the following is not responsible for the blue sphere's colliding with the red object?",
+    "choice": "the presence of the purple metal cube",
+    "Z": "purple_metal_cube",
+    "pair": [
+     "red_metal_sphere",
+     "blue_metal_sphere"
+    ]
+   },
+   {
+    "video": 10760,
+    "qid": "11",
+    "question": "Which of the following is responsible for the cube's colliding with the yellow cylinder?",
+    "choice": "the presence of the metal sphere",
+    "Z": "red_metal_sphere",
+    "pair": [
+     "yellow_metal_cube",
+     "yellow_rubber_cylinder"
+    ]
+   },
+   {
+    "video": 10910,
+    "qid": "11",
+    "question": "Which of the following is responsible for the metal sphere's colliding with the gray cylinder?",
+    "choice": "the presence of the green cylinder",
+    "Z": "green_metal_cylinder",
+    "pair": [
+     "purple_metal_sphere",
+     "gray_metal_cylinder"
+    ]
+   },
+   {
+    "video": 10990,
+    "qid": "12",
+    "question": "Which of the following is responsible for the purple object's colliding with the cube?",
+    "choice": "the presence of the yellow rubber object",
+    "Z": "yellow_rubber_sphere",
+    "pair": [
+     "purple_rubber_sphere",
+     "brown_metal_cube"
+    ]
+   },
+   {
+    "video": 11510,
+    "qid": "12",
+    "question": "Which of the following is not responsible for the blue cube's colliding with the cylinder?",
+    "choice": "the presence of the yellow metal cube",
+    "Z": "yellow_metal_cube",
+    "pair": [
+     "blue_metal_cube",
+     "purple_rubber_cylinder"
+    ]
+   },
+   {
+    "video": 11540,
+    "qid": "11",
+    "question": "Which of the following is responsible for the collision between the purple object and the blue cube?",
+    "choice": "the presence of the blue cylinder",
+    "Z": "blue_rubber_cylinder",
+    "pair": [
+     "blue_rubber_cube",
+     "purple_rubber_cube"
+    ]
+   },
+   {
+    "video": 11640,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the cylinder and the cube?",
+    "choice": "the presence of the metal sphere",
+    "Z": "blue_metal_sphere",
+    "pair": [
+     "blue_metal_cube",
+     "red_metal_cylinder"
+    ]
+   },
+   {
+    "video": 11640,
+    "qid": "12",
+    "question": "Which of the following is responsible for the collision between the cylinder and the rubber object?",
+    "choice": "the presence of the blue metal sphere",
+    "Z": "blue_metal_sphere",
+    "pair": [
+     "gray_rubber_sphere",
+     "red_metal_cylinder"
+    ]
+   },
+   {
+    "video": 12220,
+    "qid": "11",
+    "question": "Which of the following is responsible for the brown object's colliding with the green cylinder?",
+    "choice": "the cyan cylinder's entering the scene",
+    "Z": "cyan_rubber_cylinder",
+    "pair": [
+     "green_rubber_cylinder",
+     "brown_rubber_sphere"
+    ]
+   },
+   {
+    "video": 12220,
+    "qid": "11",
+    "question": "Which of the following is responsible for the brown object's colliding with the green cylinder?",
+    "choice": "the presence of the cyan cylinder",
+    "Z": "cyan_rubber_cylinder",
+    "pair": [
+     "green_rubber_cylinder",
+     "brown_rubber_sphere"
+    ]
+   },
+   {
+    "video": 12550,
+    "qid": "12",
+    "question": "Which of the following is not responsible for the collision between the sphere and the gray object?",
+    "choice": "the presence of the yellow cylinder",
+    "Z": "yellow_rubber_cylinder",
+    "pair": [
+     "gray_rubber_cylinder",
+     "red_rubber_sphere"
+    ]
+   },
+   {
+    "video": 12670,
+    "qid": "12",
+    "question": "Which of the following is responsible for the purple cylinder's colliding with the sphere?",
+    "choice": "the green cylinder's entering the scene",
+    "Z": "green_metal_cylinder",
+    "pair": [
+     "purple_metal_cylinder",
+     "purple_rubber_sphere"
+    ]
+   },
+   {
+    "video": 12680,
+    "qid": "11",
+    "question": "Which of the following is responsible for the collision between the blue sphere and the purple cylinder?",
+    "choice": "the presence of the blue rubber cylinder",
+    "Z": "blue_rubber_cylinder",
+    "pair": [
+     "blue_rubber_sphere",
+     "purple_rubber_cylinder"
+    ]
+   },
+   {
+    "video": 12750,
+    "qid": "11",
+    "question": "Which of the following is responsible for the cylinder's colliding with the cyan cube?",
+    "choice": "the presence of the sphere",
+    "Z": "red_rubber_sphere",
+    "pair": [
+     "cyan_rubber_cube",
+     "brown_rubber_cylinder"
+    ]
+   }
+  ]
+ },
+ "TEST-B": {
+  "counts": {
+   "presence|not responsible|collides without Z": 471,
+   "entrance|responsible|no collision without Z": 28,
+   "presence|responsible|no collision without Z": 71,
+   "entrance|not responsible|collides without Z": 198,
+   "presence|responsible|collides without Z": 37,
+   "entrance|responsible|collides without Z": 12
+  },
+  "n": 817,
+  "agree": 768,
+  "responsible": 148,
+  "responsible_but_collides": 49,
+  "not_responsible": 669,
+  "not_responsible_but_no_collision": 0,
+  "examples": [
+   {
+    "video": 180,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the cube's colliding with the purple cylinder?",
+    "choice": "the presence of the metal cylinder",
+    "Z": "yellow_metal_cylinder",
+    "pair": [
+     "purple_rubber_cylinder",
+     "purple_metal_cube"
+    ]
+   },
+   {
+    "video": 340,
+    "qid": "12",
+    "question": "Which of the following is not responsible for the rubber cylinder's colliding with the brown object?",
+    "choice": "the blue cube's entrance",
+    "Z": "blue_metal_cube",
+    "pair": [
+     "brown_rubber_cube",
+     "blue_rubber_cylinder"
+    ]
+   },
+   {
+    "video": 340,
+    "qid": "12",
+    "question": "Which of the following is not responsible for the rubber cylinder's colliding with the brown object?",
+    "choice": "the presence of the blue cube",
+    "Z": "blue_metal_cube",
+    "pair": [
+     "brown_rubber_cube",
+     "blue_rubber_cylinder"
+    ]
+   },
+   {
+    "video": 380,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the cyan sphere's colliding with the cube?",
+    "choice": "the presence of the gray cylinder",
+    "Z": "gray_metal_cylinder",
+    "pair": [
+     "red_rubber_cube",
+     "cyan_rubber_sphere"
+    ]
+   },
+   {
+    "video": 440,
+    "qid": "12",
+    "question": "Which of the following is responsible for the collision between the purple sphere and the brown sphere?",
+    "choice": "the presence of the red object",
+    "Z": "red_metal_cube",
+    "pair": [
+     "purple_metal_sphere",
+     "brown_metal_sphere"
+    ]
+   },
+   {
+    "video": 680,
+    "qid": "11",
+    "question": "Which of the following is responsible for the gray cylinder's colliding with the cyan cylinder?",
+    "choice": "the presence of the sphere",
+    "Z": "red_metal_sphere",
+    "pair": [
+     "gray_rubber_cylinder",
+     "cyan_metal_cylinder"
+    ]
+   },
+   {
+    "video": 1560,
+    "qid": "11",
+    "question": "Which of the following is responsible for the cyan cube's colliding with the blue cube?",
+    "choice": "the presence of the cyan metal object",
+    "Z": "cyan_metal_sphere",
+    "pair": [
+     "cyan_rubber_cube",
+     "blue_rubber_cube"
+    ]
+   },
+   {
+    "video": 3260,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the rubber cylinder and the cube?",
+    "choice": "the presence of the blue cylinder",
+    "Z": "blue_metal_cylinder",
+    "pair": [
+     "cyan_rubber_cylinder",
+     "yellow_rubber_cube"
+    ]
+   },
+   {
+    "video": 3260,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the rubber cylinder and the cube?",
+    "choice": "the blue cylinder's entrance",
+    "Z": "blue_metal_cylinder",
+    "pair": [
+     "cyan_rubber_cylinder",
+     "yellow_rubber_cube"
+    ]
+   },
+   {
+    "video": 3290,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the cyan object's colliding with the blue cylinder?",
+    "choice": "the gray sphere's entering the scene",
+    "Z": "gray_rubber_sphere",
+    "pair": [
+     "cyan_rubber_sphere",
+     "blue_rubber_cylinder"
+    ]
+   },
+   {
+    "video": 3290,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the cyan object's colliding with the blue cylinder?",
+    "choice": "the presence of the gray rubber sphere",
+    "Z": "gray_rubber_sphere",
+    "pair": [
+     "cyan_rubber_sphere",
+     "blue_rubber_cylinder"
+    ]
+   },
+   {
+    "video": 3430,
+    "qid": "12",
+    "question": "Which of the following is not responsible for the collision between the gray cylinder and the sphere?",
+    "choice": "the presence of the purple metal object",
+    "Z": "purple_metal_cube",
+    "pair": [
+     "gray_metal_cylinder",
+     "yellow_metal_sphere"
+    ]
+   },
+   {
+    "video": 3450,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the sphere and the brown metal cube?",
+    "choice": "the cylinder's entering the scene",
+    "Z": "cyan_rubber_cylinder",
+    "pair": [
+     "purple_metal_sphere",
+     "brown_metal_cube"
+    ]
+   },
+   {
+    "video": 3450,
+    "qid": "11",
+    "question": "Which of the following is not responsible for the collision between the sphere and the brown metal cube?",
+    "choice": "the presence of the cyan rubber object",
+    "Z": "cyan_rubber_cylinder",
+    "pair": [
+     "purple_metal_sphere",
+     "brown_metal_cube"
+    ]
+   },
+   {
+    "video": 3950,
+    "qid": "12",
+    "question": "Which of the following is not responsible for the rubber sphere's colliding with the blue cube?",
+    "choice": "the presence of the rubber cylinder",
+    "Z": "cyan_rubber_cylinder",
+    "pair": [
+     "cyan_rubber_sphere",
+     "blue_metal_cube"
+    ]
+   }
+  ]
+ }
+}

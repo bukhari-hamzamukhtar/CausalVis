@@ -1,0 +1,32 @@
+{
+ "VAL-A": {
+  "video: pair collides once": 37,
+  "engine: same collision (within 10 frames of the recorded one)": 17,
+  "engine: no collision without Z": 6,
+  "engine: earlier or other": 8,
+  "engine: later collision (inside the video)": 6
+ },
+ "TEST-A": {
+  "video: pair collides once": 27,
+  "engine: earlier or other": 6,
+  "engine: same collision (within 10 frames of the recorded one)": 16,
+  "engine: no collision without Z": 3,
+  "engine: later collision (inside the video)": 2
+ },
+ "TEST-B": {
+  "video: pair collides once": 49,
+  "engine: same collision (within 10 frames of the recorded one)": 23,
+  "engine: no collision without Z": 11,
+  "engine: later collision (inside the video)": 5,
+  "engine: earlier or other": 9,
+  "engine: later collision (after the video)": 1
+ },
+ "all": {
+  "video: pair collides once": 113,
+  "engine: same collision (within 10 frames of the recorded one)": 56,
+  "engine: no collision without Z": 20,
+  "engine: earlier or other": 23,
+  "engine: later collision (inside the video)": 13,
+  "engine: later collision (after the video)": 1
+ }
+}

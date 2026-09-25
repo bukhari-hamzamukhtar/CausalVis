@@ -1,0 +1,445 @@
+{
+ "chosen": {
+  "learned": {
+   "run": "learned_lb3",
+   "lookback": 3,
+   "det": "union",
+   "ext": 30,
+   "options": 3061,
+   "n_options": 3391,
+   "questions": 670,
+   "n_questions": 941
+  },
+  "laws": {
+   "run": "laws_lb3",
+   "lookback": 3,
+   "det": "union",
+   "ext": 60,
+   "options": 3104,
+   "n_options": 3391,
+   "questions": 705,
+   "n_questions": 941
+  },
+  "straight": {
+   "run": "straight_lb1",
+   "lookback": 1,
+   "det": "union",
+   "ext": 45,
+   "options": 3028,
+   "n_options": 3391,
+   "questions": 651,
+   "n_questions": 941
+  },
+  "strfric": {
+   "run": "strfric_lb1",
+   "lookback": 1,
+   "det": "union",
+   "ext": 45,
+   "options": 3047,
+   "n_options": 3391,
+   "questions": 668,
+   "n_questions": 941
+  },
+  "nosim": {
+   "run": "nosim",
+   "lookback": null,
+   "det": "union",
+   "ext": 0,
+   "options": 2769,
+   "n_options": 3391,
+   "questions": 473,
+   "n_questions": 941
+  }
+ },
+ "B": {
+  "learned": {
+   "options": 5449,
+   "n_options": 6018,
+   "questions": 1229,
+   "n_questions": 1689
+  },
+  "laws": {
+   "options": 5494,
+   "n_options": 6018,
+   "questions": 1264,
+   "n_questions": 1689
+  },
+  "strfric": {
+   "options": 5431,
+   "n_options": 6018,
+   "questions": 1220,
+   "n_questions": 1689
+  },
+  "straight": {
+   "options": 5394,
+   "n_options": 6018,
+   "questions": 1185,
+   "n_questions": 1689
+  },
+  "nosim": {
+   "options": 4905,
+   "n_options": 6018,
+   "questions": 854,
+   "n_questions": 1689
+  },
+  "abl_novoxel": {
+   "options": 5390,
+   "n_options": 6018,
+   "questions": 1184,
+   "n_questions": 1689
+  },
+  "abl_noforce": {
+   "options": 5476,
+   "n_options": 6018,
+   "questions": 1251,
+   "n_questions": 1689
+  },
+  "abl_nodrag": {
+   "options": 5437,
+   "n_options": 6018,
+   "questions": 1211,
+   "n_questions": 1689
+  },
+  "abl_noentry": {
+   "options": 5438,
+   "n_options": 6018,
+   "questions": 1223,
+   "n_questions": 1689
+  },
+  "abl_lb12": {
+   "options": 5403,
+   "n_options": 6018,
+   "questions": 1195,
+   "n_questions": 1689
+  },
+  "ckpt_v3_6_3d": {
+   "options": 5402,
+   "n_options": 6018,
+   "questions": 1192,
+   "n_questions": 1689
+  },
+  "ckpt_v3_7_3d_frozen": {
+   "options": 5407,
+   "n_options": 6018,
+   "questions": 1195,
+   "n_questions": 1689
+  },
+  "ckpt_v3_8_impulse": {
+   "options": 5468,
+   "n_options": 6018,
+   "questions": 1246,
+   "n_questions": 1689
+  },
+  "ckpt_v5_noyaw": {
+   "options": 5418,
+   "n_options": 6018,
+   "questions": 1202,
+   "n_questions": 1689
+  },
+  "ckpt_v5b_noyaw": {
+   "options": 5370,
+   "n_options": 6018,
+   "questions": 1168,
+   "n_questions": 1689
+  },
+  "ckpt_v6_control": {
+   "options": 5452,
+   "n_options": 6018,
+   "questions": 1236,
+   "n_questions": 1689
+  },
+  "ckpt_v72_fixed": {
+   "options": 5444,
+   "n_options": 6018,
+   "questions": 1221,
+   "n_questions": 1689
+  },
+  "ckpt_v72_curriculum": {
+   "options": 5426,
+   "n_options": 6018,
+   "questions": 1206,
+   "n_questions": 1689
+  },
+  "ckpt_v72_control": {
+   "options": 5455,
+   "n_options": 6018,
+   "questions": 1236,
+   "n_questions": 1689
+  },
+  "seed1": {
+   "options": 5455,
+   "n_options": 6018,
+   "questions": 1230,
+   "n_questions": 1689
+  },
+  "seed2": {
+   "options": 5423,
+   "n_options": 6018,
+   "questions": 1208,
+   "n_questions": 1689
+  }
+ },
+ "A": {
+  "learned": {
+   "options": 3005,
+   "n_options": 3332,
+   "questions": 664,
+   "n_questions": 930
+  },
+  "laws": {
+   "options": 3055,
+   "n_options": 3332,
+   "questions": 700,
+   "n_questions": 930
+  },
+  "strfric": {
+   "options": 3002,
+   "n_options": 3332,
+   "questions": 664,
+   "n_questions": 930
+  },
+  "straight": {
+   "options": 2990,
+   "n_options": 3332,
+   "questions": 653,
+   "n_questions": 930
+  },
+  "nosim": {
+   "options": 2710,
+   "n_options": 3332,
+   "questions": 459,
+   "n_questions": 930
+  },
+  "abl_novoxel": {
+   "options": 2992,
+   "n_options": 3332,
+   "questions": 658,
+   "n_questions": 930
+  },
+  "abl_noforce": {
+   "options": 3015,
+   "n_options": 3332,
+   "questions": 671,
+   "n_questions": 930
+  },
+  "abl_nodrag": {
+   "options": 3028,
+   "n_options": 3332,
+   "questions": 681,
+   "n_questions": 930
+  },
+  "abl_noentry": {
+   "options": 3008,
+   "n_options": 3332,
+   "questions": 663,
+   "n_questions": 930
+  },
+  "abl_lb12": {
+   "options": 2936,
+   "n_options": 3332,
+   "questions": 615,
+   "n_questions": 930
+  },
+  "ckpt_v3_6_3d": {
+   "options": 3004,
+   "n_options": 3332,
+   "questions": 657,
+   "n_questions": 930
+  },
+  "ckpt_v3_7_3d_frozen": {
+   "options": 2997,
+   "n_options": 3332,
+   "questions": 657,
+   "n_questions": 930
+  },
+  "ckpt_v3_8_impulse": {
+   "options": 3027,
+   "n_options": 3332,
+   "questions": 676,
+   "n_questions": 930
+  },
+  "ckpt_v5_noyaw": {
+   "options": 3013,
+   "n_options": 3332,
+   "questions": 672,
+   "n_questions": 930
+  },
+  "ckpt_v5b_noyaw": {
+   "options": 2973,
+   "n_options": 3332,
+   "questions": 639,
+   "n_questions": 930
+  },
+  "ckpt_v6_control": {
+   "options": 3016,
+   "n_options": 3332,
+   "questions": 671,
+   "n_questions": 930
+  },
+  "ckpt_v72_fixed": {
+   "options": 3003,
+   "n_options": 3332,
+   "questions": 658,
+   "n_questions": 930
+  },
+  "ckpt_v72_curriculum": {
+   "options": 3004,
+   "n_options": 3332,
+   "questions": 658,
+   "n_questions": 930
+  },
+  "ckpt_v72_control": {
+   "options": 3000,
+   "n_options": 3332,
+   "questions": 658,
+   "n_questions": 930
+  },
+  "seed1": {
+   "options": 3009,
+   "n_options": 3332,
+   "questions": 666,
+   "n_questions": 930
+  },
+  "seed2": {
+   "options": 3001,
+   "n_options": 3332,
+   "questions": 660,
+   "n_questions": 930
+  }
+ },
+ "A+B": {
+  "learned": {
+   "options": 8454,
+   "n_options": 9350,
+   "questions": 1893,
+   "n_questions": 2619
+  },
+  "laws": {
+   "options": 8549,
+   "n_options": 9350,
+   "questions": 1964,
+   "n_questions": 2619
+  },
+  "strfric": {
+   "options": 8433,
+   "n_options": 9350,
+   "questions": 1884,
+   "n_questions": 2619
+  },
+  "straight": {
+   "options": 8384,
+   "n_options": 9350,
+   "questions": 1838,
+   "n_questions": 2619
+  },
+  "nosim": {
+   "options": 7615,
+   "n_options": 9350,
+   "questions": 1313,
+   "n_questions": 2619
+  },
+  "abl_novoxel": {
+   "options": 8382,
+   "n_options": 9350,
+   "questions": 1842,
+   "n_questions": 2619
+  },
+  "abl_noforce": {
+   "options": 8491,
+   "n_options": 9350,
+   "questions": 1922,
+   "n_questions": 2619
+  },
+  "abl_nodrag": {
+   "options": 8465,
+   "n_options": 9350,
+   "questions": 1892,
+   "n_questions": 2619
+  },
+  "abl_noentry": {
+   "options": 8446,
+   "n_options": 9350,
+   "questions": 1886,
+   "n_questions": 2619
+  },
+  "abl_lb12": {
+   "options": 8339,
+   "n_options": 9350,
+   "questions": 1810,
+   "n_questions": 2619
+  },
+  "ckpt_v3_6_3d": {
+   "options": 8406,
+   "n_options": 9350,
+   "questions": 1849,
+   "n_questions": 2619
+  },
+  "ckpt_v3_7_3d_frozen": {
+   "options": 8404,
+   "n_options": 9350,
+   "questions": 1852,
+   "n_questions": 2619
+  },
+  "ckpt_v3_8_impulse": {
+   "options": 8495,
+   "n_options": 9350,
+   "questions": 1922,
+   "n_questions": 2619
+  },
+  "ckpt_v5_noyaw": {
+   "options": 8431,
+   "n_options": 9350,
+   "questions": 1874,
+   "n_questions": 2619
+  },
+  "ckpt_v5b_noyaw": {
+   "options": 8343,
+   "n_options": 9350,
+   "questions": 1807,
+   "n_questions": 2619
+  },
+  "ckpt_v6_control": {
+   "options": 8468,
+   "n_options": 9350,
+   "questions": 1907,
+   "n_questions": 2619
+  },
+  "ckpt_v72_fixed": {
+   "options": 8447,
+   "n_options": 9350,
+   "questions": 1879,
+   "n_questions": 2619
+  },
+  "ckpt_v72_curriculum": {
+   "options": 8430,
+   "n_options": 9350,
+   "questions": 1864,
+   "n_questions": 2619
+  },
+  "ckpt_v72_control": {
+   "options": 8455,
+   "n_options": 9350,
+   "questions": 1894,
+   "n_questions": 2619
+  },
+  "seed1": {
+   "options": 8464,
+   "n_options": 9350,
+   "questions": 1896,
+   "n_questions": 2619
+  },
+  "seed2": {
+   "options": 8424,
+   "n_options": 9350,
+   "questions": 1868,
+   "n_questions": 2619
+  }
+ },
+ "errors": {
+  "invented: during the video": 360,
+  "missed: collision visible in the video": 89,
+  "missed: collision after the video ends": 274,
+  "invented: after the video ends": 139,
+  "object not found by the detector": 34
+ }
+}

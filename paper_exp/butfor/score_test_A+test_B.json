@@ -1,0 +1,41 @@
+{
+ "n_options": 8566,
+ "n_questions": 2366,
+ "trace": [
+  7572,
+  1886
+ ],
+ "kinds": {
+  "entrance": 1321,
+  "presence": 3292,
+  "collision": 2389,
+  "unresolved": 1564
+ },
+ "butfor_0": [
+  6653,
+  1455,
+  111,
+  1030,
+  -27.21
+ ],
+ "kind_collision_0": [
+  2389,
+  1870,
+  2343
+ ],
+ "kind_entrance_0": [
+  1321,
+  1165,
+  1284
+ ],
+ "kind_presence_0": [
+  3292,
+  2820,
+  3147
+ ],
+ "kind_unresolved_0": [
+  1564,
+  798,
+  798
+ ]
+}

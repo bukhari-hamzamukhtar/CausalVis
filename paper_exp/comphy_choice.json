@@ -1,0 +1,5 @@
+{"chosen_on": "300 ComPhy TRAIN scenes (paper_exp/comphy_runs/dev300r_*, dev300n_*)",
+ "use_reference_videos": true, "counterfactual_extension_frames": 0, "predictive_extension_frames": 50,
+ "dev": {"refs": {"cf": [1682, 2144, 701, 1072], "pred_50": [284, 324, 122, 162]},
+         "no_refs": {"cf": [1676, 2144, 697, 1072], "pred_50": [288, 324, 127, 162]}},
+ "rule": "most options over both question types (refs 1966 vs no refs 1964)"}

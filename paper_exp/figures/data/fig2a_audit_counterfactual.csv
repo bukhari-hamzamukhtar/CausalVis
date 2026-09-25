@@ -1,0 +1,14 @@
+simulator,err40_val,replay30_val,cf_options_testAB,cf_questions_testAB
+learned,0.0629,0.683,90.4,72.3
+laws,0.0502,0.696,91.4,75.0
+straight,0.1125,0.525,89.7,70.2
+strfric,0.0945,0.512,90.2,71.9
+ckpt_v3_6_3d,0.0673,0.569,89.9,70.6
+ckpt_v3_7_3d_frozen,0.0714,0.574,89.9,70.7
+ckpt_v3_8_impulse,0.0644,0.671,90.9,73.4
+ckpt_v5_noyaw,0.0695,0.574,90.2,71.6
+ckpt_v5b_noyaw,0.0756,0.517,89.2,69.0
+ckpt_v6_control,0.0670,0.631,90.6,72.8
+ckpt_v72_fixed,0.0621,0.644,90.3,71.7
+ckpt_v72_curriculum,0.0640,0.626,90.2,71.2
+ckpt_v72_control,0.0620,0.644,90.4,72.3

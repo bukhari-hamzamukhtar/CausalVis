@@ -1,0 +1,17 @@
+simulator,lookahead_frames,options_pct,questions_pct
+learned,1,90.0,71.2
+learned,3,90.3,71.2
+learned,6,89.5,69.4
+learned,12,88.9,68.0
+laws,1,91.3,74.3
+laws,3,91.5,74.9
+laws,6,90.8,72.7
+laws,12,90.4,71.5
+straight,1,89.3,69.2
+straight,3,89.1,68.8
+straight,6,88.7,67.6
+straight,12,87.5,64.1
+strfric,1,89.9,71.0
+strfric,3,89.6,70.5
+strfric,6,89.2,69.4
+strfric,12,87.9,65.5

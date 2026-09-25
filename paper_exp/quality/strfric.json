@@ -1,0 +1,14 @@
+{
+ "sim": "straight_friction",
+ "model": "v6_voxel.pt",
+ "no_voxel": false,
+ "no_force": false,
+ "drag_scale": 1.0,
+ "videos": 200,
+ "rollout_err_20": 0.03424994847026157,
+ "rollout_err_40": 0.09445411966889924,
+ "n_err40": 2341,
+ "replay_12": 0.9489795918367347,
+ "replay_30": 0.5123762376237624,
+ "n_replay": 490
+}

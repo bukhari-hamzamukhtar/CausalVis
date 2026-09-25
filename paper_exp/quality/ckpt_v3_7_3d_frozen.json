@@ -1,0 +1,14 @@
+{
+ "sim": "learned",
+ "model": "v3_7_3d_frozen.pt",
+ "no_voxel": false,
+ "no_force": false,
+ "drag_scale": 1.0,
+ "videos": 200,
+ "rollout_err_20": 0.0274869554252291,
+ "rollout_err_40": 0.07143263397753273,
+ "n_err40": 2348,
+ "replay_12": 0.9612244897959183,
+ "replay_30": 0.5742574257425742,
+ "n_replay": 490
+}

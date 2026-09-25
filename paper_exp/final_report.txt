@@ -1,0 +1,105 @@
+VAL-A choices: learned lb 3 union +30; laws lb 3 union +60; straight lb 1 union +45; strfric lb 1 union +45; nosim lb None union +0
+
+=== TEST-B   (options % [95% CI]   questions % [95% CI]   paired z vs CausalVis: options / questions)
+  CausalVis (learned world model)     90.5 [89.6-91.4]    72.8 [70.3-75.0]   n 6018/1689
+  textbook laws                       91.3 [90.4-92.1]    74.8 [72.5-77.0]   n 6018/1689  z +3.05 / +2.91
+  straight lines + friction           90.2 [89.3-91.1]    72.2 [69.8-74.5]   n 6018/1689  z -0.94 / -0.61
+  straight lines                      89.6 [88.7-90.5]    70.2 [67.6-72.5]   n 6018/1689  z -2.73 / -2.85
+  no physics                          81.5 [80.4-82.6]    50.6 [48.2-52.9]   n 6018/1689  z -18.36 / -16.62
+  -- one change to CausalVis at a time:
+  - extension past the video end      85.7 [84.7-86.6]    57.5 [55.1-59.9]   n 6018/1689  z -13.56 / -13.87
+  - path-change detector (cal only)   90.2 [89.3-91.1]    71.9 [69.5-74.1]   n 6018/1689  z -4.20 / -3.44
+  - voxel contact impulse             89.6 [88.6-90.5]    70.1 [67.5-72.4]   n 6018/1689  z -3.68 / -3.74
+  - learned pair energy               91.0 [90.1-91.8]    74.1 [71.7-76.3]   n 6018/1689  z +3.04 / +3.05
+  - learned friction (eval-time)      90.3 [89.5-91.2]    71.7 [69.2-74.0]   n 6018/1689  z -0.90 / -1.73
+  - entry correction                  90.4 [89.4-91.2]    72.4 [70.0-74.7]   n 6018/1689  z -2.20 / -1.50
+  12-frame hand-off (v7.1)            89.8 [88.9-90.7]    70.8 [68.2-73.1]   n 6018/1689  z -2.80 / -2.69
+  -- other trained simulators / seeds, same pipeline:
+  v3_6_3d                             89.8 [88.9-90.7]    70.6 [68.2-73.0]   n 6018/1689  z -2.94 / -2.77
+  v3_7_3d_frozen                      89.8 [88.9-90.7]    70.8 [68.4-73.1]   n 6018/1689  z -2.83 / -2.78
+  v3_8_impulse                        90.9 [89.9-91.7]    73.8 [71.3-76.1]   n 6018/1689  z +1.97 / +2.25
+  v5_noyaw                            90.0 [89.1-90.9]    71.2 [68.9-73.5]   n 6018/1689  z -2.20 / -2.31
+  v5b_noyaw                           89.2 [88.3-90.1]    69.2 [66.7-71.4]   n 6018/1689  z -4.80 / -4.51
+  v6_control                          90.6 [89.6-91.4]    73.2 [70.8-75.4]   n 6018/1689  z +0.28 / +0.78
+  v72_fixed                           90.5 [89.6-91.3]    72.3 [70.0-74.6]   n 6018/1689  z -0.50 / -0.98
+  v72_curriculum                      90.2 [89.2-91.0]    71.4 [69.0-73.7]   n 6018/1689  z -2.13 / -2.44
+  v72_control                         90.6 [89.7-91.5]    73.2 [70.8-75.4]   n 6018/1689  z +0.61 / +0.84
+  seed1                               90.6 [89.7-91.5]    72.8 [70.5-75.1]   n 6018/1689  z +0.57 / +0.11
+  seed2                               90.1 [89.2-91.0]    71.5 [69.0-73.9]   n 6018/1689  z -2.37 / -2.13
+
+=== TEST-A   (options % [95% CI]   questions % [95% CI]   paired z vs CausalVis: options / questions)
+  CausalVis (learned world model)     90.2 [89.0-91.4]    71.4 [68.0-74.7]   n 3332/930
+  textbook laws                       91.7 [90.6-92.8]    75.3 [72.2-78.4]   n 3332/930  z +4.23 / +3.88
+  straight lines + friction           90.1 [88.9-91.3]    71.4 [68.1-74.6]   n 3332/930  z -0.21 / +0.00
+  straight lines                      89.7 [88.5-91.0]    70.2 [66.9-73.4]   n 3332/930  z -0.99 / -0.95
+  no physics                          81.3 [79.8-82.7]    49.4 [46.0-52.6]   n 3332/930  z -13.05 / -12.32
+  -- one change to CausalVis at a time:
+  - extension past the video end      86.2 [84.9-87.4]    58.9 [55.5-62.2]   n 3332/930  z -8.60 / -9.11
+  - path-change detector (cal only)   89.9 [88.7-91.1]    70.8 [67.5-74.0]   n 3332/930  z -2.06 / -1.60
+  - voxel contact impulse             89.8 [88.5-91.0]    70.8 [67.3-74.0]   n 3332/930  z -1.17 / -0.75
+  - learned pair energy               90.5 [89.3-91.8]    72.2 [68.8-75.4]   n 3332/930  z +1.34 / +1.40
+  - learned friction (eval-time)      90.9 [89.7-92.1]    73.2 [70.0-76.3]   n 3332/930  z +2.14 / +2.08
+  - entry correction                  90.3 [89.0-91.5]    71.3 [67.9-74.6]   n 3332/930  z +0.77 / -0.45
+  12-frame hand-off (v7.1)            88.1 [86.7-89.4]    66.1 [62.6-69.5]   n 3332/930  z -5.16 / -5.25
+  -- other trained simulators / seeds, same pipeline:
+  v3_6_3d                             90.2 [88.9-91.4]    70.6 [67.4-74.0]   n 3332/930  z -0.08 / -0.78
+  v3_7_3d_frozen                      89.9 [88.7-91.1]    70.6 [67.5-73.8]   n 3332/930  z -0.72 / -0.86
+  v3_8_impulse                        90.8 [89.6-92.1]    72.7 [69.3-75.9]   n 3332/930  z +2.99 / +2.27
+  v5_noyaw                            90.4 [89.2-91.7]    72.3 [68.9-75.5]   n 3332/930  z +0.78 / +1.07
+  v5b_noyaw                           89.2 [87.9-90.4]    68.7 [65.3-71.9]   n 3332/930  z -2.61 / -2.78
+  v6_control                          90.5 [89.3-91.7]    72.2 [68.9-75.3]   n 3332/930  z +1.34 / +1.18
+  v72_fixed                           90.1 [88.8-91.3]    70.8 [67.4-74.0]   n 3332/930  z -0.27 / -1.18
+  v72_curriculum                      90.2 [88.9-91.3]    70.8 [67.4-74.0]   n 3332/930  z -0.13 / -1.06
+  v72_control                         90.0 [88.7-91.3]    70.8 [67.3-74.1]   n 3332/930  z -0.67 / -1.18
+  seed1                               90.3 [89.0-91.5]    71.6 [68.2-74.9]   n 3332/930  z +0.50 / +0.34
+  seed2                               90.1 [88.8-91.3]    71.0 [67.6-74.3]   n 3332/930  z -0.50 / -0.73
+
+=== TEST-A+B   (options % [95% CI]   questions % [95% CI]   paired z vs CausalVis: options / questions)
+  CausalVis (learned world model)     90.4 [89.7-91.1]    72.3 [70.5-74.2]   n 9350/2619
+  textbook laws                       91.4 [90.8-92.1]    75.0 [73.2-76.8]   n 9350/2619  z +5.03 / +4.67
+  straight lines + friction           90.2 [89.5-90.9]    71.9 [70.2-73.8]   n 9350/2619  z -0.88 / -0.49
+  straight lines                      89.7 [89.0-90.4]    70.2 [68.3-72.1]   n 9350/2619  z -2.78 / -2.86
+  no physics                          81.4 [80.6-82.3]    50.1 [48.3-52.1]   n 9350/2619  z -22.51 / -20.69
+  -- one change to CausalVis at a time:
+  - extension past the video end      85.9 [85.1-86.6]    58.0 [56.1-59.9]   n 9350/2619  z -16.03 / -16.59
+  - path-change detector (cal only)   90.1 [89.4-90.8]    71.5 [69.6-73.4]   n 9350/2619  z -4.52 / -3.66
+  - voxel contact impulse             89.6 [88.9-90.4]    70.3 [68.5-72.2]   n 9350/2619  z -3.69 / -3.53
+  - learned pair energy               90.8 [90.1-91.5]    73.4 [71.5-75.3]   n 9350/2619  z +3.18 / +3.30
+  - learned friction (eval-time)      90.5 [89.8-91.2]    72.2 [70.4-74.1]   n 9350/2619  z +0.64 / -0.08
+  - entry correction                  90.3 [89.6-91.0]    72.0 [70.2-74.0]   n 9350/2619  z -1.26 / -1.53
+  12-frame hand-off (v7.1)            89.2 [88.4-89.9]    69.1 [67.2-71.0]   n 9350/2619  z -5.43 / -5.28
+  -- other trained simulators / seeds, same pipeline:
+  v3_6_3d                             89.9 [89.2-90.6]    70.6 [68.7-72.5]   n 9350/2619  z -2.42 / -2.73
+  v3_7_3d_frozen                      89.9 [89.2-90.6]    70.7 [68.9-72.6]   n 9350/2619  z -2.70 / -2.78
+  v3_8_impulse                        90.9 [90.2-91.5]    73.4 [71.5-75.2]   n 9350/2619  z +3.38 / +3.15
+  v5_noyaw                            90.2 [89.4-90.9]    71.6 [69.6-73.4]   n 9350/2619  z -1.32 / -1.37
+  v5b_noyaw                           89.2 [88.5-90.0]    69.0 [67.1-70.9]   n 9350/2619  z -5.41 / -5.29
+  v6_control                          90.6 [89.8-91.2]    72.8 [71.1-74.7]   n 9350/2619  z +1.03 / +1.30
+  v72_fixed                           90.3 [89.6-91.0]    71.7 [69.9-73.6]   n 9350/2619  z -0.57 / -1.46
+  v72_curriculum                      90.2 [89.4-90.9]    71.2 [69.3-73.1]   n 9350/2619  z -1.79 / -2.64
+  v72_control                         90.4 [89.7-91.1]    72.3 [70.5-74.2]   n 9350/2619  z +0.08 / +0.10
+  seed1                               90.5 [89.8-91.2]    72.4 [70.5-74.2]   n 9350/2619  z +0.76 / +0.28
+  seed2                               90.1 [89.4-90.8]    71.3 [69.4-73.2]   n 9350/2619  z -2.21 / -2.22
+
+=== AUDIT: physics quality (VAL-A, 200 videos) vs TEST A+B score
+  learned                  err@40 0.0629  replay30 0.683   ->  options 90.4%  questions 72.3%
+  laws                     err@40 0.0502  replay30 0.696   ->  options 91.4%  questions 75.0%
+  straight                 err@40 0.1125  replay30 0.525   ->  options 89.7%  questions 70.2%
+  strfric                  err@40 0.0945  replay30 0.512   ->  options 90.2%  questions 71.9%
+  ckpt_v3_6_3d             err@40 0.0673  replay30 0.569   ->  options 89.9%  questions 70.6%
+  ckpt_v3_7_3d_frozen      err@40 0.0714  replay30 0.574   ->  options 89.9%  questions 70.7%
+  ckpt_v3_8_impulse        err@40 0.0644  replay30 0.671   ->  options 90.9%  questions 73.4%
+  ckpt_v5_noyaw            err@40 0.0695  replay30 0.574   ->  options 90.2%  questions 71.6%
+  ckpt_v5b_noyaw           err@40 0.0756  replay30 0.517   ->  options 89.2%  questions 69.0%
+  ckpt_v6_control          err@40 0.0670  replay30 0.631   ->  options 90.6%  questions 72.8%
+  ckpt_v72_fixed           err@40 0.0621  replay30 0.644   ->  options 90.3%  questions 71.7%
+  ckpt_v72_curriculum      err@40 0.0640  replay30 0.626   ->  options 90.2%  questions 71.2%
+  ckpt_v72_control         err@40 0.0620  replay30 0.644   ->  options 90.4%  questions 72.3%
+  Pearson r(err@40, options) = -0.59 over 13 simulators; options range 89.2-91.4 while err@40 ranges 0.050-0.112
+
+=== CausalVis subsets (TEST A+B)
+  E  1263 questions (48.2%)   CausalVis 92.6 / 76.6   no physics 87.5 / 59.9
+  M   600 questions (22.9%)   CausalVis 94.4 / 82.8   no physics 95.6 / 86.2
+  H   756 questions (28.9%)   CausalVis 83.6 / 56.6   no physics 60.0 / 5.3
+  E: answer key says 'collide' with no collision in the video on 474 / 4688 options (10.1%), in 437 / 1263 questions (34.6%)
+  error breakdown (896 wrong options): invented: during the video 360 (40%); missed: collision after the video ends 274 (31%); invented: after the video ends 139 (16%); missed: collision visible in the video 89 (10%); object not found by the detector 34 (4%)

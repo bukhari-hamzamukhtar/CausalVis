@@ -1,0 +1,14 @@
+{
+ "sim": "learned",
+ "model": "v6_voxel.pt",
+ "no_voxel": true,
+ "no_force": false,
+ "drag_scale": 1.0,
+ "videos": 200,
+ "rollout_err_20": 0.03376294815073354,
+ "rollout_err_40": 0.09159579961506834,
+ "n_err40": 2345,
+ "replay_12": 0.9469387755102041,
+ "replay_30": 0.5024752475247525,
+ "n_replay": 490
+}

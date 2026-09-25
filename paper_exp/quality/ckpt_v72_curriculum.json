@@ -1,0 +1,14 @@
+{
+ "sim": "learned",
+ "model": "v7_2/ckpt/curriculum.pt",
+ "no_voxel": false,
+ "no_force": false,
+ "drag_scale": 1.0,
+ "videos": 200,
+ "rollout_err_20": 0.024232795167537395,
+ "rollout_err_40": 0.06396059525167656,
+ "n_err40": 2347,
+ "replay_12": 0.9755102040816327,
+ "replay_30": 0.6262376237623762,
+ "n_replay": 490
+}

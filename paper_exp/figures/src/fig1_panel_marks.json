@@ -1,0 +1,522 @@
+{
+ "crop": [
+  33,
+  1417,
+  0,
+  931
+ ],
+ "render": [
+  1440,
+  960
+ ],
+ "marks": [
+  {
+   "label": "recorded collision",
+   "world": "obs",
+   "frame": 34,
+   "pair": [
+    "blue_metal_cube",
+    "red_rubber_sphere"
+   ],
+   "pixel_in_crop": [
+    635.6,
+    278.5
+   ],
+   "crop_size": [
+    1384,
+    931
+   ],
+   "pixel_in_final": [
+    465.6,
+    188.5
+   ]
+  },
+  {
+   "label": "recorded collision",
+   "world": "obs",
+   "frame": 54,
+   "pair": [
+    "red_rubber_sphere",
+    "brown_metal_cylinder"
+   ],
+   "pixel_in_crop": [
+    1023.3,
+    285.7
+   ],
+   "crop_size": [
+    1384,
+    931
+   ],
+   "pixel_in_final": [
+    853.3,
+    195.7
+   ]
+  },
+  {
+   "label": "recorded collision",
+   "world": "obs",
+   "frame": 70,
+   "pair": [
+    "blue_metal_cube",
+    "gray_rubber_sphere"
+   ],
+   "pixel_in_crop": [
+    1017.2,
+    509.2
+   ],
+   "crop_size": [
+    1384,
+    931
+   ],
+   "pixel_in_final": [
+    847.2,
+    419.2
+   ]
+  },
+  {
+   "label": "prevented collision (drawn where the video had it)",
+   "world": "obs",
+   "frame": 54,
+   "pair": [
+    "red_rubber_sphere",
+    "brown_metal_cylinder"
+   ],
+   "pixel_in_crop": [
+    1023.3,
+    285.7
+   ],
+   "crop_size": [
+    1384,
+    931
+   ],
+   "pixel_in_final": [
+    853.3,
+    195.7
+   ]
+  },
+  {
+   "label": "new collision",
+   "world": "cf",
+   "frame": 66,
+   "pair": [
+    "red_rubber_sphere",
+    "gray_rubber_sphere"
+   ],
+   "pixel_in_crop": [
+    1034.1,
+    496.0
+   ],
+   "crop_size": [
+    1384,
+    931
+   ],
+   "pixel_in_final": [
+    864.1,
+    406.0
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 15,
+   "object": "blue_metal_cube",
+   "pixel_in_crop": [
+    269.4,
+    388.2
+   ],
+   "pixel_in_final": [
+    99.4,
+    298.2
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 15,
+   "object": "red_rubber_sphere",
+   "pixel_in_crop": [
+    500.8,
+    211.3
+   ],
+   "pixel_in_final": [
+    330.8,
+    121.3
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 15,
+   "object": "brown_metal_cylinder",
+   "pixel_in_crop": [
+    1062.8,
+    344.7
+   ],
+   "pixel_in_final": [
+    892.8,
+    254.7
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 15,
+   "object": "gray_rubber_sphere",
+   "pixel_in_crop": [
+    1093.4,
+    605.8
+   ],
+   "pixel_in_final": [
+    923.4,
+    515.8
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 34,
+   "object": "blue_metal_cube",
+   "pixel_in_crop": [
+    605.7,
+    359.1
+   ],
+   "pixel_in_final": [
+    435.7,
+    269.1
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 34,
+   "object": "red_rubber_sphere",
+   "pixel_in_crop": [
+    665.8,
+    299.9
+   ],
+   "pixel_in_final": [
+    495.8,
+    209.9
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 34,
+   "object": "brown_metal_cylinder",
+   "pixel_in_crop": [
+    1062.8,
+    344.7
+   ],
+   "pixel_in_final": [
+    892.8,
+    254.7
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 34,
+   "object": "gray_rubber_sphere",
+   "pixel_in_crop": [
+    1093.4,
+    605.7
+   ],
+   "pixel_in_final": [
+    923.4,
+    515.7
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 54,
+   "object": "blue_metal_cube",
+   "pixel_in_crop": [
+    781.4,
+    451.3
+   ],
+   "pixel_in_final": [
+    611.4,
+    361.3
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 54,
+   "object": "red_rubber_sphere",
+   "pixel_in_crop": [
+    962.8,
+    324.7
+   ],
+   "pixel_in_final": [
+    792.8,
+    234.7
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 54,
+   "object": "brown_metal_cylinder",
+   "pixel_in_crop": [
+    1071.1,
+    347.4
+   ],
+   "pixel_in_final": [
+    901.1,
+    257.4
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 54,
+   "object": "gray_rubber_sphere",
+   "pixel_in_crop": [
+    1093.4,
+    607.5
+   ],
+   "pixel_in_final": [
+    923.4,
+    517.5
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 70,
+   "object": "blue_metal_cube",
+   "pixel_in_crop": [
+    929.2,
+    527.8
+   ],
+   "pixel_in_final": [
+    759.2,
+    437.8
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 70,
+   "object": "red_rubber_sphere",
+   "pixel_in_crop": [
+    1053.8,
+    304.4
+   ],
+   "pixel_in_final": [
+    883.8,
+    214.4
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 70,
+   "object": "brown_metal_cylinder",
+   "pixel_in_crop": [
+    1189.8,
+    367.7
+   ],
+   "pixel_in_final": [
+    1019.8,
+    277.7
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "obs",
+   "frame": 70,
+   "object": "gray_rubber_sphere",
+   "pixel_in_crop": [
+    1093.6,
+    606.9
+   ],
+   "pixel_in_final": [
+    923.6,
+    516.9
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 15,
+   "object": "red_rubber_sphere",
+   "pixel_in_crop": [
+    500.8,
+    211.3
+   ],
+   "pixel_in_final": [
+    330.8,
+    121.3
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 15,
+   "object": "brown_metal_cylinder",
+   "pixel_in_crop": [
+    1062.8,
+    344.7
+   ],
+   "pixel_in_final": [
+    892.8,
+    254.7
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 15,
+   "object": "gray_rubber_sphere",
+   "pixel_in_crop": [
+    1093.4,
+    605.8
+   ],
+   "pixel_in_final": [
+    923.4,
+    515.8
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 34,
+   "object": "red_rubber_sphere",
+   "pixel_in_crop": [
+    648.5,
+    314.5
+   ],
+   "pixel_in_final": [
+    478.5,
+    224.5
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 34,
+   "object": "brown_metal_cylinder",
+   "pixel_in_crop": [
+    1062.8,
+    344.7
+   ],
+   "pixel_in_final": [
+    892.8,
+    254.7
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 34,
+   "object": "gray_rubber_sphere",
+   "pixel_in_crop": [
+    1093.4,
+    605.7
+   ],
+   "pixel_in_final": [
+    923.4,
+    515.7
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 54,
+   "object": "red_rubber_sphere",
+   "pixel_in_crop": [
+    838.3,
+    428.8
+   ],
+   "pixel_in_final": [
+    668.3,
+    338.8
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 54,
+   "object": "brown_metal_cylinder",
+   "pixel_in_crop": [
+    1062.9,
+    345.3
+   ],
+   "pixel_in_final": [
+    892.9,
+    255.3
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 54,
+   "object": "gray_rubber_sphere",
+   "pixel_in_crop": [
+    1093.4,
+    607.5
+   ],
+   "pixel_in_final": [
+    923.4,
+    517.5
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 70,
+   "object": "red_rubber_sphere",
+   "pixel_in_crop": [
+    1006.5,
+    527.7
+   ],
+   "pixel_in_final": [
+    836.5,
+    437.7
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 70,
+   "object": "brown_metal_cylinder",
+   "pixel_in_crop": [
+    1061.9,
+    347.7
+   ],
+   "pixel_in_final": [
+    891.9,
+    257.7
+   ]
+  },
+  {
+   "label": "object base",
+   "world": "cf",
+   "frame": 70,
+   "object": "gray_rubber_sphere",
+   "pixel_in_crop": [
+    1092.7,
+    607.1
+   ],
+   "pixel_in_final": [
+    922.7,
+    517.1
+   ]
+  }
+ ],
+ "info": {
+  "cf_red_cylinder_min_gap_table_units": 1.021,
+  "cf_red_cylinder_min_gap_frame": 57,
+  "contact_distance_table_units": 0.7
+ },
+ "final_crop_in_panel": [
+  170,
+  90,
+  1310,
+  740
+ ]
+}

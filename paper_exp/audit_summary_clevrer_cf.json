@@ -1,0 +1,13 @@
+{
+ "right_checkable": 4973,
+ "right_valid": 4881,
+ "right_other_collision": 40,
+ "right_no_annotated": 52,
+ "right_all": 8454,
+ "wrong_all": 896,
+ "wrong_checkable": 305,
+ "wrong_invented_recorded": 188,
+ "wrong_missed_recorded": 37,
+ "wrong_key_after_video": 72,
+ "wrong_other_checkable": 8
+}

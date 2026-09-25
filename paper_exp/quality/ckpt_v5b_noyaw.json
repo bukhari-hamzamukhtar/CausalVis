@@ -1,0 +1,14 @@
+{
+ "sim": "learned",
+ "model": "v5b_noyaw.pt",
+ "no_voxel": false,
+ "no_force": false,
+ "drag_scale": 1.0,
+ "videos": 200,
+ "rollout_err_20": 0.02909565031573879,
+ "rollout_err_40": 0.07557277449273399,
+ "n_err40": 2348,
+ "replay_12": 0.963265306122449,
+ "replay_30": 0.5173267326732673,
+ "n_replay": 490
+}

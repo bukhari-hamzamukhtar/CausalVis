@@ -1,0 +1,258 @@
+{
+ "learned_1": {
+  "union_chosen_ext": {
+   "options": 3052,
+   "n_options": 3391,
+   "questions": 670,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3052,
+    670
+   ],
+   "union",
+   30
+  ]
+ },
+ "learned_3": {
+  "union_chosen_ext": {
+   "options": 3061,
+   "n_options": 3391,
+   "questions": 670,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3061,
+    670
+   ],
+   "union",
+   30
+  ]
+ },
+ "learned_6": {
+  "union_chosen_ext": {
+   "options": 3034,
+   "n_options": 3391,
+   "questions": 653,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3034,
+    653
+   ],
+   "union",
+   30
+  ]
+ },
+ "learned_12": {
+  "union_chosen_ext": {
+   "options": 3015,
+   "n_options": 3391,
+   "questions": 640,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3015,
+    640
+   ],
+   "union",
+   30
+  ]
+ },
+ "laws_1": {
+  "union_chosen_ext": {
+   "options": 3097,
+   "n_options": 3391,
+   "questions": 699,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3097,
+    699
+   ],
+   "union",
+   60
+  ]
+ },
+ "laws_3": {
+  "union_chosen_ext": {
+   "options": 3104,
+   "n_options": 3391,
+   "questions": 705,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3104,
+    705
+   ],
+   "union",
+   60
+  ]
+ },
+ "laws_6": {
+  "union_chosen_ext": {
+   "options": 3078,
+   "n_options": 3391,
+   "questions": 684,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3079,
+    687
+   ],
+   "union",
+   30
+  ]
+ },
+ "laws_12": {
+  "union_chosen_ext": {
+   "options": 3067,
+   "n_options": 3391,
+   "questions": 673,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3067,
+    673
+   ],
+   "union",
+   60
+  ]
+ },
+ "straight_1": {
+  "union_chosen_ext": {
+   "options": 3028,
+   "n_options": 3391,
+   "questions": 651,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3028,
+    651
+   ],
+   "union",
+   45
+  ]
+ },
+ "straight_3": {
+  "union_chosen_ext": {
+   "options": 3020,
+   "n_options": 3391,
+   "questions": 647,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3021,
+    648
+   ],
+   "union",
+   30
+  ]
+ },
+ "straight_6": {
+  "union_chosen_ext": {
+   "options": 3008,
+   "n_options": 3391,
+   "questions": 636,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3011,
+    637
+   ],
+   "union",
+   30
+  ]
+ },
+ "straight_12": {
+  "union_chosen_ext": {
+   "options": 2966,
+   "n_options": 3391,
+   "questions": 603,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    2972,
+    609
+   ],
+   "union",
+   30
+  ]
+ },
+ "strfric_1": {
+  "union_chosen_ext": {
+   "options": 3047,
+   "n_options": 3391,
+   "questions": 668,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3047,
+    668
+   ],
+   "union",
+   45
+  ]
+ },
+ "strfric_3": {
+  "union_chosen_ext": {
+   "options": 3039,
+   "n_options": 3391,
+   "questions": 663,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3039,
+    663
+   ],
+   "union",
+   45
+  ]
+ },
+ "strfric_6": {
+  "union_chosen_ext": {
+   "options": 3026,
+   "n_options": 3391,
+   "questions": 653,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    3026,
+    653
+   ],
+   "union",
+   45
+  ]
+ },
+ "strfric_12": {
+  "union_chosen_ext": {
+   "options": 2980,
+   "n_options": 3391,
+   "questions": 616,
+   "n_questions": 941
+  },
+  "best": [
+   [
+    2980,
+    616
+   ],
+   "union",
+   45
+  ]
+ }
+}

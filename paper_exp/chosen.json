@@ -1,0 +1,52 @@
+{
+ "learned": {
+  "run": "learned_lb3",
+  "lookback": 3,
+  "det": "union",
+  "ext": 30,
+  "options": 3061,
+  "n_options": 3391,
+  "questions": 670,
+  "n_questions": 941
+ },
+ "laws": {
+  "run": "laws_lb3",
+  "lookback": 3,
+  "det": "union",
+  "ext": 60,
+  "options": 3104,
+  "n_options": 3391,
+  "questions": 705,
+  "n_questions": 941
+ },
+ "straight": {
+  "run": "straight_lb1",
+  "lookback": 1,
+  "det": "union",
+  "ext": 45,
+  "options": 3028,
+  "n_options": 3391,
+  "questions": 651,
+  "n_questions": 941
+ },
+ "strfric": {
+  "run": "strfric_lb1",
+  "lookback": 1,
+  "det": "union",
+  "ext": 45,
+  "options": 3047,
+  "n_options": 3391,
+  "questions": 668,
+  "n_questions": 941
+ },
+ "nosim": {
+  "run": "nosim",
+  "lookback": null,
+  "det": "union",
+  "ext": 0,
+  "options": 2769,
+  "n_options": 3391,
+  "questions": 473,
+  "n_questions": 941
+ }
+}

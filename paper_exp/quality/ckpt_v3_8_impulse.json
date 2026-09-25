@@ -1,0 +1,14 @@
+{
+ "sim": "learned",
+ "model": "v3_8_impulse.pt",
+ "no_voxel": false,
+ "no_force": false,
+ "drag_scale": 1.0,
+ "videos": 200,
+ "rollout_err_20": 0.024023333728913316,
+ "rollout_err_40": 0.06436885993856371,
+ "n_err40": 2346,
+ "replay_12": 0.9714285714285714,
+ "replay_30": 0.6707920792079208,
+ "n_replay": 490
+}

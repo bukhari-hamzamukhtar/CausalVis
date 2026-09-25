@@ -1,0 +1,35 @@
+{
+ "options": 1597,
+ "scenes": 400,
+ "3": {
+  "right|collides|True": 553,
+  "right|no collision|True": 789,
+  "wrong|no collision|False": 152,
+  "wrong|no collision|True": 26,
+  "right|collides|False": 69,
+  "wrong|collides|False": 8
+ },
+ "5": {
+  "right|collides|True": 589,
+  "right|no collision|True": 789,
+  "wrong|no collision|False": 152,
+  "wrong|no collision|True": 26,
+  "right|collides|False": 33,
+  "wrong|collides|False": 8
+ },
+ "10": {
+  "right|collides|True": 603,
+  "right|no collision|True": 789,
+  "wrong|no collision|False": 152,
+  "wrong|no collision|True": 26,
+  "right|collides|False": 19,
+  "wrong|collides|False": 8
+ },
+ "first_event": {
+  "tp": 589,
+  "fp": 41,
+  "fn": 177,
+  "precision": 0.9349206349206349,
+  "recall": 0.7689295039164491
+ }
+}

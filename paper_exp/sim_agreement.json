@@ -1,0 +1,14 @@
+{
+ "options": 9350,
+ "agree": 8544,
+ "disagree": 806,
+ "agree_all_right": 8005,
+ "disagree_right": {
+  "learned": 449,
+  "laws": 544,
+  "straight": 379,
+  "strfric": 428
+ },
+ "agree_nosim_same": 7451,
+ "asked_object_simulated_in_video": 4468
+}

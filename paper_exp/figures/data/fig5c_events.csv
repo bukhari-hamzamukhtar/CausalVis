@@ -1,0 +1,6 @@
+group,precision,recall,tp,fp,fn,source
+CLEVRER recorded,0.788,0.951,3229,869,167,audit_events_observed.json (TEST A+B)
+CoPhy 2 balls,0.853,0.646,64,11,35,cophy_runs/audit_2.log (300 test scenes)
+CoPhy 4 balls,0.608,0.487,279,180,294,cophy_runs/audit_4.log
+CoPhy 6 balls,0.492,0.409,631,651,910,cophy_runs/audit_6.log
+ComPhy future,0.935,0.769,589,41,177,comphy_audit_summary.json (400 val scenes)

@@ -1,0 +1,26 @@
+# name | env | extra args | which | questions      (VAL = 500 CLEVRER-validation videos, dev set)
+laws_lb1 | SIM=laws CF_LOOKBACK=1 | | val | cf-val
+laws_lb3 | SIM=laws CF_LOOKBACK=3 | | val | cf-val
+laws_lb6 | SIM=laws CF_LOOKBACK=6 | | val | cf-val
+straight_lb1 | SIM=straight CF_LOOKBACK=1 | | val | cf-val
+straight_lb3 | SIM=straight CF_LOOKBACK=3 | | val | cf-val
+straight_lb6 | SIM=straight CF_LOOKBACK=6 | | val | cf-val
+straight_lb12 | SIM=straight CF_LOOKBACK=12 | | val | cf-val
+strfric_lb1 | SIM=straight_friction CF_LOOKBACK=1 | | val | cf-val
+strfric_lb3 | SIM=straight_friction CF_LOOKBACK=3 | | val | cf-val
+strfric_lb6 | SIM=straight_friction CF_LOOKBACK=6 | | val | cf-val
+strfric_lb12 | SIM=straight_friction CF_LOOKBACK=12 | | val | cf-val
+nosim | | --no-sim | val | cf-val
+abl_novoxel | CF_LOOKBACK=3 NO_VOXEL=1 | | val | cf-val
+abl_noforce | CF_LOOKBACK=3 NO_FORCE=1 | | val | cf-val
+abl_nodrag | CF_LOOKBACK=3 DRAG_SCALE=0 | | val | cf-val
+abl_noentry | CF_LOOKBACK=3 | --no-entry-fix | val | cf-val
+ckpt_v3_6_3d | CF_LOOKBACK=3 | --model v3_6_3d.pt | val | cf-val
+ckpt_v3_7_3d_frozen | CF_LOOKBACK=3 | --model v3_7_3d_frozen.pt | val | cf-val
+ckpt_v3_8_impulse | CF_LOOKBACK=3 | --model v3_8_impulse.pt | val | cf-val
+ckpt_v5_noyaw | CF_LOOKBACK=3 | --model v5_noyaw.pt | val | cf-val
+ckpt_v5b_noyaw | CF_LOOKBACK=3 | --model v5b_noyaw.pt | val | cf-val
+ckpt_v6_control | CF_LOOKBACK=3 | --model v6_control.pt | val | cf-val
+ckpt_v72_fixed | CF_LOOKBACK=3 | --model v7_2/ckpt/fixed.pt | val | cf-val
+ckpt_v72_curriculum | CF_LOOKBACK=3 | --model v7_2/ckpt/curriculum.pt | val | cf-val
+ckpt_v72_control | CF_LOOKBACK=3 | --model v7_2/ckpt/control.pt | val | cf-val

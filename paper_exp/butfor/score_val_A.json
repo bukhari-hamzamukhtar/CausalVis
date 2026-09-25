@@ -1,0 +1,95 @@
+{
+ "n_options": 3068,
+ "n_questions": 849,
+ "trace": [
+  2681,
+  669
+ ],
+ "kinds": {
+  "collision": 846,
+  "presence": 1181,
+  "entrance": 479,
+  "unresolved": 562
+ },
+ "butfor_0": [
+  2357,
+  519,
+  50,
+  374,
+  -15.73
+ ],
+ "kind_collision_0": [
+  846,
+  661,
+  826
+ ],
+ "kind_entrance_0": [
+  479,
+  411,
+  458
+ ],
+ "kind_presence_0": [
+  1181,
+  1012,
+  1124
+ ],
+ "kind_unresolved_0": [
+  562,
+  273,
+  273
+ ],
+ "butfor_10": [
+  2344,
+  514,
+  50,
+  387,
+  -16.12
+ ],
+ "kind_collision_10": [
+  846,
+  657,
+  826
+ ],
+ "kind_entrance_10": [
+  479,
+  408,
+  458
+ ],
+ "kind_presence_10": [
+  1181,
+  1006,
+  1124
+ ],
+ "kind_unresolved_10": [
+  562,
+  273,
+  273
+ ],
+ "butfor_30": [
+  2310,
+  502,
+  51,
+  422,
+  -17.06
+ ],
+ "kind_collision_30": [
+  846,
+  647,
+  826
+ ],
+ "kind_entrance_30": [
+  479,
+  399,
+  458
+ ],
+ "kind_presence_30": [
+  1181,
+  991,
+  1124
+ ],
+ "kind_unresolved_30": [
+  562,
+  273,
+  273
+ ]
+}

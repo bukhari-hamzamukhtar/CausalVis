@@ -1,0 +1,14 @@
+{
+ "sim": "learned",
+ "model": "v7_2/ckpt/control.pt",
+ "no_voxel": false,
+ "no_force": false,
+ "drag_scale": 1.0,
+ "videos": 200,
+ "rollout_err_20": 0.023537323712697424,
+ "rollout_err_40": 0.06202651932908152,
+ "n_err40": 2346,
+ "replay_12": 0.9755102040816327,
+ "replay_30": 0.6435643564356436,
+ "n_replay": 490
+}

@@ -1,0 +1,104 @@
+{
+ "obs": {
+  "T": 128,
+  "taint": {
+   "blue_metal_cube": [
+    127,
+    "video_ended",
+    null
+   ],
+   "red_rubber_sphere": [
+    127,
+    "video_ended",
+    null
+   ],
+   "gray_rubber_sphere": [
+    127,
+    "video_ended",
+    null
+   ]
+  },
+  "events": {
+   "cal": {
+    "blue_metal_cube|red_rubber_sphere": [
+     30
+    ],
+    "blue_metal_cube|gray_rubber_sphere": [
+     69
+    ],
+    "red_rubber_sphere|brown_metal_cylinder": [
+     50
+    ]
+   },
+   "kick2": {
+    "blue_metal_cube|red_rubber_sphere": [
+     32
+    ],
+    "blue_metal_cube|gray_rubber_sphere": [
+     71
+    ],
+    "red_rubber_sphere|brown_metal_cylinder": [
+     51
+    ]
+   }
+  }
+ },
+ "cf": {
+  "T": 128,
+  "taint": {
+   "red_rubber_sphere": [
+    27,
+    "lost_contact",
+    0
+   ],
+   "brown_metal_cylinder": [
+    47,
+    "lost_contact",
+    1
+   ],
+   "gray_rubber_sphere": [
+    66,
+    "lost_contact",
+    0
+   ]
+  },
+  "events": {
+   "cal": {
+    "red_rubber_sphere|gray_rubber_sphere": [
+     66
+    ]
+   },
+   "kick2": {
+    "red_rubber_sphere|gray_rubber_sphere": [
+     68
+    ]
+   }
+  }
+ },
+ "objects": [
+  "blue_metal_cube",
+  "red_rubber_sphere",
+  "brown_metal_cylinder",
+  "gray_rubber_sphere"
+ ],
+ "removed": [
+  "blue_metal_cube"
+ ],
+ "annotated_video_collisions": [
+  [
+   34,
+   "red_rubber_sphere",
+   "blue_metal_cube"
+  ],
+  [
+   54,
+   "red_rubber_sphere",
+   "brown_metal_cylinder"
+  ],
+  [
+   73,
+   "blue_metal_cube",
+   "gray_rubber_sphere"
+  ]
+ ]
+}

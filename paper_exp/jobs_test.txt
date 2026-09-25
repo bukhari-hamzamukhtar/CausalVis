@@ -1,0 +1,43 @@
+# TEST-A / TEST-B, pre-registered (PREREGISTRATION.md)
+A_learned | PARSED=1 CF_LOOKBACK=3  |  --data data/trajectories_3d_det | test | cf-val
+A_laws | PARSED=1 CF_LOOKBACK=3 SIM=laws |  --data data/trajectories_3d_det | test | cf-val
+A_straight | PARSED=1 CF_LOOKBACK=1 SIM=straight |  --data data/trajectories_3d_det | test | cf-val
+A_strfric | PARSED=1 CF_LOOKBACK=1 SIM=straight_friction |  --data data/trajectories_3d_det | test | cf-val
+A_nosim | PARSED=1 | --no-sim --data data/trajectories_3d_det | test | cf-val
+A_abl_novoxel | PARSED=1 CF_LOOKBACK=3 NO_VOXEL=1 |  --data data/trajectories_3d_det | test | cf-val
+A_abl_noforce | PARSED=1 CF_LOOKBACK=3 NO_FORCE=1 |  --data data/trajectories_3d_det | test | cf-val
+A_abl_nodrag | PARSED=1 CF_LOOKBACK=3 DRAG_SCALE=0 |  --data data/trajectories_3d_det | test | cf-val
+A_abl_noentry | PARSED=1 CF_LOOKBACK=3 | --no-entry-fix --data data/trajectories_3d_det | test | cf-val
+A_abl_lb12 | PARSED=1 CF_LOOKBACK=12 |  --data data/trajectories_3d_det | test | cf-val
+A_ckpt_v3_6_3d | PARSED=1 CF_LOOKBACK=3 | --model v3_6_3d.pt --data data/trajectories_3d_det | test | cf-val
+A_ckpt_v3_7_3d_frozen | PARSED=1 CF_LOOKBACK=3 | --model v3_7_3d_frozen.pt --data data/trajectories_3d_det | test | cf-val
+A_ckpt_v3_8_impulse | PARSED=1 CF_LOOKBACK=3 | --model v3_8_impulse.pt --data data/trajectories_3d_det | test | cf-val
+A_ckpt_v5_noyaw | PARSED=1 CF_LOOKBACK=3 | --model v5_noyaw.pt --data data/trajectories_3d_det | test | cf-val
+A_ckpt_v5b_noyaw | PARSED=1 CF_LOOKBACK=3 | --model v5b_noyaw.pt --data data/trajectories_3d_det | test | cf-val
+A_ckpt_v6_control | PARSED=1 CF_LOOKBACK=3 | --model v6_control.pt --data data/trajectories_3d_det | test | cf-val
+A_ckpt_v72_fixed | PARSED=1 CF_LOOKBACK=3 | --model v7_2/ckpt/fixed.pt --data data/trajectories_3d_det | test | cf-val
+A_ckpt_v72_curriculum | PARSED=1 CF_LOOKBACK=3 | --model v7_2/ckpt/curriculum.pt --data data/trajectories_3d_det | test | cf-val
+A_ckpt_v72_control | PARSED=1 CF_LOOKBACK=3 | --model v7_2/ckpt/control.pt --data data/trajectories_3d_det | test | cf-val
+A_seed1 | PARSED=1 CF_LOOKBACK=3 | --model v6_voxel_seed1.pt --data data/trajectories_3d_det | test | cf-val
+A_seed2 | PARSED=1 CF_LOOKBACK=3 | --model v6_voxel_seed2.pt --data data/trajectories_3d_det | test | cf-val
+B_learned | PARSED=1 CF_LOOKBACK=3  |  --data data/trajectories_3d_det | test | cf-train
+B_laws | PARSED=1 CF_LOOKBACK=3 SIM=laws |  --data data/trajectories_3d_det | test | cf-train
+B_straight | PARSED=1 CF_LOOKBACK=1 SIM=straight |  --data data/trajectories_3d_det | test | cf-train
+B_strfric | PARSED=1 CF_LOOKBACK=1 SIM=straight_friction |  --data data/trajectories_3d_det | test | cf-train
+B_nosim | PARSED=1 | --no-sim --data data/trajectories_3d_det | test | cf-train
+B_abl_novoxel | PARSED=1 CF_LOOKBACK=3 NO_VOXEL=1 |  --data data/trajectories_3d_det | test | cf-train
+B_abl_noforce | PARSED=1 CF_LOOKBACK=3 NO_FORCE=1 |  --data data/trajectories_3d_det | test | cf-train
+B_abl_nodrag | PARSED=1 CF_LOOKBACK=3 DRAG_SCALE=0 |  --data data/trajectories_3d_det | test | cf-train
+B_abl_noentry | PARSED=1 CF_LOOKBACK=3 | --no-entry-fix --data data/trajectories_3d_det | test | cf-train
+B_abl_lb12 | PARSED=1 CF_LOOKBACK=12 |  --data data/trajectories_3d_det | test | cf-train
+B_ckpt_v3_6_3d | PARSED=1 CF_LOOKBACK=3 | --model v3_6_3d.pt --data data/trajectories_3d_det | test | cf-train
+B_ckpt_v3_7_3d_frozen | PARSED=1 CF_LOOKBACK=3 | --model v3_7_3d_frozen.pt --data data/trajectories_3d_det | test | cf-train
+B_ckpt_v3_8_impulse | PARSED=1 CF_LOOKBACK=3 | --model v3_8_impulse.pt --data data/trajectories_3d_det | test | cf-train
+B_ckpt_v5_noyaw | PARSED=1 CF_LOOKBACK=3 | --model v5_noyaw.pt --data data/trajectories_3d_det | test | cf-train
+B_ckpt_v5b_noyaw | PARSED=1 CF_LOOKBACK=3 | --model v5b_noyaw.pt --data data/trajectories_3d_det | test | cf-train
+B_ckpt_v6_control | PARSED=1 CF_LOOKBACK=3 | --model v6_control.pt --data data/trajectories_3d_det | test | cf-train
+B_ckpt_v72_fixed | PARSED=1 CF_LOOKBACK=3 | --model v7_2/ckpt/fixed.pt --data data/trajectories_3d_det | test | cf-train
+B_ckpt_v72_curriculum | PARSED=1 CF_LOOKBACK=3 | --model v7_2/ckpt/curriculum.pt --data data/trajectories_3d_det | test | cf-train
+B_ckpt_v72_control | PARSED=1 CF_LOOKBACK=3 | --model v7_2/ckpt/control.pt --data data/trajectories_3d_det | test | cf-train
+B_seed1 | PARSED=1 CF_LOOKBACK=3 | --model v6_voxel_seed1.pt --data data/trajectories_3d_det | test | cf-train
+B_seed2 | PARSED=1 CF_LOOKBACK=3 | --model v6_voxel_seed2.pt --data data/trajectories_3d_det | test | cf-train

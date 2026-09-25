@@ -1,0 +1,14 @@
+{
+ "sim": "learned",
+ "model": "v3_6_3d.pt",
+ "no_voxel": false,
+ "no_force": false,
+ "drag_scale": 1.0,
+ "videos": 200,
+ "rollout_err_20": 0.024567481168617344,
+ "rollout_err_40": 0.06732900699500809,
+ "n_err40": 2347,
+ "replay_12": 0.963265306122449,
+ "replay_30": 0.5693069306930693,
+ "n_replay": 490
+}

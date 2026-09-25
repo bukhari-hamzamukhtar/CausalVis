@@ -1,0 +1,14 @@
+{
+ "sim": "laws",
+ "model": "v6_voxel.pt",
+ "no_voxel": false,
+ "no_force": false,
+ "drag_scale": 1.0,
+ "videos": 200,
+ "rollout_err_20": 0.019736800624036627,
+ "rollout_err_40": 0.050191944472835356,
+ "n_err40": 2342,
+ "replay_12": 0.9734693877551021,
+ "replay_30": 0.6955445544554455,
+ "n_replay": 490
+}

@@ -1,0 +1,18 @@
+# VAL-A, detection-only tracks, programs parsed from question text (selection runs)
+learned_lb1 | PARSED=1 CF_LOOKBACK=1 | --data data/trajectories_3d_det | val | cf-val
+learned_lb3 | PARSED=1 CF_LOOKBACK=3 | --data data/trajectories_3d_det | val | cf-val
+learned_lb6 | PARSED=1 CF_LOOKBACK=6 | --data data/trajectories_3d_det | val | cf-val
+learned_lb12 | PARSED=1 CF_LOOKBACK=12 | --data data/trajectories_3d_det | val | cf-val
+laws_lb1 | PARSED=1 SIM=laws CF_LOOKBACK=1 | --data data/trajectories_3d_det | val | cf-val
+laws_lb3 | PARSED=1 SIM=laws CF_LOOKBACK=3 | --data data/trajectories_3d_det | val | cf-val
+laws_lb6 | PARSED=1 SIM=laws CF_LOOKBACK=6 | --data data/trajectories_3d_det | val | cf-val
+laws_lb12 | PARSED=1 SIM=laws CF_LOOKBACK=12 | --data data/trajectories_3d_det | val | cf-val
+straight_lb1 | PARSED=1 SIM=straight CF_LOOKBACK=1 | --data data/trajectories_3d_det | val | cf-val
+straight_lb3 | PARSED=1 SIM=straight CF_LOOKBACK=3 | --data data/trajectories_3d_det | val | cf-val
+straight_lb6 | PARSED=1 SIM=straight CF_LOOKBACK=6 | --data data/trajectories_3d_det | val | cf-val
+straight_lb12 | PARSED=1 SIM=straight CF_LOOKBACK=12 | --data data/trajectories_3d_det | val | cf-val
+strfric_lb1 | PARSED=1 SIM=straight_friction CF_LOOKBACK=1 | --data data/trajectories_3d_det | val | cf-val
+strfric_lb3 | PARSED=1 SIM=straight_friction CF_LOOKBACK=3 | --data data/trajectories_3d_det | val | cf-val
+strfric_lb6 | PARSED=1 SIM=straight_friction CF_LOOKBACK=6 | --data data/trajectories_3d_det | val | cf-val
+strfric_lb12 | PARSED=1 SIM=straight_friction CF_LOOKBACK=12 | --data data/trajectories_3d_det | val | cf-val
+nosim | PARSED=1 | --no-sim --data data/trajectories_3d_det | val | cf-val
