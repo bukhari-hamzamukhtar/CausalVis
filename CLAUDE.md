@@ -1307,3 +1307,14 @@ Everything below uses paper_exp/ (single generated builder, PREREGISTRATION.md, 
   event (future is annotated there). CoPhy 6 balls P 0.49 / R 0.41. Simulators agree on 91.4%
   of CLEVRER CF options (sim_agreement.py). Clean runtime: learned 2.24 s, laws 1.36 s per
   question. Paper draft in paper/ (main.tex, supp.tex, refs.bib); all numbers final.
+
+## PUBLIC RELEASE (2026-09-25)
+Pushed to https://github.com/bukhari-hamzamukhtar/CausalVis on top of the layout Hamza had
+made there (legacy/v1, legacy/v2, legacy/v3, v3_2/src). Three commits add the new work:
+the engine (src2, v4 to v8, probe, checkpoints, splits, camera), the paper experiments
+(paper_exp, including records/test_records.zip with one line per answered option of every
+test run), and the paper, app, report and README.
+Kept out of git on purpose: data/ and external/ datasets, zechennlp questions, the bulk run
+records under paper_exp/runs and the version folders, node_modules, and the 2.6 GB second
+copy of the detections at legacy/v2/data/processed_proposals (legacy/v1 has them already).
+Local main now tracks origin/main; the older local-only commits were superseded.

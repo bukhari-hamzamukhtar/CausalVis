@@ -126,3 +126,6 @@ presentation/
 # keep the two archives we do want
 !paper_exp/records/test_records.zip
 !paper/causalvis_paper_overleaf.zip
+
+# the v1 detections are already tracked under legacy/v1; this second copy stays local
+legacy/v2/data/processed_proposals/
