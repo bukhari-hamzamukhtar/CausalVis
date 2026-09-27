@@ -166,6 +166,8 @@ answer ``yes'' to every event & 45.9 & 2.6 & 100 \\
 With the frames the model is indistinguishable from never predicting a collision (54.4 against 54.1), and it is 35 points below the engine on the same options (paired: the engine is right where the model is wrong 1,362 times, the reverse 177 times, $z = -30.2$).
 It answers ``no'' to every event of 86\% of questions when it sees the frames and ``yes'' to every event of 70\% of them when it does not, so what changes its answer is whether images are present rather than which object was removed.
 Two of 1,859 replies could not be read and were counted as ``no''.
+Concurrent work measures the same effect on a different subset and with much larger models: a blind vision-language model answers 50.1 of counterfactual options, GPT-4o 56.5 and GPT-5.5 76.7, against a 50.0 chance level (PhysMind, Table 1, cited in the main paper).
+Our 54.4 for a 7B open model sits where that range predicts, and the blind number is close to the 48.8 we measure.
 This is a baseline and not a fair comparison with the published systems: it is one prompt of one open model with no fine-tuning on this dataset, and a system built around such a model could do better.
 It does say that the frames alone, read by a strong general model, do not answer these questions.
 

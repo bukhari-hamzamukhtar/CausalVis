@@ -236,7 +236,7 @@ Training the world model took 8.1 hours, and answering a counterfactual question
 \label{sec:results}
 
 \begin{table}[tb]
-\caption{Counterfactual questions on CLEVRER. Accuracy per option and per question. Published numbers are on the official test set. Ours are on 1,398 held-out videos (TEST-A and TEST-B pooled), and the last column gives the fresh TEST-B set alone, which our pre-registration names as primary. $\dagger$: trained object detector; $\ddagger$: attribute labels in training. The rows of \sys{} share the engine and differ only in the simulator.}
+\caption{Counterfactual questions on CLEVRER. Accuracy per option and per question. Published numbers are on the official test set. Ours are on 1,398 held-out videos (TEST-A and TEST-B pooled), and the last column gives the fresh TEST-B set alone, which our pre-registration names as primary. $\dagger$: trained object detector; $\ddagger$: attribute labels in training. $\ast$: concurrent, measured on its own fixed subset of 1,000 CLEVRER validation scenes rather than the test set, and training-free apart from off-the-shelf perception. The rows of \sys{} share the engine and differ only in the simulator.}
 \label{tab:main}
 \centering
 \small
@@ -251,6 +251,7 @@ VRDP, no labels~\cite{ding2021vrdp} & none & 89.9 & 75.7 & \\
 ALOE~\cite{ding2021aloe} & none & 91.4 & 75.6 & \\
 VRDP~\cite{ding2021vrdp} & $\dagger\ddagger$ & 94.8 & 84.3 & \\
 CRCG on VRDP~\cite{ishay2024crcg} & $\dagger\ddagger$ & 96.1 & 87.8 & \\
+PhysMind~\cite{yang2026physmind}$^{\ast}$ & none & 88.1 & 70.6 & \\
 \midrule
 \sys{}, no physics & $\dagger\ddagger$ & 81.4 & 50.1 & 81.5 / 50.6 \\
 \sys{}, straight lines & $\dagger\ddagger$ & 89.7 & 70.2 & 89.6 / 70.2 \\
@@ -270,6 +271,7 @@ The fitted laws answer 91.4\% and 75.0\%, 1.0 points above the learned model ($z
 The two test sets agree: the learned model scores 90.2\% on TEST-A and 90.5\% on the fresh TEST-B, and the laws 91.7\% and 91.3\% ($z=3.1$ on TEST-B alone).
 We report the pooled sets from here on, which narrows the intervals; the comparisons in this section hold on TEST-B alone (Supp.~J).
 \sys{} stays 3.4 to 5.7 points per option below VRDP and CRCG, which use the same kind of perception.
+The closest concurrent system, PhysMind~\cite{yang2026physmind}, also builds one editable world per video and reports 88.1 per option and 70.6 per question on its own 1,000-scene validation subset; it reaches that without any CLEVRER-trained perception, so the 2.3-point difference from our numbers is not a like-for-like gap in either direction.
 Without any physics the engine already answers 81.4\% of options, above NS-DR and DCL; physics adds 9.0 points per option and 22.2 per question.
 For the other direction, a general vision-language model given 16 frames of the video and the same options, Qwen2.5-VL-7B-Instruct~\cite{bai2025qwen25vl}, answers 54.4\% of options on TEST-A, which is what answering ``no'' to every event scores (54.1\%), and 2.9\% of questions (Supp.~C).
 
