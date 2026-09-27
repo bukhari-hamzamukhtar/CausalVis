@@ -162,12 +162,6 @@ def fig1():
         ax.text(x, y, txt, fontsize=size, color=color, fontweight=weight, va="top", ha="left", linespacing=1.35)
         y -= n * line_h(size) + after
 
-    def tick(x, ytop, size=6.5):
-        h = line_h(size) * 0.55
-        yc = ytop - h * 1.15
-        ax.plot([x, x + h * 0.45, x + h * 1.25], [yc, yc - h * 0.55, yc + h * 0.65],
-                color=GREEN, lw=0.9, solid_capstyle="round", clip_on=False)
-
     put("Q: What will happen if the\ncube is removed?", 7.5, TXT, "bold", after=0.05)
     opts = [("The cylinder collides with the\ngray object.", "no", "closest gap 1.81"),
             ("The red object collides with\nthe cylinder.", "no", "video collision at 54 is gone"),
@@ -176,7 +170,6 @@ def fig1():
         put(text, 7, TXT, after=0.010)
         ytop = y
         ax.text(pad, ytop, ans, fontsize=6.5, fontweight="bold", va="top", ha="left")
-        tick(pad + (0.115 if ans == "no" else 0.145), ytop)
         put(ev, 6.5, TXT2, x=pad + 0.30, after=0.042)
     put("All three answers match the CLEVRER key.", 6, TXT2)
     save(fig, "fig1_teaser")
@@ -315,17 +308,7 @@ def fig3():
     axa.annotate("textbook laws", (0.0502, 91.4), (0.0545, 91.55), fontsize=7, va="center")
     axa.annotate("learned (ours)", (0.0629, 90.4), (0.0672, 90.75), fontsize=7, fontweight="bold", va="center")
     axa.annotate("straight + friction", (0.0945, 90.2), (0.0945, 90.95), fontsize=7, va="center", ha="center")
-    axa.annotate("straight lines", (0.1125, 89.7), (0.1090, 90.25), fontsize=7, va="center", ha="right")
-    axa.text(0.1150, 91.93, "Pearson r = −0.59, 13 simulators", fontsize=6.5, color=TXT2, ha="right", va="top")
-    axa.plot([0.0880], [91.60], marker="o", ms=4, mfc="none", mec=SKY, mew=0.9, clip_on=False)
-    axa.text(0.0898, 91.60, "nine other checkpoints", fontsize=6.5, color=TXT2, ha="left", va="center")
-    axa.text(0.0462, 88.86, "no physics: 81.4 (off axis)", fontsize=6.5, color=GREY, ha="left", va="bottom")
-    axa.annotate("", xy=(0.0502, 89.22), xytext=(0.1125, 89.22),
-                 arrowprops=dict(arrowstyle="<->", color=TXT2, lw=0.6))
-    axa.text((0.0502 + 0.1125) / 2, 89.28, "error changes 2.2×", fontsize=6.5, color=TXT2, ha="center", va="bottom")
-    axa.annotate("", xy=(0.1168, 89.7), xytext=(0.1168, 91.4),
-                 arrowprops=dict(arrowstyle="<->", color=TXT2, lw=0.6))
-    axa.text(0.1148, 90.55, "score changes 2.2 points", fontsize=6.5, color=TXT2, ha="center", va="center", rotation=90)
+    axa.annotate("straight lines", (0.1125, 89.7), (0.1125, 89.22), fontsize=7, va="center", ha="center")
     # (b)
     p = {r["simulator"]: r for r in rows("fig2b_predictive_ci.csv")}
     pts = sorted(((float(d[k]["err40_val"]), float(p[k]["options_pct"]), k) for k in p), key=lambda t: t[0])
@@ -338,7 +321,7 @@ def fig3():
     axb.set_ylim(86.5, 93.0); axb.set_yticks([87, 89, 91, 93])
     axb.annotate("textbook laws", (0.0502, 88.1), (0.0545, 87.75), fontsize=7, va="center")
     axb.annotate("learned (ours)", (0.0629, 90.5), (0.0665, 90.95), fontsize=7, fontweight="bold", va="center")
-    axb.annotate("straight + friction", (0.0945, 90.9), (0.0905, 91.9), fontsize=7, va="center", ha="center")
+    axb.annotate("straight + friction", (0.0945, 90.9), (0.0905, 92.15), fontsize=7, va="center", ha="center")
     axb.annotate("straight lines", (0.1125, 91.4), (0.1150, 92.6), fontsize=7, va="center", ha="right")
     axb.text(0.1165, 86.7, "better physics, lower score", fontsize=7, color=TXT2, ha="right", va="bottom")
     for ax in (axa, axb):
@@ -468,7 +451,8 @@ def fig5():
     b.set_xticks([-15, -10, -5, 0, 5, 10, 15])
     b.set_xticklabels(["\u2264\u221215", "\u221210", "\u22125", "0", "5", "10", "\u226515"], fontsize=6.5)
     b.set_yticks([0, 250, 500, 750]); b.tick_params(axis="y", labelsize=6.5)
-    b.set_xlabel("our frame \u2212 annotated frame", fontsize=7, labelpad=1)
+    b.set_xlabel("detected \u2212 annotated contact\n(frames; negative = earlier)",
+                 fontsize=6.5, labelpad=1, linespacing=1.2)
     b.set_ylabel("answers", fontsize=7)
     tidy(b)
     b.text(0.6, 880, "annotated\ncontact", fontsize=6, ha="left", va="top", linespacing=1.15)
