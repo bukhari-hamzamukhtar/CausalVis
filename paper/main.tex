@@ -220,7 +220,7 @@ Intervals are 95\% bootstrap intervals over videos with 2,000 resamples~\cite{ef
 
 \paragraph{Physical accuracy.}
 For every simulator we start from true states on 200 VAL-A videos and measure the mean position error after 40 frames, which we call the rollout error.
-Besides the four simulators we evaluate nine checkpoints of the learned model from earlier training runs; two retrained seeds are evaluated on the benchmark only.
+Besides the four simulators we evaluate nine checkpoints of the learned model from earlier training runs; six retrained seeds are evaluated on the benchmark only.
 
 \paragraph{Compute.}
 Every experiment ran on one laptop CPU (Intel i5-8350U, 4 cores, 7.9 GB of memory) without a GPU.
@@ -266,6 +266,7 @@ The two test sets agree: the learned model scores 90.2\% on TEST-A and 90.5\% on
 We report the pooled sets from here on, which narrows the intervals; the comparisons in this section hold on TEST-B alone (Supp.~J).
 \sys{} stays 3.4 to 5.7 points per option below VRDP and CRCG, which use the same kind of perception.
 Without any physics the engine already answers 81.4\% of options, above NS-DR and DCL; physics adds 9.0 points per option and 22.2 per question.
+For the other direction, a general vision-language model given 16 frames of the video and the same options, Qwen2.5-VL-7B-Instruct~\cite{bai2025qwen25vl}, answers 54.4\% of options on TEST-A, which is what answering ``no'' to every event scores (54.1\%), and 2.9\% of questions (Supp.~C).
 
 \subsection{What the counterfactual score measures}
 \label{sec:audit}
@@ -419,7 +420,7 @@ First, all scenes are synthetic, with three shapes, one object size and almost n
 Second, our perception uses NS-DR's detector, which was trained with CLEVRER's masks and attributes, so the fair comparison group in \cref{tab:main} is VRDP and CRCG.
 Third, the answers decided in simulation (40.5\% of the correct ones) can be inspected but not verified on CLEVRER.
 Fourth, the simulators are planar and model neither toppling nor 3D rotation, and CLEVRER's test server had closed, so our test sets are held-out validation and training videos and the comparison with published numbers is approximate.
-Finally, with one CPU we could train only two extra seeds, each stopped after two of four epochs.
+Finally, with one CPU we could train only two extra seeds, each stopped after two of four epochs; four more were later trained in full on free hosted CPU sessions, and the seven checkpoints of this recipe span 90.0 to 90.5 per option (Supp.~C).
 The spread between them (0.4 points) is as large as several effects we report, which is itself part of our finding.
 
 % =====================================================================================

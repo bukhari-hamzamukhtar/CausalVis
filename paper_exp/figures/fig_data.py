@@ -88,7 +88,8 @@ def main():
                ("12-frame hand-off", "abl_lb12"), ("distance rule only", "abl_calonly"),
                ("no voxel contact impulse", "abl_novoxel"), ("no learned pair energy", "abl_noforce"),
                ("no learned friction", "abl_nodrag"), ("no entry correction", "abl_noentry"),
-               ("seed 1", "seed1"), ("seed 2", "seed2")]
+               ("seed 1", "seed1"), ("seed 2", "seed2"), ("seed 3", "seed3"),
+               ("seed 4", "seed4"), ("seed 5", "seed5"), ("seed 6", "seed6")]
     rows = []
     for label, name in changes:
         if name == "abl_noext":

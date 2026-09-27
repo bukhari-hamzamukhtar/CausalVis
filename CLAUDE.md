@@ -1318,3 +1318,90 @@ Kept out of git on purpose: data/ and external/ datasets, zechennlp questions, t
 records under paper_exp/runs and the version folders, node_modules, and the 2.6 GB second
 copy of the detections at legacy/v2/data/processed_proposals (legacy/v1 has them already).
 Local main now tracks origin/main; the older local-only commits were superseded.
+
+## VLM BASELINE + FULL-LENGTH SEEDS: BOTH RUN, results below (2026-09-27)
+Both use the methods from the OCVLP course project (Kaggle free compute, the VLP-style Qwen
+prompter, an append-only answer cache). Pre-registered in paper_exp/PREREGISTRATION.md as
+systems 11 and 12 BEFORE either run.
+
+`vlm_baseline/` asks Qwen2.5-VL-7B the TEST-A counterfactual options directly: 16 frames per
+clip, greedy, seed 0, two conditions (`video` and `blind`). It fills the paper's missing
+comparison, a model that answers from the video with no physics.
+- Questions are exported with the SAME keys as paper_exp/score.py (video, qid, choice text,
+  occurrence), so every option is paired with the engine's own answer. 930 q / 3,332 options
+  test, 941 / 3,391 val. The answer key is written to a separate file and never uploaded.
+- The model is asked "does this event happen", and POLARITY IS APPLIED AT SCORING. 474 of 930
+  test questions are "which will NOT happen"; the negation bug in v6/lm.py is not repeated.
+- `selftest.py` proves the scorer without a GPU: the true answers score 100%, always-no scores
+  54.1% and always-yes 45.9%, which are exactly the trivial policies already recorded above.
+- Videos come out of CLEVRER's 6.2 GB zip by HTTP byte range (`remote_zip.py`), about 1.6 MB
+  per clip, fetched by a background thread a few ahead of the model. Nothing large is
+  uploaded: the Kaggle code dataset is 0.8 MB.
+- An answer is keyed by model, seed, prompt and FRAME NAMES THAT CARRY NO MACHINE PATH
+  ("frames/video_10000_i00.jpg"), so a session that runs out of time can be continued on
+  another machine and nothing is asked twice. An earlier draft keyed on the temp directory,
+  which would have re-asked everything on a restart.
+
+`kaggle/` runs more training seeds on a free Kaggle CPU session (no GPU asked for: 43,460
+parameters, the cost is the voxel contact check). Seeds 1 and 2 in the paper stopped after two
+of four epochs for lack of laptop time; these run all four. Measured with the same code copy:
+2.6 s/batch, 699 batches/epoch, so 2 to 3 hours per seed, inside the 12-hour session.
+
+Both need his Kaggle token (KAGGLE_API_TOKEN on the command line) and one dataset upload each
+(0.8 MB for the VLM, 178 MB of clips for training). Push with
+`bash vlm_baseline/run_kaggle.sh smoke` and `bash kaggle/run_kaggle.sh causalvis-train-seed3`.
+
+Also settled: CLEVRER objects really do have ONE size class. The ground truth carries no size
+attribute and sphere-sphere contact distance is a single peak (0.706, p5 0.645, p95 0.863),
+where CLEVR's two sizes differ by 2x. The size attribute OCVLP uses belongs to CLEVR-Hans, a
+different dataset. Nothing in the paper changes.
+
+## RESULTS OF BOTH (2026-09-27) -- ran on Kaggle free compute, full numbers in paper_exp/RESULTS.md
+
+**VLM baseline: a general vision-language model cannot do this task at all.** Qwen2.5-VL-7B,
+16 frames, TEST-A, 1,859 prompts, 4.4 s each on one T4:
+| system                        | per option | per question | says "yes" |
+|-------------------------------|-----------|--------------|------------|
+| always answer "no"            | 54.1%     | 0.0%         | 0%         |
+| **Qwen2.5-VL, sees 16 frames**| **54.4%** | **2.9%**     | 9%         |
+| **Qwen2.5-VL, blind**         | **48.8%** | **4.2%**     | 78%        |
+| always answer "yes"           | 45.9%     | 2.6%         | 100%       |
+| engine (learned world model)  | 89.9%     | 70.8%        | --         |
+Paired: engine right / VLM wrong 1,362 vs the reverse 177, z = -30.2. With frames it answers
+"no" to every event of 86% of questions; blind it answers "yes" to every event of 70%. It is
+reacting to whether images are present, not to the intervention. My pre-registered prediction
+was half wrong: "well below the engine" held, "between the trivial floor and no-physics 81.0"
+did not (it landed AT the floor), and the video-blind gap was 5.6 points where I said 2.
+
+**Six seeds now, and the best-trained checkpoint yet still does not move the benchmark.**
+Seeds 3-6 ran all four epochs on a Kaggle CPU session (15 min/epoch there, 41 min per seed;
+the laptop needed 8 h for the same recipe, which is why seeds 1-2 stopped at two epochs).
+| checkpoint | epochs | val err@20 | A+B options | A+B questions | z vs production |
+|------------|--------|-----------|-------------|---------------|-----------------|
+| v6_voxel (production) | 4 | 0.0230 | 90.4% (8454) | 72.3% | --      |
+| seed 1 | 2 of 4 | --     | 90.5% (8464) | 72.4% | +0.8            |
+| seed 2 | 2 of 4 | --     | 90.1% (8424) | 71.3% | -2.2            |
+| seed 3 | 4 | **0.0214**  | 90.5% (8463) | 72.4% | +0.85 n.s.      |
+| seed 4 | 4 | 0.0253      | 90.2% (8430) | 71.6% | -1.60 n.s.      |
+| seed 5 | 4 | 0.0231      | 90.4% (8448) | 72.0% | -0.54 n.s.      |
+| seed 6 | 4 | 0.0239      | 90.0% (8414) | 70.8% | -2.63           |
+Seven checkpoints: 90.3% +- 0.2 per option (range 90.0-90.5), questions 71.8% +- 0.6.
+r(val rollout error, options) = -0.76 across the five with a val number, while the benchmark
+spans 0.5 points and the rollout error 18%.
+
+TWO THINGS TO REMEMBER FROM THIS RUN:
+1. **`train_voxel.py` draws its val windows from seed+1**, so val errors are NOT comparable
+   across seeds (the same init scores 0.0274 / 0.0296 / 0.0285 / 0.0274 on four draws). Judge
+   a seed by its improvement over its own init: seed 3 -22%, production -13%.
+2. **The detector for the seed comparison is UNION (+30), not cal.** I first scored the seeds
+   with cal and reported the wrong digits; the paper's system uses cal OR path change. Both
+   readings agree on the conclusion but only union is comparable to the published table.
+   Kaggle also DROPS THE TOP FOLDER of an uploaded archive: data/trajectories_3d_yaw/*.npz
+   arrives as trajectories_3d_yaw/*.npz, which failed the first seed job in a minute.
+
+PAPER UPDATED FOR BOTH: supplement C now has a vision-language paragraph plus table
+(tab:vlm) and the six-seed table; main.tex has one sentence on the baseline with the
+Qwen2.5-VL citation (refs.bib, arXiv 2502.13923, checked against the arXiv API), and the
+limitation sentence says four seeds were later trained in full. Figure 4 (forest plot) now
+shows all six seeds; its panel grew 3.30 -> 4.05 in and the paper still compiles to 10 pages.
+The supplement has NO bibliography, so a \cite there is undefined: put citations in main.tex.

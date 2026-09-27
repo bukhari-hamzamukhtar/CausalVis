@@ -350,9 +350,9 @@ def fig3():
 
 # ===================================================================== Figure 4: forest plot
 def fig4():
-    W, H = 3.25, 3.30
+    W, H = 3.25, 4.05
     fig = plt.figure(figsize=(W, H))
-    ax = fig.add_axes([1.46 / W, 0.42 / H, 1.00 / W, 2.62 / H])
+    ax = fig.add_axes([1.46 / W, 0.42 / H, 1.00 / W, 3.37 / H])
     tidy(ax, grid=None)
     ax.spines["left"].set_visible(False)
     r = {x["change"]: x for x in rows("fig3_effects.csv")}
@@ -362,14 +362,16 @@ def fig4():
                                    ("no voxel contact impulse", "l"), ("distance rule only", "l"),
                                    ("no entry correction", "l"), ("no learned friction", "l"),
                                    ("no learned pair energy", "l")]),
-              ("Retrain (new seed)", [("seed 1", "seed"), ("seed 2", "seed")])]
+              ("Retrain (new seed)", [("seed 1", "seed"), ("seed 2", "seed"), ("seed 3", "seed"),
+                                      ("seed 4", "seed"), ("seed 5", "seed"), ("seed 6", "seed")])]
     key = {"textbook laws": "textbook laws", "straight + friction": "straight lines + friction",
            "straight lines": "straight lines", "no physics": "no physics",
            "no extension past the video end": "no extension past the video end",
            "12-frame hand-off (instead of 3)": "12-frame hand-off", "no voxel contact impulse": "no voxel contact impulse",
            "distance rule only": "distance rule only", "no entry correction": "no entry correction",
            "no learned friction": "no learned friction", "no learned pair energy": "no learned pair energy",
-           "seed 1": "seed 1", "seed 2": "seed 2"}
+           "seed 1": "seed 1", "seed 2": "seed 2", "seed 3": "seed 3", "seed 4": "seed 4",
+           "seed 5": "seed 5", "seed 6": "seed 6"}
     y, ticks, labels = 0, [], []
     ax.axvline(0, color="#333333", lw=0.75, zorder=2)
     for gx in (-5, -4, -3, -2, -1, 1, 2):
@@ -408,7 +410,7 @@ def fig4():
     ax.set_xlim(-5.6, 2.0)
     ax.set_xticks([-5, -4, -3, -2, -1, 0, 1, 2])
     ax.set_xlabel("Change in options correct vs. CausalVis (points)", fontsize=7)
-    fig.text((1.46 + 1.00 + 0.05) / W, (0.42 + 2.62 + 0.10) / H, "value [95% CI]", fontsize=6, color=TXT2, ha="left", va="bottom")
+    fig.text((1.46 + 1.00 + 0.05) / W, (0.42 + 3.37 + 0.10) / H, "value [95% CI]", fontsize=6, color=TXT2, ha="left", va="bottom")
     save(fig, "fig4_changes")
 
 

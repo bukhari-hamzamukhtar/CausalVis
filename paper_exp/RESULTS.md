@@ -52,6 +52,52 @@ invented after the end 16%, missed visible 10%, object not found by the detector
 | no entry correction | 90.3 / 72.0 | -1.3 n.s. |
 | seed 1 / seed 2 of the final fine-tune | 90.5 / 72.4 ; 90.1 / 71.3 | +0.8 ; -2.2 |
 Other trained simulators: 89.2 (v5b_noyaw) .. 90.9 (v3_8_impulse).
+
+### Seeds of the final fine-tune, six of them, 2026-09-27
+Seeds 1 and 2 stopped after two of four epochs (laptop time); seeds 3 to 6 ran all four on a
+free Kaggle CPU session (15 min per epoch there, `kaggle/`). Same recipe otherwise, scored
+once each on TEST-A and TEST-B at the production system's setting (union, +30).
+| checkpoint | epochs | val err@20 | TEST-A | TEST-B | A+B options | A+B questions | paired z vs production |
+|---|---|---|---|---|---|---|---|
+| v6_voxel (production) | 4 | 0.0230 | 90.2 / 71.4 | 90.5 / 72.8 | 90.4% (8454) | 72.3% | – |
+| seed 1 | 2 of 4 | – | 90.3 / 71.6 | 90.6 / 72.8 | 90.5% (8464) | 72.4% | +0.8 |
+| seed 2 | 2 of 4 | – | 90.1 / 71.0 | 90.1 / 71.5 | 90.1% (8424) | 71.3% | -2.2 |
+| seed 3 | 4 | **0.0214** | 90.3 / 71.3 | 90.6 / 73.0 | 90.5% (8463) | 72.4% | +0.85 n.s. |
+| seed 4 | 4 | 0.0253 | 90.1 / 71.1 | 90.2 / 71.9 | 90.2% (8430) | 71.6% | -1.60 n.s. |
+| seed 5 | 4 | 0.0231 | 90.3 / 71.0 | 90.4 / 72.6 | 90.4% (8448) | 72.0% | -0.54 n.s. |
+| seed 6 | 4 | 0.0239 | 90.2 / 71.0 | 89.9 / 70.8 | 90.0% (8414) | 70.8% | -2.63 |
+Seven checkpoints: 90.3% +- 0.2 per option, range 90.0-90.5; questions 71.8% +- 0.6.
+CAVEAT on the val column: `v6/train_voxel.py` draws its validation windows from seed+1, so
+each seed's val error is measured on its own window draw. Relative to its own starting point
+seed 3 improves 22% where the production checkpoint improved 13%, so it is the strongest
+simulator this project has trained, but 0.0214 against 0.0230 is not a like-for-like pair.
+FINDING: seed 3 trains clearly better and answers +9 options of 9,350 (z = +0.85). Across the
+five checkpoints that have a val number, r(val rollout error, options) = -0.76 with the
+benchmark spanning 0.5 points while the rollout error spans 18%. One more confirmation, with
+freshly trained checkpoints rather than modified ones, that this benchmark barely sees the
+simulator's accuracy.
+
+## Vision-language baseline — TEST-A, run once, 2026-09-27
+Qwen2.5-VL-7B-Instruct, 16 frames per clip, greedy, seed 0, asked directly whether each event
+happens under the intervention (polarity applied when scoring). Same 3,332 options as the
+engine, `vlm_baseline/`. 1,859 prompts (two videos give a byte-identical blind prompt, which
+the answer cache correctly answers once). 4.4 s per answer on one T4.
+| system | per option | per question | says "yes" |
+|---|---|---|---|
+| always answer "no" | 54.1% | 0.0% | 0% |
+| Qwen2.5-VL, 16 frames | 54.4% (1811) [53.1-55.6] | 2.9% (27) | 9% |
+| Qwen2.5-VL, blind (no frames) | 48.8% (1625) [47.4-50.1] | 4.2% (39) | 78% |
+| always answer "yes" | 45.9% | 2.6% | 100% |
+| CausalVis, learned world model | 89.9% (2996) | 70.8% (658) | – |
+Paired on the 3,332 options: engine right where the VLM is wrong 1,362 times, the reverse 177,
+z = -30.2 (questions 634 vs 3, z = -25.0).
+FINDING: with the frames the model is indistinguishable from never predicting a collision
+(54.4 against 54.1). It answers "no" to every event of 86% of questions when it sees frames
+and "yes" to every event of 70% of them when it cannot, so it is reacting to whether images
+are present rather than to the intervention. Two replies of 1,859 could not be read.
+PRE-REGISTERED PREDICTION, half wrong: "well below the engine" held; "between the trivial
+policies and the no-physics baseline (81.0)" did not, it landed at the trivial floor; and the
+video-blind gap was 5.6 points where 2 was predicted.
 AUDIT, 13 simulators: Pearson r(err@40, options) = -0.59; options span 89.2-91.4 while
 err@40 spans 0.050-0.112.
 

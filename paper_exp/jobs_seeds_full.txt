@@ -1,0 +1,6 @@
+A_seed4 | PARSED=1 CF_LOOKBACK=3 | --model v6_voxel_seed4.pt --data data/trajectories_3d_det | test | cf-val
+B_seed4 | PARSED=1 CF_LOOKBACK=3 | --model v6_voxel_seed4.pt --data data/trajectories_3d_det | test | cf-train
+A_seed5 | PARSED=1 CF_LOOKBACK=3 | --model v6_voxel_seed5.pt --data data/trajectories_3d_det | test | cf-val
+B_seed5 | PARSED=1 CF_LOOKBACK=3 | --model v6_voxel_seed5.pt --data data/trajectories_3d_det | test | cf-train
+A_seed6 | PARSED=1 CF_LOOKBACK=3 | --model v6_voxel_seed6.pt --data data/trajectories_3d_det | test | cf-val
+B_seed6 | PARSED=1 CF_LOOKBACK=3 | --model v6_voxel_seed6.pt --data data/trajectories_3d_det | test | cf-train

@@ -1,4 +1,4 @@
-\begin{thebibliography}{55}
+\begin{thebibliography}{56}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -27,6 +27,17 @@ Ieva Bagdonaviciute and Vibhav Vineet.
 \newblock Physics knowledge in frontier models: A diagnostic study of failure
   modes.
 \newblock \emph{arXiv preprint arXiv:2510.06251}, 2025.
+
+\bibitem[Bai et~al.(2025)Bai, Chen, Liu, Wang, Ge, Song, Dang, Wang, Wang,
+  Tang, Zhong, Zhu, Yang, Li, Wan, Wang, Ding, Fu, Xu, Ye, Zhang, Xie, Cheng,
+  Zhang, Yang, Xu, and Lin]{bai2025qwen25vl}
+Shuai Bai, Keqin Chen, Xuejing Liu, Jialin Wang, Wenbin Ge, Sibo Song, Kai
+  Dang, Peng Wang, Shijie Wang, Jun Tang, Humen Zhong, Yuanzhi Zhu, Mingkun
+  Yang, Zhaohai Li, Jianqiang Wan, Pengfei Wang, Wei Ding, Zheren Fu, Yiheng
+  Xu, Jiabo Ye, Xi~Zhang, Tianbao Xie, Zesen Cheng, Hang Zhang, Zhibo Yang,
+  Haiyang Xu, and Junyang Lin.
+\newblock Qwen2.5-vl technical report.
+\newblock \emph{arXiv preprint arXiv:2502.13923}, 2025.
 
 \bibitem[Balazadeh et~al.(2025)Balazadeh, Ataei, Cheong, Khasahmadi, and
   Krishnan]{balazadeh2025pcb}

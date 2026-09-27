@@ -129,3 +129,18 @@ presentation/
 
 # the v1 detections are already tracked under legacy/v1; this second copy stays local
 legacy/v2/data/processed_proposals/
+
+# Kaggle packages: the built uploads and whatever a session sent back
+kaggle/build/
+kaggle/outputs/
+vlm_baseline/kaggle/build/
+vlm_baseline/kaggle/outputs/
+vlm_baseline/answers*.jsonl
+vlm_baseline/_selftest.jsonl
+# question sets and the answer key: made by vlm_baseline/make_questions.py from the dataset
+vlm_baseline/questions_*.json
+vlm_baseline/questions_*.json.truth.json
+
+# LaTeX build files (the .bbl and .blg the paper needs are tracked explicitly)
+paper/*.aux
+paper/*.out

@@ -32,7 +32,7 @@ Ghulam Ishaq Khan Institute of Engineering Sciences and Technology}
 \paragraph{Pre-registration.}
 Before the fresh test set was scored, we wrote down the inputs, the sets, the selection rule, the systems to be scored and the statistics to be reported.
 Settings were chosen on VAL-A only; TEST-A and TEST-B were then scored once per listed system, and nothing was changed afterwards.
-The listed systems were the learned engine, the textbook laws, straight lines, straight lines with friction, no physics, seven one-change ablations of the learned engine, nine other checkpoints of the learned model, two retrained seeds, the other three question types, and the learned engine with the dataset's own question programs as a check of the parser.
+The listed systems were the learned engine, the textbook laws, straight lines, straight lines with friction, no physics, seven one-change ablations of the learned engine, nine other checkpoints of the learned model, six retrained seeds, a vision-language baseline, the other three question types, and the learned engine with the dataset's own question programs as a check of the parser.
 Anything else reported in the paper is labelled as a separate analysis (the evidence audit, the explanatory but-for test and the key-consistency check).
 
 \paragraph{History of the sets.}
@@ -134,7 +134,40 @@ total & & 43,460 \\
 The base model was trained for 30 epochs on the tracks of 11,182 training videos with a rollout loss whose horizon grew from 3 to 20 frames (AdamW, learning rate $10^{-3}$, batch 16, gradient clipping at 1.0; 5.2 hours).
 The final model was fine-tuned for 4 epochs at horizon 20 with voxel contacts inside the rollout (learning rate $3 \times 10^{-4}$; 2.9 hours), keeping the epoch with the lowest validation rollout error.
 Object radii are measured from the masks and kept fixed.
-The two seeds repeat the fine-tune; both were stopped after two of four epochs by a power loss, and in both the best epoch was the first, as in the original run.
+Six seeds repeat the fine-tune. Seeds 1 and 2 were stopped after two of four epochs by a power loss, and in both the best epoch was the first, as in the original run; seeds 3 to 6 ran all four epochs on a free hosted CPU session and their best epochs were the fourth, second, third and third.
+Their validation rollout errors at 20 frames are 0.0214, 0.0253, 0.0231 and 0.0239 against the released model's 0.0230, but the trainer draws its validation windows from the seed, so these are not measured on identical windows; relative to its own starting point seed 3 improves 22\% where the released model improved 13\%.
+Across the five checkpoints that have a validation number the correlation between rollout error and options correct is $-0.76$, with the benchmark spanning 0.5 points while the rollout error spans 18\%.
+The seven checkpoints of this recipe score $90.3 \pm 0.2$ per option and $71.8 \pm 0.6$ per question.
+
+\paragraph{Vision-language baseline.}
+We also asked a general vision-language model the same options, to see what the task looks like to a system that watches the video and answers from what it sees.
+Qwen2.5-VL-7B-Instruct receives 16 frames spread evenly over the clip and the list of events, and is asked whether each event happens once the named object is removed; decoding is greedy, and the polarity of questions that ask which event will \emph{not} happen is applied when scoring, so the number does not depend on how the model handles negation.
+The same run was repeated with the frames withheld.
+
+\begin{table}[h]
+\caption{A vision-language model on the 3,332 options of TEST-A, options / questions correct (\%), with the two policies that ignore the question and the engine for reference. The last column is how often the model answers that an event happens.}
+\label{tab:vlm}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+System & Option & Question & Says yes \\
+\midrule
+answer ``no'' to every event & 54.1 & 0.0 & 0 \\
+Qwen2.5-VL-7B, 16 frames & 54.4 & 2.9 & 9 \\
+Qwen2.5-VL-7B, no frames & 48.8 & 4.2 & 78 \\
+answer ``yes'' to every event & 45.9 & 2.6 & 100 \\
+\midrule
+\sys{}, learned model & 89.9 & 70.8 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+With the frames the model is indistinguishable from never predicting a collision (54.4 against 54.1), and it is 35 points below the engine on the same options (paired: the engine is right where the model is wrong 1,362 times, the reverse 177 times, $z = -30.2$).
+It answers ``no'' to every event of 86\% of questions when it sees the frames and ``yes'' to every event of 70\% of them when it does not, so what changes its answer is whether images are present rather than which object was removed.
+Two of 1,859 replies could not be read and were counted as ``no''.
+This is a baseline and not a fair comparison with the published systems: it is one prompt of one open model with no fine-tuning on this dataset, and a system built around such a model could do better.
+It does say that the frames alone, read by a strong general model, do not answer these questions.
 
 \paragraph{Textbook laws.}
 Fitted on training tracks: cubes and cylinders slide with a constant deceleration of 0.00008 per frame; spheres roll and lose 0.3\% (metal) or 0.2\% (rubber) of their speed per frame; collisions apply an impulse along the line of centres with restitution 0.2, a metal to rubber mass ratio of 1.00 and contact friction 0.05.
@@ -420,8 +453,12 @@ no learned pair energy & 90.5 / 72.2 ($+1.3$) & 91.0 / 74.1 ($+3.0$) & 90.8 / 73
 no learned friction & 90.9 / 73.2 ($+2.1$) & 90.3 / 71.7 ($-0.9$) & 90.5 / 72.2 ($+0.6$) \\
 no entry correction & 90.3 / 71.3 ($+0.8$) & 90.4 / 72.4 ($-2.2$) & 90.3 / 72.0 ($-1.3$) \\
 \midrule
-seed 1 & 90.3 / 71.6 ($+0.5$) & 90.6 / 72.8 ($+0.6$) & 90.5 / 72.4 ($+0.8$) \\
-seed 2 & 90.1 / 71.0 ($-0.5$) & 90.1 / 71.5 ($-2.4$) & 90.1 / 71.3 ($-2.2$) \\
+seed 1 (2 of 4 epochs) & 90.3 / 71.6 ($+0.5$) & 90.6 / 72.8 ($+0.6$) & 90.5 / 72.4 ($+0.8$) \\
+seed 2 (2 of 4 epochs) & 90.1 / 71.0 ($-0.5$) & 90.1 / 71.5 ($-2.4$) & 90.1 / 71.3 ($-2.2$) \\
+seed 3 & 90.3 / 71.3 & 90.6 / 73.0 & 90.5 / 72.4 ($+0.9$) \\
+seed 4 & 90.1 / 71.1 & 90.2 / 71.9 & 90.2 / 71.6 ($-1.6$) \\
+seed 5 & 90.3 / 71.0 & 90.4 / 72.6 & 90.4 / 72.0 ($-0.5$) \\
+seed 6 & 90.2 / 71.0 & 89.9 / 70.8 & 90.0 / 70.8 ($-2.6$) \\
 \bottomrule
 \end{tabular}
 \end{table}
