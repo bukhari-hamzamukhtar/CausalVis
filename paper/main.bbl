@@ -1,4 +1,4 @@
-\begin{thebibliography}{56}
+\begin{thebibliography}{59}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -260,6 +260,14 @@ Bingyi Kang, Yang Yue, Rui Lu, Zhijie Lin, Yang Zhao, Kaixin Wang, Gao Huang,
   perspective.
 \newblock In \emph{International Conference on Machine Learning (ICML)}, 2025.
 
+\bibitem[Kao et~al.(2026)Kao, Huynh, Wang, Vesdapunt, Stojanov, Hariharan,
+  Obiednikov, and Zhou]{kao2026dynamics}
+Chia-Hsiang Kao, Cong~Phuoc Huynh, Chien-Yi Wang, Noranart Vesdapunt, Stefan
+  Stojanov, Bharath Hariharan, Oleksandr Obiednikov, and Ning Zhou.
+\newblock Dynamics: Language-based representation for inferring rigid-body
+  dynamics from videos.
+\newblock \emph{arXiv preprint arXiv:2605.20576}, 2026.
+
 \bibitem[Krojer et~al.(2025)Krojer, Komeili, Ross, Garrido, Sinha, Ballas, and
   Assran]{krojer2025mvp}
 Benno Krojer, Mojtaba Komeili, Candace Ross, Quentin Garrido, Koustuv Sinha,
@@ -393,6 +401,14 @@ Hsiao-Yu~Fish Tung, Mingyu Ding, Zhenfang Chen, Daniel~M. Bear, Chuang Gan,
 \newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS),
   Datasets and Benchmarks Track}, 2023.
 
+\bibitem[Wang et~al.(2026)Wang, Huang, Liu, Chen, Sun, Gu, Zhou, Liu, and
+  Cui]{wang2026moshwm}
+Zhekai Wang, Haoxiang Huang, Xiang Liu, Zhikang Chen, Yueqing Sun, Qi~Gu, Shiji
+  Zhou, Miao Liu, and Sen Cui.
+\newblock Mosh-wm: Mask-grounded soft-hamiltonian dynamics for object-centric
+  world models.
+\newblock \emph{arXiv preprint arXiv:2608.22750}, 2026.
+
 \bibitem[Wu et~al.(2015)Wu, Yildirim, Lim, Freeman, and
   Tenenbaum]{wu2015galileo}
 Jiajun Wu, Ilker Yildirim, Joseph~J. Lim, William~T. Freeman, and Joshua~B.
@@ -416,6 +432,14 @@ Ziyi Wu, Nikita Dvornik, Klaus Greff, Thomas Kipf, and Animesh Garg.
   object-centric models.
 \newblock In \emph{International Conference on Learning Representations
   (ICLR)}, 2023.
+
+\bibitem[Yang et~al.(2026)Yang, Zeng, Zhao, Xu, He, Li, Deng, Fan, and
+  Wang]{yang2026physmind}
+Chen Yang, Shenxiang Zeng, Haoyang Zhao, Zhouyuan Xu, Youquan He, Haoyu Li,
+  Mingyi Deng, Jiansheng Fan, and Chen Wang.
+\newblock Physmind: From video to executable worlds for training-free physical
+  reasoning.
+\newblock \emph{arXiv preprint arXiv:2608.04575}, 2026.
 
 \bibitem[Yi et~al.(2020)Yi, Gan, Li, Kohli, Wu, Torralba, and
   Tenenbaum]{yi2020clevrer}

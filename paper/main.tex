@@ -115,13 +115,15 @@ NS-DR~\cite{yi2020clevrer} and DCL~\cite{chen2021dcl} execute question programs 
 VRDP~\cite{ding2021vrdp} fits a differentiable rigid-body simulator to each video, ALOE~\cite{ding2021aloe} answers with a transformer over object embeddings, and SlotFormer~\cite{wu2023slotformer} rolls object slots forward for predictive questions.
 CRCG~\cite{ishay2024crcg} keeps unaffected objects on their perceived states and simulates only the objects an intervention reaches, which raised VRDP from 94.8\% to 96.1\% per option.
 Rovai~\cite{rovai2026eventgraph} replays the annotated event log without the removed object and notes that new collisions caused by a removal need a simulator.
+Concurrently, PhysMind~\cite{yang2026physmind} builds one reusable executable world per video from segmentation, meshes and 6D pose, fits analytic dynamics to it and then inspects, continues or edits that world to answer a question, without training; it reports a 38.2 point gain over chain-of-thought prompting of the same vision-language model on CLEVRER.
+We share the one-world-per-video design and the separation of perception from answering, and differ in what we do with it: our simulator is interchangeable, and we use the engine to measure how much of the benchmark score the physics explains.
 Beyond CLEVRER, ComPhy~\cite{chen2022comphy} adds hidden mass and charge, CoPhy~\cite{baradel2020cophy,janny2022filtered} asks for counterfactual trajectories under hidden confounders, and CLEVRER-Humans~\cite{mao2022clevrerhumans} collects human causal judgments.
 Other benchmarks test causal consistency~\cite{ates2022craft,foss2025causalvqa,begiristain2026cronos} or physical prediction~\cite{bear2021physion,tung2023physionpp,bordes2025intphys2}; Melnik \etal~\cite{melnik2023benchmarks} survey them.
 
 \paragraph{Learned physical simulators.}
 Graph-based simulators learn pairwise messages or forces~\cite{battaglia2016interaction,li2019propnet,sanchez2020gns}.
-Energy-based networks conserve energy by construction~\cite{greydanus2019hnn,cranmer2020lnn,sanchez2019hgn}, which makes friction and contact hard to represent~\cite{sosanya2022dissipative,gruver2022deconstructing}; built-in momentum conservation reduces long-horizon error~\cite{sharma2026dynamical} and contact-aware models handle rigid bodies~\cite{allen2023fignet}.
-Inverse graphics recovers physical state by matching a renderer to images~\cite{wu2015galileo,wu2017deanimation}.
+Energy-based networks conserve energy by construction~\cite{greydanus2019hnn,cranmer2020lnn,sanchez2019hgn,wang2026moshwm}, which makes friction and contact hard to represent~\cite{sosanya2022dissipative,gruver2022deconstructing}; built-in momentum conservation reduces long-horizon error~\cite{sharma2026dynamical} and contact-aware models handle rigid bodies~\cite{allen2023fignet}.
+Inverse graphics recovers physical state by matching a renderer to images~\cite{wu2015galileo,wu2017deanimation}, and recent work reads rigid-body state and material out of video with a vision-language model~\cite{kao2026dynamics}.
 Our learned simulator follows the energy-based line and adds friction by operator splitting~\cite{hairer2006geometric}.
 
 \paragraph{Auditing benchmarks and answers.}

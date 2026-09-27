@@ -451,8 +451,7 @@ def fig5():
     b.set_xticks([-15, -10, -5, 0, 5, 10, 15])
     b.set_xticklabels(["\u2264\u221215", "\u221210", "\u22125", "0", "5", "10", "\u226515"], fontsize=6.5)
     b.set_yticks([0, 250, 500, 750]); b.tick_params(axis="y", labelsize=6.5)
-    b.set_xlabel("detected \u2212 annotated contact\n(frames; negative = earlier)",
-                 fontsize=6.5, labelpad=1, linespacing=1.2)
+    b.set_xlabel("frames before or after the annotated contact", fontsize=6.2, labelpad=2)
     b.set_ylabel("answers", fontsize=7)
     tidy(b)
     b.text(0.6, 880, "annotated\ncontact", fontsize=6, ha="left", va="top", linespacing=1.15)
