@@ -20,6 +20,7 @@
 \usepackage{multirow}
 \usepackage{xcolor}
 \usepackage[hidelinks]{hyperref}
+\def\UrlBreaks{\do\/\do-}
 \usepackage[capitalize]{cleveref}
 \providecommand{\etal}{et al.}
 
@@ -58,6 +59,7 @@ Across 13 simulators, a 2.2$\times$ range in rollout error moves the counterfact
 Two choices that involve no physics matter more: when objects are handed to the simulator (1.2 points) and whether the simulation continues past the end of the video (4.6 points).
 Of the correct answers that can be checked against the annotation, 98.2\% rest on a real recorded event.
 We also find that CLEVRER's ``responsible'' labels contradict its own counterfactual answers in 35\% of cases, while a counterfactual test agrees better with human judgments.
+Code, checkpoints and the per-answer records of every reported run are at {\small \url{https://github.com/bukhari-hamzamukhtar/CausalVis}}.
 Our study suggests that counterfactual video benchmarks should report the evidence behind each answer alongside its accuracy.
 \end{abstract}
 
@@ -431,6 +433,13 @@ We presented \sys{}, a counterfactual engine that answers by intervention and si
 Used as an instrument, it shows that CLEVRER's counterfactual score depends little on physical accuracy and much on when simulation starts and how long it runs, and that CLEVRER's causal labels follow a rule that people do not use.
 For the answers we could check, the evidence was real in 98.2\% of cases.
 We suggest that benchmarks for counterfactual reasoning report, next to accuracy, the share of answers that are decided by physics and the share whose evidence is valid.
+
+\ifanon\else
+% =====================================================================================
+\section*{Acknowledgements}
+% Name anyone who gave feedback on the paper here, then uncomment the line.
+% I thank NAME (AFFILIATION) for comments on an earlier draft.
+\fi
 
 {\small
 \IfFileExists{ieeenat_fullname.bst}{\bibliographystyle{ieeenat_fullname}}{\bibliographystyle{plainnat}}
