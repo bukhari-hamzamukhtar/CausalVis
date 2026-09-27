@@ -1,6 +1,6 @@
 # Paper preparation: everything to finish before writing
 
-Started 2026-09-18. Review page: https://claude.ai/artifact/8eLGgw5iwuvCh2kLdRFRU1
+Started 2026-09-18.
 
 ## Evaluation sets
 | name   | videos | counterfactual q | role |
@@ -32,8 +32,8 @@ val_entry (104/104). Old no-sim records predate the kick detectors -> no-sim rer
 | A8 | question parser qparser.py (TRAIN templates): val exact-match CF 100%, predictive 100%, explanatory 99.995%, descriptive 99.80% | done |
 | B1 | executor.py (official NS-DR semantics) + eval_qtypes.py + score_qtypes.py; smoke test OK | done (TEST A+B) |
 | C1 | downloads approved 2026-09-18. CLEVRER-Humans: humans.py (LLM grounding + trace / but-for), grounding running. ComPhy: annotations downloading. CoPhy: 18 GB downloading to C:/cophy_dl (slow) | done (CLEVRER-Humans, ComPhy val, CoPhy BallsCF) |
-| D1 | REPRODUCE.md written; pushing the code is Hamza's call | partly |
-| D2 | CLEVRER authors: Hamza emailed twice, four months apart, no reply. DROPPED; the paper states that the server is closed and that requests went unanswered | closed |
+| D1 | REPRODUCE.md written; pushing the code was a later decision | partly |
+| D2 | CLEVRER authors: emailed twice, four months apart, no reply. DROPPED; the paper states that the server is closed and that requests went unanswered | closed |
 | E1 | evidence audit of CLEVRER answers (audit_traces.py): 98.2% of checkable correct answers rest on a real event | done |
 | E2 | explanatory questions by the but-for test (butfor_explanatory.py): 77.7% vs chain rule 88.4% on TEST A+B | done |
 | E3 | model-free key consistency (key_consistency.py): "responsible" contradicts CLEVRER's own counterfactual key in 35.3% of cases; pair collides once in the video in all 113, same collision in >= 56 | done |
@@ -41,6 +41,6 @@ val_entry (104/104). Old no-sim records predate the kick detectors -> no-sim rer
 | F1 | FIGURES.md: every figure specified; data in figures/data, renders in figures/src | done |
 | F2 | SETTINGS.md, VENUES.md, LIMITATIONS_IMPACT.md, README.md, .gitignore release rules | done (nothing committed) |
 | F3 | clean single-process runtime: learned 2.24 s, laws 1.36 s per question | done |
-| W1 | paper draft: paper/main.tex, supp.tex, refs.bib (57 verified refs) | done; figures pending (Hamza) |
-| F4 | figures drawn (Hamza's drafts -> paper_exp/figures/make_figures.py, data-driven); 9 vector PDFs in paper/figures | done |
+| W1 | paper draft: paper/main.tex, supp.tex, refs.bib (57 verified refs) | done; figures pending |
+| F4 | figures drawn (hand drafts -> paper_exp/figures/make_figures.py, data-driven); 9 vector PDFs in paper/figures | done |
 | F5 | MiKTeX installed on this laptop; main.pdf (8 pages + references) and supp.pdf (8 pages) compile clean | done |

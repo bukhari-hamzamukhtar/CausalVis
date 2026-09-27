@@ -20,6 +20,6 @@ Kind regards,
 Hamza Mukhtar Bukhari
 GIK Institute of Engineering Sciences and Technology
 
-(2026-09-20) DROPPED. Hamza emailed the CLEVRER authors twice, four months ago, and received no
+(2026-09-20) DROPPED. The CLEVRER authors were emailed twice, four months ago, with no
 reply. The paper reports our own splits and says that the server is closed and the organisers did
 not answer. Kept only as a record.

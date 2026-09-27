@@ -1,4 +1,4 @@
-# CausalVis — project context
+# CausalVis — working log
 
 ## What this is
 A physics-structured world model that answers CLEVRER counterfactual questions
@@ -283,7 +283,7 @@ would overclaim end-to-end impact.
 ## v5: THE HONEST BENCHMARK NUMBER (2026-09-09)
 `v5/evaluate.py` enforces one rule: ground truth is INITIAL CONDITIONS only,
 never an answer. The light cone survives only to choose WHEN each simulation
-starts (a few frames before the event, from a true state -- the design Hamza
+starts (a few frames before the event, from a true state -- the design I
 specified in July). Every pair a question asks about is simulated.
 
 | evaluator                              | per-choice | model-decided share |
@@ -432,10 +432,9 @@ three changes in one run.)
 - a defect found on one line usually exists in several places: scan the whole
   file for the pattern, not just the crashing line
 
-## Working style
-Plain English, no publication framing, honest caveats stated openly. Complete
-verified files rather than snippets. Measure before and after every change.
-Show the current code and explain what it does before changing it — the last
+## Practices this log follows
+Plain English, no publication framing, caveats stated openly. Measure before and
+after every change. Read the current code before changing it: the last wrong
 diagnosis survived three weeks because nobody opened the training loop.
 
 
@@ -585,7 +584,7 @@ and a slightly lower benchmark score -- pick by which you need to defend.
 
 
 ## v6: VOXEL CONTACT RESOLUTION (2026-09-10) -- correct, practical, invisible
-Hamza's design: put an origin in the scene, lay a 3D grid over it, record which
+The design: put an origin in the scene, lay a 3D grid over it, record which
 object presses which voxels each frame. Contact is where the pressed sets meet;
 the normal comes from the pressed geometry; the velocity splits along it.
 
@@ -789,7 +788,7 @@ Grid for A (per-choice): rule 80.0 (+0) -> 84.6 (+30); cal 84.8 (+0) -> 89.0
 78.4-83.2. Extension past the video end is worth ~4 points; past +30 false
 positives start to cost. The voxel sensor at MEASURED size still trails the
 calibrated rule by ~6 points -- the reconstruction is ~20% small.
-Strict (Hamza's "initial conditions only") loses 24 points: long free
+Strict ("initial conditions only") loses 24 points: long free
 rollouts drift. Following the recording until the removal can reach an object
 is causality, not a crutch, and is what makes the difference.
 SELECTED ON VAL: config A, detector cal, extension +30. Test run once.
@@ -845,7 +844,7 @@ videos could not have found this (the bias is constant); contact distance can.
 VAL recorded motion, 700 clips / 1,705 annotated collisions, no model:
 - voxel sensor, surfaces sharing a voxel within +-3 frames: 25.3% -> 41.9% with
   measured sizes; within 1 voxel 34.4 -> 49.9; within 6 voxels 68.7 -> 78.5.
-- VELOCITY-CHANGE confirmation (Hamza: "a collision changes someone's path"):
+- VELOCITY-CHANGE confirmation ("a collision changes someone's path"):
   surfaces within 0.03 AND either object's velocity changes >= 0.002 nearby:
   found 84.9% with 332 made-up vs 84.5% / 407 without it; >= 0.004: 82.5% / 251.
   Logged in cf_world as detectors kick2 / kick4 (for simulated objects the
@@ -864,7 +863,7 @@ VAL, 941 q / 3391 choices, v6_voxel.pt, config A. Per-choice at +30 frames [per-
 | voxel<=1   | 67.0% [16.0]         | **74.5% [31.1]**               | 69.7% [20.9]                   |
 | voxel<=3   | 75.6% [33.6]         | 80.6% [45.5]                   | 77.9% [39.3]                   |
 | voxel<=6   | 83.0% [51.4]         | 85.2% [57.6]                   | 85.1% [57.3]                   |
-- Measured sizes make Hamza's voxel sensor far better (+7.5 at 1 voxel, +5.0 at
+- Measured sizes make the voxel sensor far better (+7.5 at 1 voxel, +5.0 at
   3) and the plain rule better (+0.8), but the best detector is still the
   generous calibrated rule on stored sizes (89.0). Not adopted; test untouched.
 - Velocity change ("a collision changes someone's path") beats the plain
@@ -1010,7 +1009,7 @@ spread within each bin (p25-p75 about 0.97-1.12) is several times larger, so
 alignment is not the main source of position error.
 
 ## v7.1 = v7 + ENTRY CORRECTION (launched 2026-09-12)
-Hamza chose to keep v7's learned world model (not v8's laws). v7_1/make_v7_1.py
+Chose to keep v7's learned world model (not v8's laws). v7_1/make_v7_1.py
 generates v7_1/cf_world.py and evaluate.py from v7 with ONE change: the entry-
 state correction (v7_1/entry_profile.json, TRAIN). Verified: fix OFF gives
 records identical to v7 (42/42); fix ON changes events on 4/42.
@@ -1031,8 +1030,8 @@ v6_voxel.pt was trained on 20-frame rollouts; in a what-if world it runs alone
 for 30-100 frames. v7_2/train_long.py fine-tunes it, three arms in parallel,
 same init / clip order / seed / lr 1e-4 / 2000-batch budget / checkpoint rule;
 ONLY the rollout-length schedule differs:
-- fixed:40-60 (my proposal) -- random length 40-60 every batch
-- curriculum:40,50,60,70,80 (Hamza's) -- next length only when val error over
+- fixed:40-60 -- random length 40-60 every batch
+- curriculum:40,50,60,70,80 -- next length only when val error over
   frames 1-H fails to improve by 1% for 2 checks in a row (or 400 batches);
   stops when 80 stops improving
 - fixed:20-20 -- control, isolates "trained more" from "trained longer"
@@ -1075,7 +1074,7 @@ training objectives and five physics fixes left the benchmark flat. Do not
 re-run horizon/curriculum fine-tunes of this model.
 
 ## APP: GENERAL WHAT-IF REQUESTS + A 3D VIEW THE USER TURNS (2026-09-12)
-Hamza: removal-only is too narrow, and a fixed menu of change types is too
+Removal-only is too narrow, and a fixed menu of change types is too
 ("it shouldnt be limited to js this, thats the whole purpose of kinda generalised
 model"). The GIFs must not auto-rotate; the user turns the view.
 
@@ -1165,7 +1164,7 @@ The LM's plan for the same sentence varies between runs; the resolver's guards
 stable, not the prompt alone.
 
 ## TEMPORAL-GNN IDEA ON CLEVRER: CEILING PROBE SAYS NO (2026-09-14)
-Hamza proposed reusing the jet project's temporal graph network
+Considered reusing the jet project's temporal graph network
 (Desktop/DNN/neural_evasion, V3 pilot) on CLEVRER. Context from DNN/crosstest/
 CROSSTEST.md, all inside our own what-if builder, TEST: jet world model = straight
 lines 86.8% options / 64.4% questions; learned v7 88.1% / 66.6% (z = 2.79 vs straight
@@ -1188,7 +1187,7 @@ Answer added to presentation/CausalVis_Presentation_Explainer.docx section 5.
 v7_3/make_v7_3.py generates cf_world/evaluate from v7_1 with two env knobs, both off
 by default (records identical to v7.1 with them off: 19/19). PHYS_RADIUS_SCALE scales
 only the physics radius; CF_LOOKBACK replaces the 12-frame hand-off look-ahead.
-Detector sizes question (Hamza: "use one size for both"), all VAL, 3,387 options:
+Detector sizes question ("use one size for both"), all VAL, 3,387 options:
 - detector at the model's size (x1.0): 84.9% [55.3] (TEST 84.7 / 55.8) -- much worse
 - physics at the detector's size (x1.2, no retrain): 89.1% [67.4] vs 89.2% [67.8] -- tie
 - exact sizes only for simulated pairs / voxel gating / 2-of-3 votes: all worse
@@ -1214,7 +1213,7 @@ The learned world model now beats the v8 law engine on test (89.4 / 69.8; +entry
 The app (app/server.py) still serves v7.1 (lookback 12, cal) until switched.
 
 ## UNCERTAINTY-AWARE HYBRID DETECTOR -- tested, NOT adopted (2026-09-18)
-Hamza: combine the strict voxel check (VAL invented 65) with the union's low missed.
+Idea: combine the strict voxel check (VAL invented 65) with the union's low missed.
 Idea tested: node memory = frames each object has been simulated; a simulated pair's
 candidate hit counts only if its voxel gap <= g0 + k * (summed simulated age), else
 the distance rule / path change as in v7.3. Offline on v7.3 VAL records (lookback 3),
@@ -1235,7 +1234,7 @@ merged. Verified: the app's answers equal the evaluated v7.3 VAL records on 33/3
 options across 10 worlds.
 
 ## PAPER READINESS + LITERATURE CHECK (2026-09-18)
-Full review: https://claude.ai/artifact/8eLGgw5iwuvCh2kLdRFRU1 (private). Key facts for any paper:
+Full literature review, kept out of the repository. Key facts for any paper:
 - PRIOR ART: CRCG (Ishay et al., WACV 2024, arXiv 2506.10753) already keeps unaffected objects on
   their perceived states and simulates only reached objects from the first affected frame (+ new
   collisions from simulated objects). That is v7's core idea -> cite it; our part is the hand-off
@@ -1299,8 +1298,8 @@ Everything below uses paper_exp/ (single generated builder, PREREGISTRATION.md, 
   vs chain 60.9): CLEVRER's "responsible" is chain ancestry, not counterfactual dependence.
   Caveat: the counterfactual answer does not say when the pair collides.
 - CoPhy BallsCF event audit (+-1 step, same pair): 2 balls P 0.85 / R 0.65; 4 balls 0.61 / 0.49.
-- Figures fully specified in paper_exp/FIGURES.md (data in paper_exp/figures/data). Hamza draws
-  them. Venue order in paper_exp/VENUES.md (arXiv -> CVPR 2027 -> NeurIPS 2027 E&D -> TMLR).
+- Figures fully specified in paper_exp/FIGURES.md (data in paper_exp/figures/data). Drawn
+  by hand. Venue order in paper_exp/VENUES.md (arXiv -> CVPR 2027 -> NeurIPS 2027 E&D -> TMLR).
 - (2026-09-20) Key-consistency caveat checked: in all 113 "responsible, yet still collides"
   cases the pair collides once in the video; engine world without Z collides within 10 frames
   of it in 56. ComPhy predictive evidence audit: 97.7% of correct answers rest on a real future
@@ -1309,7 +1308,7 @@ Everything below uses paper_exp/ (single generated builder, PREREGISTRATION.md, 
   question. Paper draft in paper/ (main.tex, supp.tex, refs.bib); all numbers final.
 
 ## PUBLIC RELEASE (2026-09-25)
-Pushed to https://github.com/bukhari-hamzamukhtar/CausalVis on top of the layout Hamza had
+Pushed to https://github.com/bukhari-hamzamukhtar/CausalVis on top of the layout already
 made there (legacy/v1, legacy/v2, legacy/v3, v3_2/src). Three commits add the new work:
 the engine (src2, v4 to v8, probe, checkpoints, splits, camera), the paper experiments
 (paper_exp, including records/test_records.zip with one line per answered option of every

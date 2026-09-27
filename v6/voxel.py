@@ -2,7 +2,7 @@
 v6/voxel.py  —  the scene as a 3D coordinate space, every voxel addressable
 ============================================================================
 
-THE IDEA (Hamza's, and it is the right one)
+THE IDEA
 -------------------------------------------
 Stop describing objects by a centre and a radius. Put an ORIGIN in the scene,
 lay a 3D grid over it so every point in space has a coordinate, and record

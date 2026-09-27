@@ -1,6 +1,6 @@
 # Where to submit, cheapest first (rewritten 20 September 2026)
 
-Hamza cannot pay publication or travel costs, so cost decides the order. One venue at a time
+Publication and travel costs cannot be paid, so cost decides the order. One venue at a time
 (no dual submission). An arXiv preprint is allowed alongside all of them.
 
 ## What each kind of venue actually costs

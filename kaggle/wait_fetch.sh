@@ -7,8 +7,8 @@
 # from ~/.kaggle, so no token appears here.
 NAME=$1
 DEST=${2:-/g/CausalVis/kaggle/outputs/$NAME}
-USER=bukharihamzamukhtar
-K=$(command -v kaggle || echo "/c/Users/Hamza Bukhari/AppData/Roaming/Python/Python314/Scripts/kaggle.exe")
+USER=${KAGGLE_USER:-bukharihamzamukhtar}
+K=${KAGGLE:-kaggle}      # set KAGGLE if the command is not on the PATH
 SLUG="$USER/$NAME"
 
 while true; do

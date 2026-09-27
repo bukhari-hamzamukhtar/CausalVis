@@ -4,7 +4,7 @@ Every number below comes from a file in `paper_exp/figures/data/` or `paper_exp/
 If a number here and a file ever disagree, the file wins; tell me and I fix this document.
 
 **STATUS (20 Sep 2026): the figures are drawn and are in `paper/figures/*.pdf`.**
-Hamza drew the first version by hand; this specification and those drafts were then turned into
+The first version of each figure was drawn by hand; this specification and those drafts were then turned into
 `paper_exp/figures/make_figures.py`, which reads the data files and writes every figure, so a
 figure cannot disagree with the tables. Redraw them all with:
 

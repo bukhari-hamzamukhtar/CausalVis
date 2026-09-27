@@ -1,5 +1,5 @@
 # Chat and temporary files
-claude_chat*.txt
+*chat*.txt
 
 # Python
 __pycache__/
@@ -62,7 +62,7 @@ Thumbs.db
 *.zip
 *.tar.gz
 
-# Local virtualenv created by the assistant for reproducible runs
+# Local virtualenv for reproducible runs
 .venv39/
 
 # Model and dataset binaries (do not commit large .pt checkpoints)
@@ -144,3 +144,6 @@ vlm_baseline/questions_*.json.truth.json
 # LaTeX build files (the .bbl and .blg the paper needs are tracked explicitly)
 paper/*.aux
 paper/*.out
+
+# local pointer to WORKING_LOG.md for the editor, not part of the project
+CLAUDE.md

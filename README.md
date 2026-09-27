@@ -57,7 +57,7 @@ Python 3.10 or newer, PyTorch (CPU build), NumPy, Pillow.
 | `v5/` to `v8/` | the versions of the engine, in order, each with its own README notes |
 | `probe/` | measurement scripts (shadow replay, fitted laws, entry-state study) |
 | `legacy/`, `src/` | the first two generations of the project, kept for the record |
-| `CLAUDE.md` | the working log: every experiment, including the ones that failed |
+| `WORKING_LOG.md` | the working log: every experiment, including the ones that failed |
 
 Model checkpoints sit in the repository root. `v6_voxel.pt` is the one used in the paper.
 `v8/laws.json` holds the fitted textbook laws, `camera_fit.json` the camera recovered from object

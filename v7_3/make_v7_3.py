@@ -11,7 +11,7 @@ PHYS_RADIUS_SCALE  (default 1.0)
     contact distance, the voxel contact shells, the inertia) and nothing else.
     The collision detector keeps reading the stored sizes. With 1.2, the physics
     uses the same enlarged size the calibrated detector already uses, so the two
-    finally agree: the question Hamza asked ("one size for both").
+    finally agree: the question was "one size for both".
 
 CF_LOOKBACK  (default 12)
     How many frames before an expected, no-longer-valid recorded contact an object

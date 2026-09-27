@@ -8,8 +8,8 @@
 # The token is read from the environment only, so it never lands in a file here.
 NAME=$1
 T=${2:-43200}
-USER=bukharihamzamukhtar
-K=$(command -v kaggle || echo "/c/Users/Hamza Bukhari/AppData/Roaming/Python/Python314/Scripts/kaggle.exe")
+USER=${KAGGLE_USER:-bukharihamzamukhtar}
+K=${KAGGLE:-kaggle}      # set KAGGLE if the command is not on the PATH
 BUILD="/g/CausalVis/kaggle/build/kernels/$NAME"
 DEST="/g/CausalVis/kaggle/outputs/$NAME"
 SLUG="$USER/$NAME"

@@ -394,7 +394,7 @@ and a slightly lower benchmark score -- pick by which you need to defend.
 
 
 ## v6: VOXEL CONTACT RESOLUTION (2026-09-10) -- correct, practical, invisible
-Hamza's design: put an origin in the scene, lay a 3D grid over it, record which
+The design: put an origin in the scene, lay a 3D grid over it, record which
 object presses which voxels each frame. Contact is where the pressed sets meet;
 the normal comes from the pressed geometry; the velocity splits along it.
 
