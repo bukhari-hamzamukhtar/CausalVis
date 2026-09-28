@@ -214,7 +214,9 @@ Programs come from templates learned on training questions, which reproduce the 
 \paragraph{Splits.}
 CLEVRER's test server closed on 16 January 2026 and our requests to the organisers went unanswered, so the answers of its test set are not available to us.
 Before any experiment we fixed a split of the 15,000 videos that have answers.
-TEST-A holds 500 CLEVRER validation videos (930 counterfactual questions, 3,332 options) and TEST-B holds 898 CLEVRER training videos that no model was trained on (1,689 questions, 6,018 options).
+TEST-A holds 500 CLEVRER validation videos (930 counterfactual questions, 3,332 options) and TEST-B holds 898 CLEVRER training videos that we trained nothing on (1,689 questions, 6,018 options).
+One caveat belongs here rather than in a footnote: our perception reads NS-DR's detector, which its authors trained on CLEVRER training videos, so TEST-B is held out for our engine and its world model but not for that detector.
+The two sets score within 0.3 points of each other throughout, which is what we would expect if this did not decide anything, and TEST-A carries no such caveat.
 VAL-A holds another 500 validation videos (941 questions, 3,391 options) and is used for every choice of setting.
 The world model and the laws were fitted on 11,182 other training videos.
 
@@ -293,6 +295,7 @@ Straight lines have 1.8 times the rollout error of the learned model and score o
 Earlier checkpoints of the learned model range from 89.2\% to 90.9\%, a spread as large as most changes of simulator.
 On predictive questions the relation reverses (\cref{fig:audit}b): straight lines answer 91.4\% of options and the laws, which have the lowest rollout error, answer 88.1\% ($z=-3.8$ against the learned model).
 A physical simulator therefore does not guarantee a better score on either question type.
+The claim is about accuracy above a low bar and not about physics as a whole: removing the simulation entirely costs 9.0 points per option, while making it 2.2 times more accurate buys at most 2.2.
 The reason is visible in the answers themselves.
 The four simulators give the same answer on 91.4\% of the 9,350 counterfactual options, although at least one asked object is simulated before the video ends on 47.8\% of them.
 Every difference between simulators comes from the remaining 8.6\%, and there the laws are right on 67.5\% of options, the learned model on 55.7\% and straight lines on 47.0\%.
@@ -446,6 +449,11 @@ We suggest that benchmarks for counterfactual reasoning report, next to accuracy
 I thank Dr. Khurram Khan Jadoon, Faculty of Computer Science and Engineering, Ghulam Ishaq Khan Institute of Engineering Sciences and Technology, who supervised the research internship from which this work grew.
 His regular review of the design decisions, the results and the failure analyses set the direction the project took, and the standard he held for what a measurement has to show before it is believed is the habit this paper is built on.
 I am grateful for his reading of a draft.
+
+\paragraph{Use of AI assistance.}
+An AI coding assistant was used for implementation support and for language editing of this manuscript: writing and refactoring code to a specification, drafting documentation, organising bibliographic records, and polishing prose.
+The research question, the experimental design, the pre-registration, the choice of what to measure and the reading of every result are the author's own, and every number reported here was produced by code in the public repository and checked against the records deposited with it.
+No text, citation or result was accepted without verification: each reference was checked against arXiv, Crossref or OpenAlex, and each claim traced to the run that produced it.
 \fi
 
 {\small
