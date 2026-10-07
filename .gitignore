@@ -159,3 +159,12 @@ paper/*.out
 paper/*.log
 
 paper/tmlr/
+
+paper/workshop/*.pdf
+paper/workshop/*.aux
+paper/workshop/*.log
+paper/workshop/*.out
+paper/workshop/*.bbl
+paper/workshop/*.blg
+paper/workshop/refs.bib
+paper/workshop/figures/

@@ -1,0 +1,213 @@
+% CoRL 2026 Workshop PhysWM, 4 pages excluding references, double anonymous, non-archival.
+% The workshop encourages the CoRL template; its 2026 style file is not publicly
+% downloadable, so this uses a neutral single-column layout of the same family.
+\documentclass[10pt,letterpaper]{article}
+
+\usepackage[letterpaper,top=1in,bottom=1in,left=1.25in,right=1.25in]{geometry}
+\usepackage{times}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalize]{cleveref}
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{1.1ex plus .2ex}{0.7ex}
+\titlespacing*{\paragraph}{0pt}{0.8ex}{1em}
+\setlength{\parskip}{0pt}
+\providecommand{\etal}{et al.}
+\newcommand{\sys}{the engine}
+
+\title{\vspace{-3.5ex}A Benchmark That Cannot See Its Own Physics:\\
+Measuring What Counterfactual Video Scores Actually Reward\vspace{-1ex}}
+\author{Anonymous submission\vspace{-2ex}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+A world model is useful for control only if it gets the physics right, so we need benchmarks
+that reward physical accuracy rather than plausible-looking output. We test whether the most
+widely used counterfactual video benchmark does. We build an engine that answers CLEVRER's
+counterfactual questions by intervention, with the simulator as a swappable component, and
+run 13 simulators through it on 1,398 held-out videos. A 2.2$\times$ spread in rollout error
+moves the benchmark score by 2.2 points, straight-line motion scores within 0.75 points of a
+learned world model, and on predictive questions the ordering reverses: the most accurate
+simulator scores lowest. What does move the score is evaluation logic that contains no
+physics at all, worth up to 4.6 points. Physics as a whole matters, since removing simulation
+costs 9.0 points, but accuracy above a low bar buys almost nothing. We argue that a benchmark
+meant to verify a world model must report, next to accuracy, the share of decisions the
+simulator actually made and the share whose evidence is valid, and we show both are
+measurable.
+\end{abstract}
+
+\vspace{-1ex}
+\section{The problem this measures}
+\vspace{-0.5ex}
+
+This workshop asks what benchmarks can verify that a world model is control-useful rather
+than only visually convincing. The question presumes that current benchmarks reward physical
+accuracy. We tested that presumption on CLEVRER~\cite{yi2020clevrer}, the most used benchmark
+for counterfactual physical reasoning, and found that its counterfactual score is nearly
+blind to the accuracy of the simulator that produces the answers.
+
+The result matters beyond one dataset. Counterfactual and predictive questions reduce a
+continuous trajectory to a discrete outcome: did these two objects touch? A yes-or-no outcome
+changes only when a trajectory error moves a pair across the contact distance. Everywhere
+else, halving the error changes nothing that is scored. Manipulation benchmarks that grade
+task success share this structure, so the measurement we report is a property of outcome-
+scored evaluation, not of CLEVRER alone.
+
+\vspace{-0.5ex}
+\section{An engine with the simulator as a variable}
+\vspace{-0.5ex}
+
+To attribute a score to the simulator, everything else must be held fixed. Our engine answers
+a counterfactual with the three steps of an intervention~\cite{pearl2009causality}: the
+recording plays the role of abduction, the edit is the action, and prediction is a
+simulation. Every object follows its recorded path until the intervention can reach it, then
+is handed to a simulator a few frames before it would lose a recorded contact, and the world
+runs on past the end of the video. The engine returns the event that decided each answer: the
+two objects, the frame, and whether it was recorded or simulated. It is never trained on
+questions or answers. Simulating only the objects an intervention affects follows
+CRCG~\cite{ishay2024crcg}; building one reusable editable world per video is also the design
+of PhysMind~\cite{yang2026physmind}.
+
+The simulator is a module. We plug in a learned world model with a pairwise potential, a
+symplectic integrator and learned per-object friction; textbook laws whose constants are
+fitted on training videos, in the spirit of system identification~\cite{ding2021vrdp};
+straight-line motion with and without friction; nine earlier checkpoints of the learned
+model; and six retrained seeds. Rollout error is measured separately, on held-out validation
+videos, as mean position error at 40 frames.
+
+\vspace{-0.5ex}
+\section{What the benchmark rewards}
+\vspace{-0.5ex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/fig3_audit.pdf}
+\vspace{-3.5ex}
+\caption{Physics quality against benchmark score for 13 simulators. (a) Counterfactual
+questions: a 2.2$\times$ spread in rollout error moves the score by 2.2 points, and most
+differences sit inside the 95\% intervals. (b) Predictive questions: the ordering reverses
+and the most accurate simulator scores lowest. Error on 200 validation videos, scores on
+1,398 held-out test videos.}
+\label{fig:audit}
+\vspace{-2ex}
+\end{figure}
+
+\cref{fig:audit}a plots the counterfactual score of all 13 simulators against their rollout
+error. The error spans 0.050 to 0.113, a factor of 2.2, while the score spans 89.2\% to
+91.4\% of options (Pearson $r=-0.59$). Straight-line motion has 1.8 times the rollout error
+of the learned model and scores 0.75 points lower. On predictive questions the relation
+reverses (\cref{fig:audit}b): straight lines answer 91.4\% of options while the fitted laws,
+which have the lowest rollout error, answer 88.1\% ($z=-3.8$). No simulator is best on both
+question types.
+
+The reason is visible in the answers. The four main simulators give the same answer on
+91.4\% of the 9,350 counterfactual options, although at least one asked object is simulated
+before the video ends on 47.8\% of them. Every difference between simulators comes from the
+remaining 8.6\%, which suggests most asked pairs sit far from the contact boundary where a
+trajectory error could flip an answer.
+
+This is not an argument that physics is unnecessary. Removing the simulation entirely costs
+9.0 points per option and 22.2 per question. The claim is narrower and, we think, more
+useful: \emph{above a low bar, accuracy buys almost nothing on this metric}.
+
+\paragraph{What does move the score.} Two choices that contain no physics matter more than
+the choice of simulator. Stopping the simulation at the last recorded frame costs 4.6 points
+per option and 14.3 per question, because CLEVRER's counterfactual answers include events
+after the video ends. Handing objects to the simulator 12 frames before a lost contact
+instead of 3 costs a further 1.2 and 3.2 points: every extra frame of real recorded path is
+drift avoided. A system can therefore gain more from when it starts simulating than from how
+well it simulates.
+
+\begin{table}[t]
+\centering\small
+\setlength{\tabcolsep}{5pt}
+\caption{Counterfactual accuracy on 1,398 held-out videos (9,350 options, 2,619 questions)
+against rollout error measured separately. Sorted by rollout error.}
+\label{tab:sims}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Simulator & Rollout error @40 & Options (\%) & Questions (\%) \\
+\midrule
+textbook laws, fitted on training videos & 0.050 & \textbf{91.4} & \textbf{75.0} \\
+learned world model & 0.063 & 90.4 & 72.3 \\
+straight lines + friction & 0.095 & 90.2 & 71.9 \\
+straight lines & 0.113 & 89.7 & 70.2 \\
+\midrule
+no simulation at all & -- & 81.4 & 50.1 \\
+a 7B vision-language model, 16 frames & -- & 54.4 & 2.9 \\
+answer ``no'' to every event & -- & 54.1 & 0.0 \\
+\bottomrule
+\end{tabular}
+\vspace{-2.5ex}
+\end{table}
+
+\cref{tab:sims} places the spread in context. The gap between the best and worst real
+simulator is 1.7 points; the gap between having a simulator and not having one is 9.0; and a
+general vision-language model given the frames lands at the level of answering ``no'' to
+everything.
+
+\vspace{-0.5ex}
+\section{Two numbers a benchmark should report}
+\vspace{-0.5ex}
+
+Because the engine returns the event behind each answer, we can ask what the accuracy rests
+on. Of the correct answers whose deciding event can be checked against CLEVRER's annotation,
+98.2\% rest on a real recorded event, meaning an annotated collision of the same pair within
+15 frames or no collision of that pair at all. That is reassuring. The other half of the
+story is not: 40.5\% of correct answers are decided in the simulated part of the world, where
+the dataset has no ground truth, so they can be inspected but never verified.
+
+We propose that benchmarks intended to verify world models report two quantities alongside
+accuracy:
+
+\vspace{-0.8ex}
+\begin{itemize}\itemsep1pt \parskip0pt
+\item \textbf{the share of decisions the simulator made}, separating answers that the
+recording already settles from answers the physics produced; and
+\item \textbf{the share of correct answers whose evidence is valid}, checked against
+annotation where it exists.
+\end{itemize}
+\vspace{-0.8ex}
+
+Both are cheap to compute once a system reports its deciding event, and together they
+distinguish a model that is right for the right reason from one that inherits its score from
+the evaluation protocol. On CLEVRER these two numbers reveal that a large, independently
+verified improvement in physics, a 25\% reduction in rollout error from adding dissipation,
+moves the benchmark by nothing measurable.
+
+\paragraph{Applying this to a manipulation benchmark.} The recipe needs no new annotation.
+Make the simulator a swappable component and run at least one deliberately weak baseline
+through the same harness, for instance constant-velocity extrapolation or a rigid-body
+simulator with default parameters. If task success barely separates them, the benchmark is
+scoring something other than the dynamics, and the separation it does show tells you how much
+of the headline number the physics earned. Then, for every scored episode, record which
+predicted event the decision rested on and whether that event occurred in the real rollout.
+The first measurement costs one extra run per baseline; the second costs a log line. Together
+they turn \emph{our model scores higher} into \emph{our model scores higher because it
+predicted contacts that actually happened}, which is the claim a control result needs.
+
+\vspace{-0.5ex}
+\section{Limitations}
+\vspace{-0.5ex}
+
+The scenes are synthetic, planar, with three shapes and one object size, and no manipulator
+is involved; we have not tested the engine on real video or on contact-rich manipulation. Our
+perception reads a detector trained with the dataset's own labels. The 13 simulators span a
+range of quality but all are rigid-body planar models, so we cannot say where the saturation
+begins, only that it is below the accuracy of straight-line motion. Whether the same
+insensitivity holds for manipulation benchmarks that grade task success is the open question
+we would most like to discuss at this workshop.
+
+{\small
+\bibliographystyle{plainnat}
+\bibliography{refs}
+}
+
+\end{document}
