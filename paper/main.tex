@@ -18,6 +18,7 @@
 
 \iftmlr
   \usepackage{tmlr}%  hides the authors; [accepted] or [preprint] de-anonymises
+  \usepackage{placeins}%  so no figure drifts past the references
 \else
 \IfFileExists{cvpr.sty}{%
   \ifanon\usepackage[review]{cvpr}\else\usepackage{cvpr}\fi%
@@ -489,6 +490,7 @@ I am grateful for his reading of a draft.
 An AI coding assistant was used for implementation support and for language editing of this manuscript: writing and refactoring code to a specification, drafting documentation, organising bibliographic records, and polishing prose.
 \fi
 
+\iftmlr\FloatBarrier\fi
 {\small
 \iftmlr\bibliographystyle{tmlr}\else
 \IfFileExists{ieeenat_fullname.bst}{\bibliographystyle{ieeenat_fullname}}{\bibliographystyle{plainnat}}
