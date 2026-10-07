@@ -157,3 +157,5 @@ paper/arxiv/
 paper/*.aux
 paper/*.out
 paper/*.log
+
+paper/tmlr/
