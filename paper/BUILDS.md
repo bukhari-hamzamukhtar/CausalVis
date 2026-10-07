@@ -1,8 +1,8 @@
-# Two builds from one source
+# Three builds from one source
 
-`main.tex` and `supp.tex` both look for a file named `ANONYMOUS` beside them. Its presence
-selects the double-blind conference build. Nothing else has to be edited, so the two versions
-cannot drift apart.
+`main.tex` and `supp.tex` look for marker files beside them: `ANONYMOUS` hides the author
+block, the acknowledgements and the repository link, and `TMLR` switches to one column in the
+journal's own style. Nothing else is edited by hand, so the versions cannot drift apart.
 
 | | `paper/` (arXiv) | `paper/tmlr/` (journal submission) | `paper/cvpr/` (conference) |
 |---|---|---|---|
