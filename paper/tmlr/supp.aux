@@ -1,0 +1,104 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Protocol}{1}{section.1}\protected@file@percent }
+\newlabel{app:prereg}{{A}{1}{Protocol}{section.1}{}}
+\newlabel{app:prereg@cref}{{[section][1][]A}{[1][1][]1}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Pre-registration.}{1}{section*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{History of the sets.}{1}{section*.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Selection on VAL-A.}{1}{section*.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {S1}{\ignorespaces Settings chosen on VAL-A (941 questions, 3,391 options). Union: calibrated distance rule OR path change.}}{1}{table.1}\protected@file@percent }
+\newlabel{tab:val}{{S1}{1}{Settings chosen on VAL-A (941 questions, 3,391 options). Union: calibrated distance rule OR path change}{table.1}{}}
+\newlabel{tab:val@cref}{{[table][1][]S1}{[1][1][]1}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Statistics.}{1}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {B}Perception and question parsing}{2}{section.2}\protected@file@percent }
+\newlabel{app:perception}{{B}{2}{Perception and question parsing}{section.2}{}}
+\newlabel{app:perception@cref}{{[section][2][]B}{[1][1][]2}{}{}{}}
+\newlabel{app:parser}{{B}{2}{Perception and question parsing}{section.2}{}}
+\newlabel{app:parser@cref}{{[section][2][]B}{[1][1][]2}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Tracks from detections.}{2}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Camera.}{2}{section*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Tracking quality.}{2}{section*.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {S2}{\ignorespaces Detection-only tracks against the annotation (object inventory per video).}}{2}{table.2}\protected@file@percent }
+\newlabel{tab:percep}{{S2}{2}{Detection-only tracks against the annotation (object inventory per video)}{table.2}{}}
+\newlabel{tab:percep@cref}{{[table][2][]S2}{[1][2][]2}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Question parser.}{2}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {C}Model, settings and compute}{2}{section.3}\protected@file@percent }
+\newlabel{app:settings}{{C}{2}{Model, settings and compute}{section.3}{}}
+\newlabel{app:settings@cref}{{[section][3][]C}{[1][2][]2}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {S3}{\ignorespaces Learned world model (43,460 trained parameters).}}{2}{table.3}\protected@file@percent }
+\newlabel{tab:params}{{S3}{2}{Learned world model (43,460 trained parameters)}{table.3}{}}
+\newlabel{tab:params@cref}{{[table][3][]S3}{[1][2][]2}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Training.}{2}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Vision-language baseline.}{3}{section*.10}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {S4}{\ignorespaces A vision-language model on the 3,332 options of TEST-A, options / questions correct (\%), with the two policies that ignore the question and the engine for reference. The last column is how often the model answers that an event happens.}}{3}{table.4}\protected@file@percent }
+\newlabel{tab:vlm}{{S4}{3}{A vision-language model on the 3,332 options of TEST-A, options / questions correct (\%), with the two policies that ignore the question and the engine for reference. The last column is how often the model answers that an event happens}{table.4}{}}
+\newlabel{tab:vlm@cref}{{[table][4][]S4}{[1][3][]3}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Textbook laws.}{3}{section*.11}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {S1}{\ignorespaces The engine on the example of Figure 1 in the main paper (video 10880, the blue cube removed). Each object follows the recorded video until the removal can reach it, and is handed to the simulator 3 frames before it would lose a recorded contact. The red sphere then misses the cylinder and strikes the gray sphere at frame 66.}}{3}{figure.1}\protected@file@percent }
+\newlabel{fig:timeline}{{S1}{3}{The engine on the example of Figure 1 in the main paper (video 10880, the blue cube removed). Each object follows the recorded video until the removal can reach it, and is handed to the simulator 3 frames before it would lose a recorded contact. The red sphere then misses the cylinder and strikes the gray sphere at frame 66}{figure.1}{}}
+\newlabel{fig:timeline@cref}{{[figure][1][]S1}{[1][3][]3}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Engine.}{4}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Other question types.}{4}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Compute.}{4}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {D}Hand-off look-ahead and extension}{4}{section.4}\protected@file@percent }
+\newlabel{app:sweeps}{{D}{4}{Hand-off look-ahead and extension}{section.4}{}}
+\newlabel{app:sweeps@cref}{{[section][4][]D}{[1][4][]4}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {S2}{\ignorespaces Settings chosen on VAL-A. (a) Handing an object to the simulator later helps every simulator. (b) Simulating past the video end adds 4 to 5 points, because CLEVRER's answers include collisions after the last frame.}}{4}{figure.2}\protected@file@percent }
+\newlabel{fig:sweeps}{{S2}{4}{Settings chosen on VAL-A. (a) Handing an object to the simulator later helps every simulator. (b) Simulating past the video end adds 4 to 5 points, because CLEVRER's answers include collisions after the last frame}{figure.2}{}}
+\newlabel{fig:sweeps@cref}{{[figure][2][]S2}{[1][4][]4}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {S5}{\ignorespaces Options correct on VAL-A (\%) by look-ahead $L$, at each simulator's chosen detector and extension.}}{4}{table.5}\protected@file@percent }
+\newlabel{tab:lookahead}{{S5}{4}{Options correct on VAL-A (\%) by look-ahead $L$, at each simulator's chosen detector and extension}{table.5}{}}
+\newlabel{tab:lookahead@cref}{{[table][5][]S5}{[1][4][]4}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {E}Question subsets and errors}{4}{section.5}\protected@file@percent }
+\newlabel{app:subsets}{{E}{4}{Question subsets and errors}{section.5}{}}
+\newlabel{app:subsets@cref}{{[section][5][]E}{[1][4][]4}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {S3}{\ignorespaces Where physics matters. Without physics the H questions fall to 5.3\%; any simulator recovers most of them, and the simulators differ by a few points.}}{5}{figure.3}\protected@file@percent }
+\newlabel{fig:subsets}{{S3}{5}{Where physics matters. Without physics the H questions fall to 5.3\%; any simulator recovers most of them, and the simulators differ by a few points}{figure.3}{}}
+\newlabel{fig:subsets@cref}{{[figure][3][]S3}{[1][4][]5}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {S6}{\ignorespaces Subsets on TEST-A and TEST-B, options / questions correct (\%).}}{5}{table.6}\protected@file@percent }
+\newlabel{tab:subsets}{{S6}{5}{Subsets on TEST-A and TEST-B, options / questions correct (\%)}{table.6}{}}
+\newlabel{tab:subsets@cref}{{[table][6][]S6}{[1][4][]5}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {F}Evidence audit}{5}{section.6}\protected@file@percent }
+\newlabel{app:events}{{F}{5}{Evidence audit}{section.6}{}}
+\newlabel{app:events@cref}{{[section][6][]F}{[1][5][]5}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {G}Explanatory questions and CLEVRER-Humans}{5}{section.7}\protected@file@percent }
+\newlabel{app:explanatory}{{G}{5}{Explanatory questions and CLEVRER-Humans}{section.7}{}}
+\newlabel{app:explanatory@cref}{{[section][7][]G}{[1][5][]5}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{But-for test on CLEVRER.}{5}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Key consistency.}{5}{section*.16}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {S7}{\ignorespaces Evidence behind the answers of the learned engine (TEST-A and TEST-B).}}{6}{table.7}\protected@file@percent }
+\newlabel{tab:evidence}{{S7}{6}{Evidence behind the answers of the learned engine (TEST-A and TEST-B)}{table.7}{}}
+\newlabel{tab:evidence@cref}{{[table][7][]S7}{[1][5][]6}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {S8}{\ignorespaces Explanatory options on TEST-A and TEST-B (8,566 options), by kind of candidate cause.}}{6}{table.8}\protected@file@percent }
+\newlabel{tab:butfor}{{S8}{6}{Explanatory options on TEST-A and TEST-B (8,566 options), by kind of candidate cause}{table.8}{}}
+\newlabel{tab:butfor@cref}{{[table][8][]S8}{[1][5][]6}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Is it the same collision?}{6}{section*.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{CLEVRER-Humans.}{6}{section*.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {H}ComPhy}{6}{section.8}\protected@file@percent }
+\newlabel{app:comphy}{{H}{6}{ComPhy}{section.8}{}}
+\newlabel{app:comphy@cref}{{[section][8][]H}{[1][6][]6}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {S9}{\ignorespaces CLEVRER's explanatory key against its own counterfactual key.}}{7}{table.9}\protected@file@percent }
+\newlabel{tab:consistency}{{S9}{7}{CLEVRER's explanatory key against its own counterfactual key}{table.9}{}}
+\newlabel{tab:consistency@cref}{{[table][9][]S9}{[1][5][]7}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{Evidence audit on ComPhy.}{7}{section*.19}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {S10}{\ignorespaces ComPhy, accuracy per option. Ours: validation set (2,000 scenes) with oracle tracks; published: test set.}}{7}{table.10}\protected@file@percent }
+\newlabel{tab:comphy}{{S10}{7}{ComPhy, accuracy per option. Ours: validation set (2,000 scenes) with oracle tracks; published: test set}{table.10}{}}
+\newlabel{tab:comphy@cref}{{[table][10][]S10}{[1][7][]7}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {I}CoPhy}{7}{section.9}\protected@file@percent }
+\newlabel{app:cophy}{{I}{7}{CoPhy}{section.9}{}}
+\newlabel{app:cophy@cref}{{[section][9][]I}{[1][7][]7}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {S11}{\ignorespaces CoPhy BallsCF test splits (1,000 scenes each), counterfactual position error (lower is better).}}{7}{table.11}\protected@file@percent }
+\newlabel{tab:cophy}{{S11}{7}{CoPhy BallsCF test splits (1,000 scenes each), counterfactual position error (lower is better)}{table.11}{}}
+\newlabel{tab:cophy@cref}{{[table][11][]S11}{[1][7][]7}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {J}Full results per test set}{8}{section.10}\protected@file@percent }
+\newlabel{app:full}{{J}{8}{Full results per test set}{section.10}{}}
+\newlabel{app:full@cref}{{[section][10][]J}{[1][8][]8}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {S12}{\ignorespaces Counterfactual questions, options / questions correct (\%), with paired $z$ against the learned engine on options. One change at a time below the line.}}{8}{table.12}\protected@file@percent }
+\newlabel{tab:full}{{S12}{8}{Counterfactual questions, options / questions correct (\%), with paired $z$ against the learned engine on options. One change at a time below the line}{table.12}{}}
+\newlabel{tab:full@cref}{{[table][12][]S12}{[1][8][]8}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {S13}{\ignorespaces Other checkpoints of the learned model in the same engine, options / questions correct (\%), and their rollout error at 40 frames on VAL-A.}}{8}{table.13}\protected@file@percent }
+\newlabel{tab:ckpt}{{S13}{8}{Other checkpoints of the learned model in the same engine, options / questions correct (\%), and their rollout error at 40 frames on VAL-A}{table.13}{}}
+\newlabel{tab:ckpt@cref}{{[table][13][]S13}{[1][8][]8}{}{}{}}
+\gdef \@abspage@last{8}

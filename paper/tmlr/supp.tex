@@ -1,0 +1,496 @@
+% Supplementary material for the CausalVis paper (CVPR 2027 draft).
+% Compile like main.tex. Figures S1 and S2 are specified in paper_exp/FIGURES.md.
+\documentclass[10pt,onecolumn,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{times}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalize]{cleveref}
+\providecommand{\etal}{et al.}
+\newcommand{\sys}{CausalVis}
+\newcommand{\figfile}[2]{\IfFileExists{figures/#1}{\includegraphics{figures/#1}}{\fbox{\parbox[c][#2][c]{0.9\linewidth}{\centering\small figure file \texttt{#1} (see FIGURES.md)}}}}
+\renewcommand{\thesection}{\Alph{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+\title{Better Physics, Same Score: What an Auditable Counterfactual Engine Reveals About CLEVRER\\[4pt]\large Supplementary material}
+\newif\ifanon
+\IfFileExists{ANONYMOUS}{\anontrue}{\anonfalse}
+\ifanon
+\author{Anonymous CVPR submission\\ Paper ID *****}
+\else
+\author{Syed Hamza Mukhtar Bukhari\\
+Ghulam Ishaq Khan Institute of Engineering Sciences and Technology}
+\fi
+\date{}
+
+\begin{document}
+\maketitle
+
+% =====================================================================================
+\section{Protocol}
+\label{app:prereg}
+
+\paragraph{Pre-registration.}
+Before the fresh test set was scored, we wrote down the inputs, the sets, the selection rule, the systems to be scored and the statistics to be reported.
+Settings were chosen on VAL-A only; TEST-A and TEST-B were then scored once per listed system, and nothing was changed afterwards.
+The listed systems were the learned engine, the textbook laws, straight lines, straight lines with friction, no physics, seven one-change ablations of the learned engine, nine other checkpoints of the learned model, six retrained seeds, a vision-language baseline, the other three question types, and the learned engine with the dataset's own question programs as a check of the parser.
+Anything else reported in the paper is labelled as a separate analysis (the evidence audit, the explanatory but-for test and the key-consistency check).
+
+\paragraph{History of the sets.}
+TEST-A served as the test set of earlier versions of the engine, so some design choices may have been influenced by it.
+For this reason we added TEST-B, 898 CLEVRER training videos that no model had been trained on and that had never been scored, and named it the primary test set.
+Every significant comparison of the main paper keeps its direction on TEST-B alone (\cref{app:full}); the entry correction, not significant on the pooled sets, is significant on TEST-B alone ($z=-2.2$).
+
+\paragraph{Selection on VAL-A.}
+For each simulator we swept the hand-off look-ahead $L \in \{1,3,6,12\}$, five collision detectors and the extension $E \in \{0,10,20,30,45,60\}$, and kept the setting with the most correct options (ties broken by correct questions).
+\cref{tab:val} lists the chosen settings.
+
+\begin{table}[h]
+\caption{Settings chosen on VAL-A (941 questions, 3,391 options). Union: calibrated distance rule OR path change.}
+\label{tab:val}
+\centering
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Simulator & Look-ahead $L$ & Detector, extension $E$ & Options & Questions \\
+\midrule
+textbook laws & 3 & union, +60 & 91.5 (3,104) & 74.9 (705) \\
+learned world model & 3 & union, +30 & 90.3 (3,061) & 71.2 (670) \\
+straight + friction & 1 & union, +45 & 89.9 (3,047) & 71.0 (668) \\
+straight lines & 1 & union, +45 & 89.3 (3,028) & 69.2 (651) \\
+no physics & none & union & 81.7 (2,769) & 50.3 (473) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Statistics.}
+Intervals resample videos, because the options of one question and the questions of one video are not independent: 2,000 resamples with a fixed seed.
+Paired comparisons use McNemar's test on the options both systems answer, reported as $z = (b - c)/\sqrt{b+c}$, where $b$ and $c$ count the options only one of the two systems gets right; the same is done for questions.
+For the pooled sets the set name is part of the video identifier, so that the bootstrap and the grouping of questions stay correct.
+
+% =====================================================================================
+\section{Perception and question parsing}
+\label{app:perception}
+\label{app:parser}
+
+\paragraph{Tracks from detections.}
+We use the Mask R-CNN detections released with NS-DR for all 20,000 CLEVRER videos, each with predicted colour, material and shape.
+Detections of the same colour and shape closer than 8 pixels are merged; two objects may share colour and shape only if two detections appear at least 20 pixels apart in 3 or more frames; tracks shorter than 5 frames are dropped; gaps of up to 5 frames are interpolated; the material is a score-weighted majority vote.
+Objects are identified by colour, material and shape together, because 21\% of CLEVRER videos contain two objects that share colour and shape.
+
+\paragraph{Camera.}
+The camera published for CLEVR scenes does not match CLEVRER.
+We recovered it by rendering the convex hulls of the three shapes and fitting camera position and focal length to the detected masks, which raised the median silhouette IoU from 0.57 to 0.93.
+Mask centres are lifted to the table plane at the object's centre height.
+
+\paragraph{Tracking quality.}
+\cref{tab:percep} compares the object inventory of each video with the annotation, which is used only for this check.
+
+\begin{table}[h]
+\caption{Detection-only tracks against the annotation (object inventory per video).}
+\label{tab:percep}
+\centering
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Set & Videos & Recall & Precision & Exact inventory & Frames in view covered \\
+\midrule
+VAL-A & 500 & 99.4 & 99.7 & 95.8 & 98.6 \\
+TEST-A & 500 & 99.8 & 99.7 & 97.6 & 98.5 \\
+TEST-B & 898 & 99.6 & 99.4 & 95.2 & 98.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Question parser.}
+Questions are parsed by templates learned from CLEVRER's training questions: each template has typed slots that are filled by voting over the training programs.
+On the validation questions the parser reproduces the dataset's programs exactly for 100\% of counterfactual and predictive questions, 99.995\% of explanatory questions and 99.80\% of descriptive questions.
+With the dataset's programs instead of parsed ones, the scores change by at most 0.2 points.
+
+% =====================================================================================
+\section{Model, settings and compute}
+\label{app:settings}
+
+\begin{table}[h]
+\caption{Learned world model (43,460 trained parameters).}
+\label{tab:params}
+\centering
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Part & Shape & Parameters \\
+\midrule
+attribute encoder & $8 \to 128 \to 64$ & 9,408 \\
+mass head & $64 \to 128 \to 1$ & 8,449 \\
+pair energy $V_\theta$ & $68 \to 128 \to 128 \to 1$ & 25,473 \\
+translational friction head & $64 \to 1$ & 65 \\
+rotational friction head & $64 \to 1$ & 65 \\
+\midrule
+total & & 43,460 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Training.}
+The base model was trained for 30 epochs on the tracks of 11,182 training videos with a rollout loss whose horizon grew from 3 to 20 frames (AdamW, learning rate $10^{-3}$, batch 16, gradient clipping at 1.0; 5.2 hours).
+The final model was fine-tuned for 4 epochs at horizon 20 with voxel contacts inside the rollout (learning rate $3 \times 10^{-4}$; 2.9 hours), keeping the epoch with the lowest validation rollout error.
+Object radii are measured from the masks and kept fixed.
+Six seeds repeat the fine-tune. Seeds 1 and 2 were stopped after two of four epochs by a power loss, and in both the best epoch was the first, as in the original run; seeds 3 to 6 ran all four epochs on a free hosted CPU session and their best epochs were the fourth, second, third and third.
+Their validation rollout errors at 20 frames are 0.0214, 0.0253, 0.0231 and 0.0239 against the released model's 0.0230, but the trainer draws its validation windows from the seed, so these are not measured on identical windows; relative to its own starting point seed 3 improves 22\% where the released model improved 13\%.
+Across the five checkpoints that have a validation number the correlation between rollout error and options correct is $-0.76$, with the benchmark spanning 0.5 points while the rollout error spans 18\%.
+The seven checkpoints of this recipe score $90.3 \pm 0.2$ per option and $71.8 \pm 0.6$ per question.
+
+\paragraph{Vision-language baseline.}
+We also asked a general vision-language model the same options, to see what the task looks like to a system that watches the video and answers from what it sees.
+Qwen2.5-VL-7B-Instruct receives 16 frames spread evenly over the clip and the list of events, and is asked whether each event happens once the named object is removed; decoding is greedy, and the polarity of questions that ask which event will \emph{not} happen is applied when scoring, so the number does not depend on how the model handles negation.
+The same run was repeated with the frames withheld.
+
+\begin{table}[h]
+\caption{A vision-language model on the 3,332 options of TEST-A, options / questions correct (\%), with the two policies that ignore the question and the engine for reference. The last column is how often the model answers that an event happens.}
+\label{tab:vlm}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+System & Option & Question & Says yes \\
+\midrule
+answer ``no'' to every event & 54.1 & 0.0 & 0 \\
+Qwen2.5-VL-7B, 16 frames & 54.4 & 2.9 & 9 \\
+Qwen2.5-VL-7B, no frames & 48.8 & 4.2 & 78 \\
+answer ``yes'' to every event & 45.9 & 2.6 & 100 \\
+\midrule
+\sys{}, learned model & 89.9 & 70.8 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+With the frames the model is indistinguishable from never predicting a collision (54.4 against 54.1), and it is 35 points below the engine on the same options (paired: the engine is right where the model is wrong 1,362 times, the reverse 177 times, $z = -30.2$).
+It answers ``no'' to every event of 86\% of questions when it sees the frames and ``yes'' to every event of 70\% of them when it does not, so what changes its answer is whether images are present rather than which object was removed.
+Two of 1,859 replies could not be read and were counted as ``no''.
+Concurrent work measures the same effect on a different subset and with much larger models: a blind vision-language model answers 50.1 of counterfactual options, GPT-4o 56.5 and GPT-5.5 76.7, against a 50.0 chance level (PhysMind, Table 1, cited in the main paper).
+Our 54.4 for a 7B open model sits where that range predicts, and the blind number is close to the 48.8 we measure.
+This is a baseline and not a fair comparison with the published systems: it is one prompt of one open model with no fine-tuning on this dataset, and a system built around such a model could do better.
+It does say that the frames alone, read by a strong general model, do not answer these questions.
+
+\paragraph{Textbook laws.}
+Fitted on training tracks: cubes and cylinders slide with a constant deceleration of 0.00008 per frame; spheres roll and lose 0.3\% (metal) or 0.2\% (rubber) of their speed per frame; collisions apply an impulse along the line of centres with restitution 0.2, a metal to rubber mass ratio of 1.00 and contact friction 0.05.
+
+\begin{figure}[h]
+\centering
+\figfile{figS3_timeline.pdf}{1.6in}
+\caption{The engine on the example of Figure 1 in the main paper (video 10880, the blue cube removed). Each object follows the recorded video until the removal can reach it, and is handed to the simulator 3 frames before it would lose a recorded contact. The red sphere then misses the cylinder and strikes the gray sphere at frame 66.}
+\label{fig:timeline}
+\end{figure}
+
+\paragraph{Engine.}
+Positions are in scene units divided by 6.
+The calibrated distance rule counts a collision when the centre distance is below $1.2(r_i + r_j) + 0.03$; the path-change rule when the surfaces are within 0.03 and one object's velocity changes by at least 0.002 within 6 frames; contacts closer than 6 frames are merged.
+An object that leaves the table ($|x| > 0.95$) stops interacting.
+
+\paragraph{Other question types.}
+Descriptive: calibrated rule with the collision onset moved to the closest approach within 6 frames; an object is moving if its speed exceeds 0.001. Explanatory: the same detector and CLEVRER's chain rule. Predictive: the plain distance rule ($r_i + r_j + 0.02$) and 60 frames of simulation past the end. All chosen on VAL-A.
+
+\paragraph{Compute.}
+One laptop CPU (Intel i5-8350U, 4 cores, 8 threads, 7.9 GB of memory), no GPU, for every stage.
+Answering one counterfactual question (building its worlds and reading every option) takes 2.24 seconds with the learned model, 1.36 with the laws, 1.40 with straight lines and 1.04 without physics, measured on 40 TEST-A questions with one process, one thread and nothing else running (start-up excluded).
+Training took 8.1 hours in total.
+
+% =====================================================================================
+\section{Hand-off look-ahead and extension}
+\label{app:sweeps}
+
+\begin{figure}[h]
+\centering
+\figfile{figS2_handoff.pdf}{2.0in}
+\caption{Settings chosen on VAL-A. (a) Handing an object to the simulator later helps every simulator. (b) Simulating past the video end adds 4 to 5 points, because CLEVRER's answers include collisions after the last frame.}
+\label{fig:sweeps}
+\end{figure}
+
+\begin{table}[h]
+\caption{Options correct on VAL-A (\%) by look-ahead $L$, at each simulator's chosen detector and extension.}
+\label{tab:lookahead}
+\centering
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Simulator & $L=1$ & $L=3$ & $L=6$ & $L=12$ \\
+\midrule
+textbook laws & 91.3 & \textbf{91.5} & 90.8 & 90.4 \\
+learned world model & 90.0 & \textbf{90.3} & 89.5 & 88.9 \\
+straight + friction & \textbf{89.9} & 89.6 & 89.2 & 87.9 \\
+straight lines & \textbf{89.3} & 89.1 & 88.7 & 87.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =====================================================================================
+\section{Question subsets and errors}
+\label{app:subsets}
+
+Following ALOE (Appendix C of Ding \etal, 2021), a question belongs to \emph{E} if the removed object never collides in the video, to \emph{M} if it collides but the recorded events already answer every option, and to \emph{H} otherwise.
+
+\begin{figure}[h]
+\centering
+\figfile{figS1_subsets.pdf}{2.2in}
+\caption{Where physics matters. Without physics the H questions fall to 5.3\%; any simulator recovers most of them, and the simulators differ by a few points.}
+\label{fig:subsets}
+\end{figure}
+
+\begin{table}[h]
+\caption{Subsets on TEST-A and TEST-B, options / questions correct (\%).}
+\label{tab:subsets}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+System & E (1,263 q) & M (600 q) & H (756 q) \\
+\midrule
+no physics & 87.5 / 59.9 & 95.6 / 86.2 & 60.0 / 5.3 \\
+straight lines & 91.5 / 74.3 & 93.1 / 79.7 & 83.9 / 55.7 \\
+straight + friction & 91.9 / 75.7 & 93.3 / 80.0 & 84.9 / 59.3 \\
+learned world model & 92.6 / 76.6 & 94.4 / 82.8 & 83.6 / 56.6 \\
+textbook laws & 93.2 / 78.3 & 94.4 / 82.8 & 86.0 / 63.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In E, the answer key says that a pair collides on 474 of 4,688 options (10.1\%) where the video contains no collision of that pair; these options occur in 437 of 1,263 questions (34.6\%).
+Since nothing in the video changes when the removed object never collides, these collisions can only happen after the last frame.
+
+Errors of the learned engine (896 wrong options): a collision invented during the video 360 (40\%); a collision missed after the video ends 274 (31\%); a collision invented after the video ends 139 (16\%); a visible collision missed 89 (10\%); an object not found by the detector 34 (4\%).
+
+% =====================================================================================
+\section{Evidence audit}
+\label{app:events}
+
+An answer's deciding event is the first collision of the asked pair in the counterfactual world, or its absence.
+It is \emph{recorded} when both objects still follow the recording at that frame and \emph{simulated} otherwise.
+A recorded collision is confirmed if the annotation has a collision of the same pair within a tolerance; a recorded absence is confirmed if the annotation has no collision of the pair in the whole video (the part after the video end is simulated and not checked).
+
+\begin{table}[h]
+\caption{Evidence behind the answers of the learned engine (TEST-A and TEST-B).}
+\label{tab:evidence}
+\centering
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Correct answers (8,454) & 15-frame tolerance & 6-frame tolerance \\
+\midrule
+recorded collision, confirmed & 2,567 & 2,329 \\
+recorded absence, confirmed & 2,314 & 2,314 \\
+recorded, annotated collision of the pair further away & 40 & 278 \\
+recorded, no annotated collision of the pair & 52 & 52 \\
+simulated & 3,426 & 3,426 \\
+asked object removed or not found & 55 & 55 \\
+\midrule
+confirmed share of checkable & 98.2\% & 93.4\% \\
+\midrule
+Wrong answers (896) & & \\
+\midrule
+detector reports a collision the annotation lacks & 188 & 193 \\
+detector misses an annotated collision & 37 & 37 \\
+key needs a collision after the video ends & 72 & 72 \\
+other recorded cases & 8 & 3 \\
+simulated & 557 & 557 \\
+object not found by the detector & 34 & 34 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The deciding recorded collision lies a median of 4 frames before the annotated one (10th percentile $-7$, 90th percentile $-2$; 2,607 answers), because the calibrated rule fires when surfaces enter its margin.
+Over all recorded videos, the detector used for the other question types (calibrated rule with onset refinement) finds 3,229 of the 3,396 annotated collisions (recall 0.95) and reports 869 others (precision 0.79), with a median timing offset of 0 frames.
+
+% =====================================================================================
+\section{Explanatory questions and CLEVRER-Humans}
+\label{app:explanatory}
+
+\paragraph{But-for test on CLEVRER.}
+For each option we locate the target collision and the candidate cause on the recorded events.
+A candidate ``presence of $Z$'' or ``$Z$'s entrance'' removes $Z$; a candidate collision removes whichever of its objects is not in the target collision.
+A candidate that shares both objects with the target cannot be removed without removing the target and keeps the chain-rule answer, as do candidates that could not be resolved.
+The extension past the video end for the target check was chosen on VAL-A (+0 frames: 76.8\%; +10: 76.4\%; +30: 75.3\%).
+
+\begin{table}[h]
+\caption{Explanatory options on TEST-A and TEST-B (8,566 options), by kind of candidate cause.}
+\label{tab:butfor}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Candidate & Options & But-for test & Chain rule \\
+\midrule
+another collision & 2,389 & 78.3 & 98.1 \\
+an entrance & 1,321 & 88.2 & 97.2 \\
+the presence of an object & 3,292 & 85.7 & 95.6 \\
+not resolvable (same answer) & 1,564 & 51.0 & 51.0 \\
+\midrule
+all & 8,566 & 77.7 & 88.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Key consistency.}
+\cref{tab:consistency} matches explanatory options about the presence or entrance of $Z$ with counterfactual options about the same pair without $Z$ in the same video. No simulator is involved.
+
+\begin{table}[h]
+\caption{CLEVRER's explanatory key against its own counterfactual key.}
+\label{tab:consistency}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Set & Matched & ``Responsible'', yet the pair & ``Not responsible'', yet the pair \\
+ & pairs & still collides without $Z$ & no longer collides without $Z$ \\
+\midrule
+VAL-A & 446 & 37 / 87 (42.5\%) & 1 / 359 (0.3\%) \\
+TEST-A & 423 & 27 / 85 (31.8\%) & 0 / 338 (0.0\%) \\
+TEST-B & 817 & 49 / 148 (33.1\%) & 0 / 669 (0.0\%) \\
+\midrule
+all & 1,686 & 113 / 320 (35.3\%) & 1 / 1,366 (0.1\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Is it the same collision?}
+CLEVRER's counterfactual answer carries no time, so ``$X$ and $Y$ still collide without $Z$'' could refer to a different collision.
+For the 113 cases in which the key calls $Z$ responsible and the pair still collides without $Z$, the pair collides exactly once in the recorded video in all 113.
+In the engine's world without $Z$, the first collision of the pair lies within 10 frames of the recorded one in 56 cases, more than 10 frames earlier in 23, more than 10 frames later in 14, and does not happen in 20.
+
+\paragraph{CLEVRER-Humans.}
+CLEVRER-Humans describes events in free-form sentences.
+We linked each sentence to objects and a frame with a language model (gpt-oss-120b through the Groq service, temperature 0, outputs cached and released), then asked whether the cause event is responsible for the effect event.
+The but-for test removes the cause's object and checks whether the effect still happens in the simulated world; the chain rule applies CLEVRER's rule to our recorded events.
+The rule was chosen on 102 grounded training videos (240 options: but-for 64.6\%, chain rule 58.8\%, always yes 52.1\%).
+On the validation split (216 questions, 432 options) the but-for test answers 64.4\% of options and 43.5\% of questions, the chain rule 60.9\% and 39.4\%, always yes 50.7\% and 30.1\%, the best published model 54.0\% and 34.2\%, and people 84.5\% and 71.4\%.
+Of the 183 validation videos, 150 lie in our world model's training split; only their trajectories were used, never any label.
+
+% =====================================================================================
+\section{ComPhy}
+\label{app:comphy}
+
+ComPhy hides mass and charge. Each target video comes with four reference videos of the same objects.
+We take object tracks from the annotation (visible frames of the first five seconds only), infer each object's mass (light or heavy) and charge (positive, negative or none) by searching for the assignment whose simulations best fit the target and reference videos, and simulate interventions and the future with laws fitted on training annotations (friction, a charge constant of 0.138, contact and restitution).
+Settings were chosen on 300 training scenes: reference videos on, counterfactual extension +0 frames, predictive extension +50 frames.
+The hidden mass is recovered exactly in 98\% of mass scenes; whether an object is charged in 99.6\% of charge scenes, but the exact signs of all charges in only 11\%.
+The validation set has 2 options per question and the test set mostly 4, so per-question accuracy is not comparable; ours is 66.7\% (counterfactual) and 74.1\% (predictive).
+371 of 15,968 options name an object we could not resolve and are answered no.
+
+\paragraph{Evidence audit on ComPhy.}
+ComPhy's annotation includes the frames after the end of each video (frames 125 to 174), so the event that decides a predictive answer can be checked.
+On 400 validation scenes (1,597 predictive options whose two objects we resolve), 1,411 answers are correct.
+Of these, 589 are decided by a simulated collision that matches a real future collision of the same pair within 5 frames (553 within 3 frames, 603 within 10), 789 by an absence of collision that matches the real future, and 33 by a simulated collision with no real counterpart within 5 frames: 97.7\% of the correct answers rest on a real event.
+Of the 186 wrong answers, 152 miss a real future collision, 8 invent one, and 26 say no collision where the annotated future window also shows none, which suggests collisions after frame 174 in the answer key.
+Counted per asked pair, the first simulated future collision is real in 93.5\% of cases (589 of 630) and finds 76.9\% of the real ones (589 of 766).
+
+\begin{table}[h]
+\caption{ComPhy, accuracy per option. Ours: validation set (2,000 scenes) with oracle tracks; published: test set.}
+\label{tab:comphy}
+\centering
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Method & Counterfactual & Predictive \\
+\midrule
+ALOE (reference videos) & 67.9 & 67.9 \\
+NS-DR+ (given properties) & 61.1 & 73.3 \\
+CPL & 68.3 & 75.3 \\
+CPL-Gt (ground-truth properties and dynamics) & 74.0 & 87.6 \\
+\sys{} engine (oracle tracks, inferred properties) & 79.5 & 86.9 \\
+people & 80.0 & 88.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =====================================================================================
+\section{CoPhy}
+\label{app:cophy}
+
+On BallsCF, the engine receives the object states of the observed run AB and the new initial state C, infers each ball's mass and restitution from AB by simulation, and predicts the counterfactual run D with planar laws fitted on the 4-ball training split.
+The metric is the squared 2D position error summed over $x$ and $y$ and averaged over time steps and balls.
+
+\begin{table}[h]
+\caption{CoPhy BallsCF test splits (1,000 scenes each), counterfactual position error (lower is better).}
+\label{tab:cophy}
+\centering
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Balls & 2 & 3 & 4 & 5 & 6 \\
+\midrule
+\sys{} engine, inferred confounders & 0.89 & 1.56 & 2.03 & 2.39 & 2.60 \\
+same engine, true confounders & 0.42 & 0.72 & 1.09 & 1.28 & 1.55 \\
+copy the observed trajectory (B) & 7.69 & 6.81 & 6.18 & 5.93 & 5.74 \\
+copy the new initial state (C) & 12.58 & 12.22 & 11.88 & 11.65 & 11.26 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The released CoPhy files differ from the description in the paper (masses 1, 2 or 5 and restitution 0.1, 0.5 or 1), and no variant of the metric reproduces the published copy baselines, so published CoPhyNet numbers are not comparable with ours.
+Event audit (300 test scenes per split, same pair within one step): 2 balls, precision 0.85 and recall 0.65 (64 / 11 / 35 true positives, false positives, misses); 4 balls, 0.61 and 0.49 (279 / 180 / 294); 6 balls, 0.49 and 0.41 (631 / 651 / 910).
+CollisionCF and BlocktowerCF were not run, because their objects fall and topple, which the planar engine does not model.
+
+% =====================================================================================
+\section{Full results per test set}
+\label{app:full}
+
+\begin{table}[h]
+\caption{Counterfactual questions, options / questions correct (\%), with paired $z$ against the learned engine on options. One change at a time below the line.}
+\label{tab:full}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+System & TEST-A & TEST-B & TEST-A + B \\
+\midrule
+learned world model (\sys{}) & 90.2 / 71.4 & 90.5 / 72.8 & 90.4 / 72.3 \\
+textbook laws & 91.7 / 75.3 ($+4.2$) & 91.3 / 74.8 ($+3.1$) & 91.4 / 75.0 ($+5.0$) \\
+straight + friction & 90.1 / 71.4 ($-0.2$) & 90.2 / 72.2 ($-0.9$) & 90.2 / 71.9 ($-0.9$) \\
+straight lines & 89.7 / 70.2 ($-1.0$) & 89.6 / 70.2 ($-2.7$) & 89.7 / 70.2 ($-2.8$) \\
+no physics & 81.3 / 49.4 ($-13.1$) & 81.5 / 50.6 ($-18.4$) & 81.4 / 50.1 ($-22.5$) \\
+\midrule
+no extension past the video end & 86.2 / 58.9 ($-8.6$) & 85.7 / 57.5 ($-13.6$) & 85.9 / 58.0 ($-16.0$) \\
+12-frame hand-off & 88.1 / 66.1 ($-5.2$) & 89.8 / 70.8 ($-2.8$) & 89.2 / 69.1 ($-5.4$) \\
+distance rule only & 89.9 / 70.8 ($-2.1$) & 90.2 / 71.9 ($-4.2$) & 90.1 / 71.5 ($-4.5$) \\
+no voxel contact impulse & 89.8 / 70.8 ($-1.2$) & 89.6 / 70.1 ($-3.7$) & 89.6 / 70.3 ($-3.7$) \\
+no learned pair energy & 90.5 / 72.2 ($+1.3$) & 91.0 / 74.1 ($+3.0$) & 90.8 / 73.4 ($+3.2$) \\
+no learned friction & 90.9 / 73.2 ($+2.1$) & 90.3 / 71.7 ($-0.9$) & 90.5 / 72.2 ($+0.6$) \\
+no entry correction & 90.3 / 71.3 ($+0.8$) & 90.4 / 72.4 ($-2.2$) & 90.3 / 72.0 ($-1.3$) \\
+\midrule
+seed 1 (2 of 4 epochs) & 90.3 / 71.6 ($+0.5$) & 90.6 / 72.8 ($+0.6$) & 90.5 / 72.4 ($+0.8$) \\
+seed 2 (2 of 4 epochs) & 90.1 / 71.0 ($-0.5$) & 90.1 / 71.5 ($-2.4$) & 90.1 / 71.3 ($-2.2$) \\
+seed 3 & 90.3 / 71.3 & 90.6 / 73.0 & 90.5 / 72.4 ($+0.9$) \\
+seed 4 & 90.1 / 71.1 & 90.2 / 71.9 & 90.2 / 71.6 ($-1.6$) \\
+seed 5 & 90.3 / 71.0 & 90.4 / 72.6 & 90.4 / 72.0 ($-0.5$) \\
+seed 6 & 90.2 / 71.0 & 89.9 / 70.8 & 90.0 / 70.8 ($-2.6$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{Other checkpoints of the learned model in the same engine, options / questions correct (\%), and their rollout error at 40 frames on VAL-A.}
+\label{tab:ckpt}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Checkpoint & Rollout error & TEST-B & TEST-A + B \\
+\midrule
+3D data, drag & 0.067 & 89.8 / 70.6 & 89.9 / 70.6 \\
+radius frozen & 0.071 & 89.8 / 70.8 & 89.9 / 70.7 \\
+contact impulse in training & 0.064 & 90.9 / 73.8 & 90.9 / 73.4 \\
+first spatial model (about 3,200 videos) & 0.070 & 90.0 / 71.2 & 90.2 / 71.6 \\
+base model before the voxel fine-tune & 0.076 & 89.2 / 69.2 & 89.2 / 69.0 \\
+fine-tune without voxels & 0.067 & 90.6 / 73.2 & 90.6 / 72.8 \\
+long rollouts, fixed length & 0.062 & 90.5 / 72.3 & 90.3 / 71.7 \\
+long rollouts, curriculum & 0.064 & 90.2 / 71.4 & 90.2 / 71.2 \\
+long rollouts, control & 0.062 & 90.6 / 73.2 & 90.4 / 72.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

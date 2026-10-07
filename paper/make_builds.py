@@ -74,9 +74,35 @@ def build_arxiv():
     return out
 
 
+def build_tmlr():
+    """Anonymous, single column in the TMLR style, appendix inside the same PDF.
+
+    TMLR rejects a non-anonymous submission without review, and the paper must not link to
+    any version that carries the authors' names, so the repository link stays hidden here
+    too. Supplementary files may be uploaded separately as well, up to 100 MB.
+    """
+    out = fresh("tmlr")
+    for f in ("main.tex", "supp.tex", "refs.bib"):
+        shutil.copy2(os.path.join(PAPER, f), os.path.join(out, f))
+    for f in ("tmlr.sty", "tmlr.bst", "fancyhdr.sty"):
+        shutil.copy2(os.path.join(STYLE, f), os.path.join(out, f))
+    for name, why in (("ANONYMOUS", "double blind"), ("TMLR", "single column, TMLR style")):
+        with open(os.path.join(out, name), "w") as fh:
+            fh.write(why + "\n")
+    supp = os.path.join(PAPER, "supp.pdf")
+    if os.path.exists(supp):
+        shutil.copy2(supp, os.path.join(out, "supp.pdf"))
+    print("built", out)
+    print("  compile: pdflatex supp; pdflatex supp; "
+          "pdflatex main; bibtex main; pdflatex main; pdflatex main")
+    return out
+
+
 if __name__ == "__main__":
-    which = sys.argv[1:] or ["cvpr", "arxiv"]
+    which = sys.argv[1:] or ["cvpr", "tmlr", "arxiv"]
     if "cvpr" in which:
         build_cvpr()
+    if "tmlr" in which:
+        build_tmlr()
     if "arxiv" in which:
         build_arxiv()
