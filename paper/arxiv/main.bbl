@@ -34,7 +34,7 @@ Ieva Bagdonaviciute and Vibhav Vineet.
 Shuai Bai, Keqin Chen, Xuejing Liu, Jialin Wang, Wenbin Ge, Sibo Song, Kai
   Dang, Peng Wang, Shijie Wang, Jun Tang, Humen Zhong, Yuanzhi Zhu, Mingkun
   Yang, Zhaohai Li, Jianqiang Wan, Pengfei Wang, Wei Ding, Zheren Fu, Yiheng
-  Xu, Jiabo Ye, Xi~Zhang, Tianbao Xie, Zesen Cheng, Hang Zhang, Zhibo Yang,
+  Xu, Jiabo Ye, Xi Zhang, Tianbao Xie, Zesen Cheng, Hang Zhang, Zhibo Yang,
   Haiyang Xu, and Junyang Lin.
 \newblock {Qwen2.5-VL} technical report.
 \newblock \emph{arXiv preprint arXiv:2502.13923}, 2025.
@@ -75,9 +75,9 @@ Peter~W. Battaglia, Jessica~B. Hamrick, and Joshua~B. Tenenbaum.
   Tao, Smith, Sun, Fei-Fei, Kanwisher, Tenenbaum, Yamins, and
   Fan]{bear2021physion}
 Daniel~M. Bear, Elias Wang, Damian Mrowca, Felix~J. Binder, Hsiao-Yu~Fish Tung,
-  R.~T. Pramod, Cameron Holdaway, Sirui Tao, Kevin~A. Smith, Fan-Yun Sun,
-  Li~Fei-Fei, Nancy Kanwisher, Joshua~B. Tenenbaum, Daniel Yamins, and
-  Judith~E. Fan.
+  R.~T. Pramod, Cameron Holdaway, Sirui Tao, Kevin~A. Smith, Fan-Yun Sun, Li
+  Fei-Fei, Nancy Kanwisher, Joshua~B. Tenenbaum, Daniel Yamins, and Judith~E.
+  Fan.
 \newblock Physion: Evaluating physical prediction from vision in humans and
   machines.
 \newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS),
@@ -106,7 +106,7 @@ Emmanuelle Bourigault.
 
 \bibitem[Buch et~al.(2022)Buch, Eyzaguirre, Gaidon, Wu, Fei-Fei, and
   Niebles]{buch2022revisiting}
-Shyamal Buch, Crist{\'o}bal Eyzaguirre, Adrien Gaidon, Jiajun Wu, Li~Fei-Fei,
+Shyamal Buch, Crist{\'o}bal Eyzaguirre, Adrien Gaidon, Jiajun Wu, Li Fei-Fei,
   and Juan~Carlos Niebles.
 \newblock Revisiting the ``video'' in video-language understanding.
 \newblock In \emph{IEEE/CVF Conference on Computer Vision and Pattern
@@ -384,7 +384,6 @@ Vinay Sharma and Olga Fink.
 \newblock A physics-informed graph neural network conserving linear and angular
   momentum for dynamical systems.
 \newblock \emph{Nature Communications}, 17, 2026.
-\newblock \doi{10.1038/s41467-025-67802-5}.
 
 \bibitem[Sosanya and Greydanus(2022)]{sosanya2022dissipative}
 Andrew Sosanya and Sam Greydanus.
@@ -403,7 +402,7 @@ Hsiao-Yu~Fish Tung, Mingyu Ding, Zhenfang Chen, Daniel~M. Bear, Chuang Gan,
 
 \bibitem[Wang et~al.(2026)Wang, Huang, Liu, Chen, Sun, Gu, Zhou, Liu, and
   Cui]{wang2026moshwm}
-Zhekai Wang, Haoxiang Huang, Xiang Liu, Zhikang Chen, Yueqing Sun, Qi~Gu, Shiji
+Zhekai Wang, Haoxiang Huang, Xiang Liu, Zhikang Chen, Yueqing Sun, Qi Gu, Shiji
   Zhou, Miao Liu, and Sen Cui.
 \newblock {MOSH-WM}: Mask-grounded soft-{H}amiltonian dynamics for
   object-centric world models.

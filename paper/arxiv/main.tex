@@ -4,15 +4,24 @@
 % compiles, so the draft can be read before the kit is added.
 \documentclass[10pt,twocolumn,letterpaper]{article}
 
+% A file named ANONYMOUS next to this one selects the anonymous conference build:
+% no author block, no acknowledgements, no repository link, no appended supplement.
+\newif\ifanon
+\IfFileExists{ANONYMOUS}{\anontrue}{\anonfalse}
+
+%%%%%%%%% PAPER ID - update once OpenReview assigns one
+\def\paperID{*****}
+\def\confName{CVPR}
+\def\confYear{2027}
+
 \IfFileExists{cvpr.sty}{%
-  \usepackage[review]{cvpr}%
+  \ifanon\usepackage[review]{cvpr}\else\usepackage{cvpr}\fi%
 }{%
   % CVPR-like page geometry, so the page count here matches the real template
   \usepackage[letterpaper,top=1in,bottom=1.125in,left=0.8125in,right=0.8125in,
               columnsep=0.3125in]{geometry}%
   \usepackage{times}%
   \usepackage[numbers,sort&compress]{natbib}%
-  \newcommand{\cvprPaperID}{*****}%
 }
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb}
@@ -22,18 +31,12 @@
 \usepackage[hidelinks]{hyperref}
 \def\UrlBreaks{\do\/\do-}
 \usepackage[capitalize]{cleveref}
-\usepackage{pdfpages}
+\ifanon\else\usepackage{pdfpages}\fi  % clashes with cvpr.sty, and unused there
 \raggedbottom  % do not stretch a short column to the full height
 \providecommand{\etal}{et al.}
 
 \newcommand{\sys}{CausalVis}
 \newcommand{\figfile}[2]{\IfFileExists{figures/#1}{\includegraphics{figures/#1}}{\fbox{\parbox[c][#2][c]{0.95\linewidth}{\centering\small figure file \texttt{#1} (see FIGURES.md)}}}}
-
-% Set \anontrue for a double-blind submission (CVPR, NeurIPS). With the official
-% cvpr.sty the [review] option already hides the author block, so this only matters
-% for the fallback layout and for the arXiv version.
-\newif\ifanon
-\anonfalse
 
 \title{Better Physics, Same Score: What an Auditable Counterfactual Engine\\Reveals About CLEVRER}
 \ifanon
@@ -61,7 +64,9 @@ Across 13 simulators, a 2.2$\times$ range in rollout error moves the counterfact
 Two choices that involve no physics matter more: when objects are handed to the simulator (1.2 points) and whether the simulation continues past the end of the video (4.6 points).
 Of the correct answers that can be checked against the annotation, 98.2\% rest on a real recorded event.
 We also find that CLEVRER's ``responsible'' labels contradict its own counterfactual answers in 35\% of cases, while a counterfactual test agrees better with human judgments.
-Code, checkpoints and the per-answer records of every reported run are at {\small \url{https://github.com/bukhari-hamzamukhtar/CausalVis}}.
+\ifanon Code, checkpoints and the per-answer records of every reported run will be released.
+\else Code, checkpoints and the per-answer records of every reported run are at {\small \url{https://github.com/bukhari-hamzamukhtar/CausalVis}}.
+\fi
 Our study suggests that counterfactual video benchmarks should report the evidence behind each answer alongside its accuracy.
 \end{abstract}
 
@@ -116,8 +121,9 @@ NS-DR~\cite{yi2020clevrer} and DCL~\cite{chen2021dcl} execute question programs 
 VRDP~\cite{ding2021vrdp} fits a differentiable rigid-body simulator to each video, ALOE~\cite{ding2021aloe} answers with a transformer over object embeddings, and SlotFormer~\cite{wu2023slotformer} rolls object slots forward for predictive questions.
 CRCG~\cite{ishay2024crcg} keeps unaffected objects on their perceived states and simulates only the objects an intervention reaches, which raised VRDP from 94.8\% to 96.1\% per option.
 Rovai~\cite{rovai2026eventgraph} replays the annotated event log without the removed object and notes that new collisions caused by a removal need a simulator.
-Concurrently, PhysMind~\cite{yang2026physmind} builds one reusable executable world per video from segmentation, meshes and 6D pose, fits analytic dynamics to it and then inspects, continues or edits that world to answer a question, without training; it reports a 38.2 point gain over chain-of-thought prompting of the same vision-language model on CLEVRER.
-We share the one-world-per-video design and the separation of perception from answering, and differ in what we do with it: our simulator is interchangeable, and we use the engine to measure how much of the benchmark score the physics explains.
+PhysMind~\cite{yang2026physmind} builds one reusable executable world per video from segmentation, meshes and 6D pose, fits analytic dynamics to it, and then inspects, continues or edits that world to answer a question, without training; it reports a 38.2 point gain over chain-of-thought prompting of the same vision-language model on CLEVRER.
+The one-world-per-video design is therefore established, and our engine is another instance of it.
+What we add is an interchangeable simulator and the use of the engine as an instrument: we measure how much of the benchmark score the physics explains, which none of this prior work set out to do.
 Beyond CLEVRER, ComPhy~\cite{chen2022comphy} adds hidden mass and charge, CoPhy~\cite{baradel2020cophy,janny2022filtered} asks for counterfactual trajectories under hidden confounders, and CLEVRER-Humans~\cite{mao2022clevrerhumans} collects human causal judgments.
 Other benchmarks test causal consistency~\cite{ates2022craft,foss2025causalvqa,begiristain2026cronos} or physical prediction~\cite{bear2021physion,tung2023physionpp,bordes2025intphys2}; Melnik \etal~\cite{melnik2023benchmarks} survey them.
 
@@ -239,7 +245,7 @@ Training the world model took 8.1 hours, and answering a counterfactual question
 \label{sec:results}
 
 \begin{table}[tb]
-\caption{Counterfactual questions on CLEVRER. Accuracy per option and per question. Published numbers are on the official test set. Ours are on 1,398 held-out videos (TEST-A and TEST-B pooled), and the last column gives the fresh TEST-B set alone, which our pre-registration names as primary. $\dagger$: trained object detector; $\ddagger$: attribute labels in training. $\ast$: concurrent, measured on its own fixed subset of 1,000 CLEVRER validation scenes rather than the test set, and training-free apart from off-the-shelf perception. The rows of \sys{} share the engine and differ only in the simulator.}
+\caption{Counterfactual questions on CLEVRER. Accuracy per option and per question. Published numbers are on the official test set. Ours are on 1,398 held-out videos (TEST-A and TEST-B pooled), and the last column gives the fresh TEST-B set alone, which our pre-registration names as primary. $\dagger$: trained object detector; $\ddagger$: attribute labels in training. $\ast$: measured on its own fixed subset of 1,000 CLEVRER validation scenes rather than the test set, and training-free apart from off-the-shelf perception. The rows of \sys{} share the engine and differ only in the simulator.}
 \label{tab:main}
 \centering
 \small
@@ -274,7 +280,7 @@ The fitted laws answer 91.4\% and 75.0\%, 1.0 points above the learned model ($z
 The two test sets agree: the learned model scores 90.2\% on TEST-A and 90.5\% on the fresh TEST-B, and the laws 91.7\% and 91.3\% ($z=3.1$ on TEST-B alone).
 We report the pooled sets from here on, which narrows the intervals; the comparisons in this section hold on TEST-B alone (Supp.~J).
 \sys{} stays 3.4 to 5.7 points per option below VRDP and CRCG, which use the same kind of perception.
-The closest concurrent system, PhysMind~\cite{yang2026physmind}, also builds one editable world per video and reports 88.1 per option and 70.6 per question on its own 1,000-scene validation subset; it reaches that without any CLEVRER-trained perception, so the 2.3-point difference from our numbers is not a like-for-like gap in either direction.
+The closest prior system, PhysMind~\cite{yang2026physmind}, also builds one editable world per video and reports 88.1 per option and 70.6 per question on its own 1,000-scene validation subset; it reaches that without any CLEVRER-trained perception, so the 2.3-point difference from our numbers is not a like-for-like gap in either direction.
 Without any physics the engine already answers 81.4\% of options, above NS-DR and DCL; physics adds 9.0 points per option and 22.2 per question.
 For the other direction, a general vision-language model given 16 frames of the video and the same options, Qwen2.5-VL-7B-Instruct~\cite{bai2025qwen25vl}, answers 54.4\% of options on TEST-A, which is what answering ``no'' to every event scores (54.1\%), and 2.9\% of questions (Supp.~C).
 
@@ -459,6 +465,8 @@ An AI coding assistant was used for implementation support and for language edit
 \bibliography{refs}
 }
 
-\IfFileExists{supp.pdf}{\clearpage\includepdf[pages=-]{supp.pdf}}{}
+\ifanon\else  % CVPR takes supplementary material as a separate upload
+\IfFileExists{supp.pdf}{\clearpage\includepdf[pages=-]{supp.pdf}}{}
+\fi
 
 \end{document}

@@ -147,3 +147,13 @@ paper/*.out
 
 # local pointer to WORKING_LOG.md for the editor, not part of the project
 CLAUDE.md
+
+# local cold-storage archives (not for git)
+_archive/
+
+# Generated paper builds (paper/make_builds.py rebuilds them from paper/style)
+paper/cvpr/
+paper/arxiv/
+paper/*.aux
+paper/*.out
+paper/*.log

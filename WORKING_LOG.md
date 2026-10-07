@@ -1404,3 +1404,47 @@ Qwen2.5-VL citation (refs.bib, arXiv 2502.13923, checked against the arXiv API),
 limitation sentence says four seeds were later trained in full. Figure 4 (forest plot) now
 shows all six seeds; its panel grew 3.30 -> 4.05 in and the paper still compiles to 10 pages.
 The supplement has NO bibliography, so a \cite there is undefined: put citations in main.tex.
+
+## VENUE CHECK AND A CONFERENCE-READY BUILD (2026-10-07)
+Checked the venues' own pages rather than memory. Full notes in paper_exp/VENUES.md.
+
+**CVPR 2027** (Seattle, 19-26 June 2027): registration of the paper 10 Nov 2026, submission
+16 Nov, supplementary 23 Nov, reviews 25 Jan, decisions 25 Feb 2027. Last cycle 16,092
+submissions and 4,089 accepted (25.4%). Eight pages excluding references, official template,
+double blind, and the public codebase may not be cited, only promised. arXiv preprints are
+explicitly allowed and so is naming the submission in a PhD application, confidentially.
+THE COST IS THE PROBLEM: an accepted paper needs an author registration, virtual does not
+count, student member rate $525 early or $675 standard. That is the whole decision.
+
+**TMLR** is free at every step, rolling, about two months, and its stated scope includes
+analysis and understanding of learning systems. Also double blind on OpenReview.
+
+**LLM policy at both: no disclosure required, responsibility instead.** CVPR: "it is not a
+defense to a charge of plagiarism or of inaccuracy to argue that an LLM did it", and citations
+to non-existent material can be desk-rejected. TMLR: "LLMs may be used as general-purpose
+assistive tools... authors are fully responsible". Both forbid prompt injection as an ethics
+violation. CVPR 2027's own LLM section says it is still being finalised, so re-read it in
+November. Our one-line assistance statement is therefore optional, and it sits in the
+acknowledgements, which the anonymous build drops anyway.
+
+**PhysMind is PRIOR WORK, not concurrent.** CVPR counts anything online before 15 September
+2026 as prior; PhysMind is August 2026. The paper now says the one-world-per-video design is
+established and that our addition is the interchangeable simulator and the audit.
+
+**Two builds from one source** (paper/BUILDS.md). main.tex and supp.tex look for a file named
+ANONYMOUS beside them: present in paper/cvpr (official cvpr.sty in review mode, anonymous, no
+repository link, no acknowledgements, supplement separate, body exactly 8 pages with
+references running to page 10), absent in paper/ (arXiv version, 19 pages with the supplement
+appended). cvpr.sty carries its own inlined copy of eso-pic and clashes with pdfpages, which
+is why only the arXiv build loads pdfpages and only the CVPR build loads cvpr.sty.
+
+**Every reference verified** (paper_exp/verify_refs.py -> paper_exp/reference_check.txt):
+61 entries, 57 matched automatically against arXiv, Crossref or OpenAlex, the other four
+checked by hand and all real. This matters because CVPR desk-rejects papers that cite
+material that does not exist.
+
+Award papers of CVPR 2026 for calibration: D4RT (DeepMind/UCL/Oxford), structured latents for
+3D generation (Tsinghua/Microsoft), NitroGen (NVIDIA), SAM 3D (Meta), and one lightweight
+training-free student paper. Four of five are large industry systems and none is a benchmark
+audit, so the paper has to read as a measurement with a finding rather than as a system that
+scores below the leaders.
