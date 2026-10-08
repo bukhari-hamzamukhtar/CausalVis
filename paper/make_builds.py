@@ -89,9 +89,12 @@ def build_tmlr():
     for name, why in (("ANONYMOUS", "double blind"), ("TMLR", "single column, TMLR style")):
         with open(os.path.join(out, name), "w") as fh:
             fh.write(why + "\n")
-    supp = os.path.join(PAPER, "supp.pdf")
-    if os.path.exists(supp):
-        shutil.copy2(supp, os.path.join(out, "supp.pdf"))
+    # Never copy paper/supp.pdf here: that one carries the author's name. This folder
+    # compiles its own anonymous supplement from supp.tex, which the ANONYMOUS marker
+    # beside it switches to "Anonymous CVPR submission".
+    stale = os.path.join(out, "supp.pdf")
+    if os.path.exists(stale):
+        os.remove(stale)
     print("built", out)
     print("  compile: pdflatex supp; pdflatex supp; "
           "pdflatex main; bibtex main; pdflatex main; pdflatex main")
