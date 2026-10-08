@@ -1448,3 +1448,26 @@ Award papers of CVPR 2026 for calibration: D4RT (DeepMind/UCL/Oxford), structure
 training-free student paper. Four of five are large industry systems and none is a benchmark
 audit, so the paper has to read as a measurement with a finding rather than as a system that
 scores below the leaders.
+
+## SUBMITTED TO TMLR (2026-10-08)
+Title changed to the noun-phrase form TMLR's own listing uses, after checking 40 recent
+accepted titles: almost all are noun phrases, and analysis papers follow "subject: what kind
+of study", as in "Re-Examining X: A Confound-Controlled Comparison of Y".
+  Benchmark Insensitivity to Physical Fidelity: A Simulator-Agnostic Audit of CLEVRER
+Submitted as a Regular submission (main content ends on page 11, references from 12,
+appendix from 15, 23 pages), competing interests N/A, human subjects N/A, CC BY 4.0,
+supplementary left empty for now and attachable later by editing the submission.
+
+CAUGHT WHILE REBUILDING: make_builds.build_tmlr was copying paper/supp.pdf, the NAMED
+arXiv supplement, into the anonymous folder, where main.tex appends it. The author's name
+would have been on page 15 of a double-blind submission. The TMLR folder now compiles its
+own supplement from supp.tex and deletes any stale copy. Check every anonymous build with
+  pdftotext main.pdf - | grep -i "bukhari\|giki\|ghulam\|khurram\|github"
+which must return nothing; it does for all three builds.
+
+Also built paper/workshop: a four-page version for the CoRL 2026 PhysWM workshop
+(non-archival, dual submission welcomed, so it cannot conflict with TMLR). Title
+"Benchmark Insensitivity to Physical Fidelity in Counterfactual Video Reasoning".
+It is written for that audience: their research question Q2 asks what benchmarks verify a
+model is control-useful, and the last section gives a recipe a manipulation group can run
+on its own benchmark without new annotation.
