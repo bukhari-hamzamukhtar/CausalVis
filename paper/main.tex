@@ -19,6 +19,7 @@
 \iftmlr
   \usepackage{tmlr}%  hides the authors; [accepted] or [preprint] de-anonymises
   \usepackage{placeins}%  so no figure drifts past the references
+  \usepackage[export]{adjustbox}%  for max width, see the figure macro below
 \else
 \IfFileExists{cvpr.sty}{%
   \ifanon\usepackage[review]{cvpr}\else\usepackage{cvpr}\fi%
@@ -53,9 +54,10 @@
 
 \newcommand{\sys}{CausalVis}
 \iftmlr
-  % one column of 6.5in: a CVPR spread overflows and a CVPR column looks lost
+  % One column of 6.5in. The wide figures were drawn 6.875in and have to shrink; the
+  % narrow ones were drawn 3.25in and must NOT be blown up, or their type doubles in size.
   \newcommand{\figfile}[2]{\IfFileExists{figures/#1}%
-    {\includegraphics[width=\linewidth]{figures/#1}}%
+    {\includegraphics[max width=\linewidth]{figures/#1}}%
     {\fbox{\parbox[c][#2][c]{0.95\linewidth}{\centering\small figure file \texttt{#1}}}}}
 \else
   \newcommand{\figfile}[2]{\IfFileExists{figures/#1}{\includegraphics{figures/#1}}{\fbox{\parbox[c][#2][c]{0.95\linewidth}{\centering\small figure file \texttt{#1} (see FIGURES.md)}}}}
