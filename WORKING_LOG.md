@@ -1471,3 +1471,40 @@ Also built paper/workshop: a four-page version for the CoRL 2026 PhysWM workshop
 It is written for that audience: their research question Q2 asks what benchmarks verify a
 model is control-useful, and the last section gives a recipe a manipulation group can run
 on its own benchmark without new annotation.
+
+## TMLR DESK-REJECTED IT, AND THE FORMATTING WAS MY FAULT (2026-10-09)
+Paper 13051 was rejected without review, no comments. The form letter cites the two TMLR
+criteria and reviewer bandwidth, so the reason is not stated. One defect in the submitted
+PDF is certain and was mine:
+
+**Page 16, the first page of the appendix, read "Anonymous CVPR submission / Paper ID *****"
+inside a TMLR submission.** The appendix was compiled as its own paper and stapled on with
+pdfpages, so from page 16 the document lost the "Under review as submission to TMLR" running
+header, restarted page numbering at 1, and carried a CVPR title block. An action editor
+skimming it sees a recycled conference submission. TMLR's AE guidance lists format violations
+as grounds for immediate rejection.
+
+Cause: when supp.tex was made anonymous its author line was hardcoded as "Anonymous CVPR
+submission", and the TMLR build keys on the same ANONYMOUS marker. The anonymity check that
+was run (grep for the author, the institute, the supervisor, the GitHub URL) passed, because
+none of those strings were present. Nobody looked at the appendix's own title block.
+
+LESSON: a grep for identity is not a check that a build is correct. Before submitting,
+LOOK AT the first page of every section boundary, and check the running header and the page
+numbers are continuous across the whole PDF:
+  for p in $(seq 1 N); do pdftotext -f $p -l $p main.pdf - | head -1; done
+
+FIXED PROPERLY, not patched. supp.tex was split: supp_body.tex holds the appendix sections,
+and main.tex now does \clearpage\appendix\input{supp_body} for every build except CVPR, so
+the appendix inherits the header, the page numbering and the bibliography of the paper it
+belongs to. supp.tex survives as a thin standalone wrapper because CVPR takes the supplement
+as a separate upload, and its anonymous line no longer names a venue. pdfpages is gone, which
+also removes the eso-pic clash that forced cvpr.sty out of the arXiv build.
+Verified after the fix: TMLR 23 pages, header on all of them, appendix starts at page 16 as
+section A, zero CVPR mentions, zero identity leaks. CVPR 10 pages plus an 8-page standalone
+supplement. arXiv 17 pages.
+
+QUOTA, which now matters: TMLR's Generalized Harmonic Quota Rule gives a sole author N_1 = 2
+submissions per year, and budget is spent even on desk-rejected ones. ONE submission left for
+2026. A resubmission must be entered as a new submission linking the rejected one and
+describing the changes, so do not spend the last slot on a quick turnaround.

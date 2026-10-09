@@ -38,7 +38,6 @@
 \usepackage[hidelinks]{hyperref}
 \def\UrlBreaks{\do\/\do-}
 \usepackage[capitalize]{cleveref}
-\IfFileExists{cvpr.sty}{}{\usepackage{pdfpages}}  % cvpr.sty inlines eso-pic and clashes
 \raggedbottom  % do not stretch a short column to the full height
 \providecommand{\etal}{et al.}
 % TMLR cites by author and year, and the text is written for parenthetical citations.
@@ -498,9 +497,11 @@ An AI coding assistant was used for implementation support and for language edit
 \bibliography{refs}
 }
 
-% CVPR takes supplementary material as a separate upload; TMLR and arXiv want it here.
+% CVPR takes supplementary material as a separate upload; everywhere else the appendix
+% belongs inside the paper, so that it keeps the running header, the page numbering and
+% the bibliography of the document it is part of.
 \IfFileExists{cvpr.sty}{}{%
-  \IfFileExists{supp.pdf}{\clearpage\includepdf[pages=-]{supp.pdf}}{}%
+  \IfFileExists{supp_body.tex}{\clearpage\appendix\input{supp_body}}{}%
 }
 
 \end{document}

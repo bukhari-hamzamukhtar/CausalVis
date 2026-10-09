@@ -36,7 +36,7 @@ def fresh(name):
 def build_cvpr():
     """Anonymous, official template, supplement kept as its own document."""
     out = fresh("cvpr")
-    for f in ("main.tex", "supp.tex", "refs.bib"):
+    for f in ("main.tex", "supp.tex", "supp_body.tex", "refs.bib"):
         shutil.copy2(os.path.join(PAPER, f), os.path.join(out, f))
     for f in ("cvpr.sty", "ieeenat_fullname.bst"):
         shutil.copy2(os.path.join(STYLE, f), os.path.join(out, f))
@@ -56,7 +56,7 @@ def build_arxiv():
     build needs to append the supplement.
     """
     out = fresh("arxiv")
-    for f in ("main.tex", "main.bbl", "supp.pdf"):
+    for f in ("main.tex", "main.bbl", "supp_body.tex"):
         src = os.path.join(PAPER, f)
         if not os.path.exists(src):
             raise SystemExit("missing %s: compile the paper in paper/ first" % f)
@@ -82,7 +82,7 @@ def build_tmlr():
     too. Supplementary files may be uploaded separately as well, up to 100 MB.
     """
     out = fresh("tmlr")
-    for f in ("main.tex", "supp.tex", "refs.bib"):
+    for f in ("main.tex", "supp.tex", "supp_body.tex", "refs.bib"):
         shutil.copy2(os.path.join(PAPER, f), os.path.join(out, f))
     for f in ("tmlr.sty", "tmlr.bst", "fancyhdr.sty"):
         shutil.copy2(os.path.join(STYLE, f), os.path.join(out, f))
