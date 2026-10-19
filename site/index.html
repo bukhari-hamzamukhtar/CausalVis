@@ -3,236 +3,881 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CausalVis</title>
-<meta name="description" content="An instrument for auditing counterfactual video evaluation. Swapping simulators across a 2.2x range of rollout error moves CLEVRER's counterfactual score by 2.2 points.">
-<meta property="og:title" content="CausalVis: Does the Benchmark Measure the Physics?">
-<meta property="og:description" content="An auditable counterfactual engine, used to measure how much of CLEVRER's score the physics actually earns.">
-<meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='11' cy='17' r='6' fill='%232f6f4e'/><circle cx='23' cy='12' r='4' fill='%23c2410c'/></svg>">
+<title>CausalVis Lab</title>
+<meta name="description" content="Counterfactual physics on CLEVRER: remove an object and see the world a learned model computes, beside the real recording.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@80,500;80,700;100,500;100,700&family=Spectral:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-  :root{
-    --bg:#fbfbf9; --panel:#ffffff; --ink:#15171a; --muted:#5b6168; --faint:#8b9199;
-    --line:#e4e4df; --accent:#2f6f4e; --accent-soft:#eef4f0; --warm:#b45309;
-    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
-  }
-  @media (prefers-color-scheme:dark){
-    :root:not([data-theme="light"]){
-      --bg:#111315; --panel:#191c1f; --ink:#e9eaec; --muted:#a3a9b0; --faint:#767c84;
-      --line:#2a2e33; --accent:#6fbf92; --accent-soft:#18241d; --warm:#e0a158;
-    }
-  }
-  :root[data-theme="dark"]{
-    --bg:#111315; --panel:#191c1f; --ink:#e9eaec; --muted:#a3a9b0; --faint:#767c84;
-    --line:#2a2e33; --accent:#6fbf92; --accent-soft:#18241d; --warm:#e0a158;
-  }
-  *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    margin:0; background:var(--bg); color:var(--ink);
-    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    font-feature-settings:"kern" 1;
-  }
-  .wrap{max-width:820px; margin:0 auto; padding:0 16px}
-  a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent}
-  a:hover{border-bottom-color:currentColor}
-
-  header{padding:64px 0 40px; border-bottom:1px solid var(--line)}
-  .eyebrow{font:600 12px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin:0 0 18px}
-  h1{font-size:clamp(28px,5vw,40px); line-height:1.18; letter-spacing:-.02em; margin:0 0 6px; font-weight:650}
-  h1 .sub{display:block; font-weight:450; color:var(--muted); font-size:clamp(17px,2.8vw,22px); margin-top:8px; letter-spacing:-.01em}
-  .byline{margin:22px 0 0; color:var(--muted); font-size:15px}
-  .byline strong{color:var(--ink); font-weight:600}
-
-  .links{display:flex; flex-wrap:wrap; gap:10px; margin:28px 0 0}
-  .btn{
-    display:inline-flex; align-items:center; gap:7px; padding:9px 15px; border-radius:8px;
-    border:1px solid var(--line); background:var(--panel); color:var(--ink);
-    font-size:14px; font-weight:550; border-bottom:1px solid var(--line);
-  }
-  .btn:hover{border-color:var(--accent); color:var(--accent)}
-  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
-  .btn.primary:hover{opacity:.9; color:#fff}
-  .btn svg{width:15px; height:15px; flex:none}
-
-  section{padding:44px 0; border-bottom:1px solid var(--line)}
-  section:last-of-type{border-bottom:0}
-  h2{font-size:13px; font-weight:650; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); margin:0 0 18px; font-family:var(--mono)}
-  h3{font-size:17px; font-weight:620; margin:30px 0 8px; letter-spacing:-.01em}
-  p{margin:0 0 16px; color:var(--muted)}
-  p.lead{color:var(--ink); font-size:17px}
-  strong{color:var(--ink); font-weight:600}
-
-  .finding{
-    background:var(--accent-soft); border:1px solid var(--line); border-left:3px solid var(--accent);
-    border-radius:8px; padding:18px 20px; margin:0 0 22px;
-  }
-  .finding p{margin:0; color:var(--ink)}
-  .finding .big{font-family:var(--mono); font-size:15px; font-weight:600; color:var(--accent)}
-
-  .tablewrap{overflow-x:auto; margin:0 0 10px; -webkit-overflow-scrolling:touch}
-  table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:440px}
-  th,td{text-align:right; padding:9px 10px; border-bottom:1px solid var(--line); white-space:nowrap}
-  th:first-child,td:first-child{text-align:left; white-space:normal}
-  thead th{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600; border-bottom:1px solid var(--line)}
-  tbody tr.best td{font-weight:600; color:var(--ink)}
-  tbody tr.rule-top td{border-top:1px solid var(--line)}
-  td.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
-  caption{caption-side:bottom; text-align:left; color:var(--faint); font-size:13px; padding-top:12px; line-height:1.55}
-
-  figure{margin:0 0 26px}
-  figure img{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:8px; background:#fff}
-  figcaption{color:var(--faint); font-size:13.5px; line-height:1.6; margin-top:10px}
-  figcaption b{color:var(--muted); font-weight:600}
-
-  ul{margin:0 0 16px; padding-left:20px; color:var(--muted)}
-  li{margin-bottom:7px}
-  li::marker{color:var(--faint)}
-
-  .note{font-size:14px; color:var(--faint); border-left:2px solid var(--line); padding-left:14px; margin:22px 0 0}
-  code{font-family:var(--mono); font-size:.9em; background:var(--accent-soft); padding:1px 5px; border-radius:4px; color:var(--ink)}
-
-  footer{padding:36px 0 64px; color:var(--faint); font-size:13.5px}
-  footer p{color:var(--faint); margin:0 0 8px}
-
-  @media (max-width:560px){
-    header{padding:44px 0 32px}
-    section{padding:34px 0}
-    .btn{flex:1 1 calc(50% - 5px); justify-content:center}
-  }
+:root{
+  --paper:#F3F5F4; --panel:#FFFFFF; --ink:#1B2127; --ink2:#56616B; --line:#D2D8D6; --tint:#E7ECEA;
+  --rec:#8A5A2C; --sim:#0E7C89; --lm:#6A4B9E; --hand:#66707A; --bad:#B0442E; --amber:#B7791F;
+  --rec-bg:#F3EAE0; --sim-bg:#E1F1F2; --lm-bg:#ECE6F5; --bad-bg:#F6E6E1; --amber-bg:#F7EEDC;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"Spectral",Georgia,serif; --mono:"IBM Plex Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root{
+  --paper:#111416; --panel:#171B1E; --ink:#E3E7E9; --ink2:#9AA3AA; --line:#2B3237; --tint:#1D2226;
+  --rec:#CE9C66; --sim:#4BC0CC; --lm:#AD8FE6; --hand:#A3ACB4; --bad:#E5826B; --amber:#E2AE55;
+  --rec-bg:#2A2119; --sim-bg:#15292C; --lm-bg:#231D30; --bad-bg:#2E1B17; --amber-bg:#2D2414;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 var(--body)}
+h1,h2,h3{font-family:var(--display);font-stretch:80%;margin:0;line-height:1.15}
+button,input,textarea,select{font:inherit;color:inherit}
+button{font-family:var(--display);font-stretch:90%;font-weight:700;cursor:pointer;border:1px solid var(--ink);background:var(--panel);padding:8px 14px}
+button.primary{background:var(--sim);border-color:var(--sim);color:#fff}
+button.on{background:var(--lm);border-color:var(--lm);color:#fff}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,canvas:focus-visible{outline:3px solid var(--sim);outline-offset:2px}
+.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding:16px 24px;border-bottom:2px solid var(--ink)}
+.top h1{font-size:1.7rem;font-weight:700}
+.tag{font-family:var(--display);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.app{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 64px)}
+.side{border-right:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:18px;background:var(--panel)}
+.main{padding:18px 24px 60px;display:flex;flex-direction:column;gap:22px;min-width:0}
+.label{font-family:var(--display);font-stretch:100%;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input[type=number]{width:120px;padding:8px 10px;border:1px solid var(--line);background:var(--paper);font-family:var(--mono)}
+textarea{width:100%;min-height:90px;padding:9px 10px;border:1px solid var(--line);background:var(--paper);resize:vertical}
+select{padding:3px 6px;border:1px solid var(--line);background:var(--paper)}
+input[type=range]{accent-color:var(--sim)}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{font-family:var(--display);font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;background:var(--tint)}
+.chip.test{background:var(--sim-bg);color:var(--sim)}
+.objs{display:flex;flex-direction:column;gap:6px}
+.obj{display:grid;grid-template-columns:16px 1fr auto;align-items:center;gap:4px 8px;padding:6px 8px;border:1px solid var(--line)}
+.obj .acts{grid-column:1/-1;display:flex;gap:4px;flex-wrap:wrap}
+.oname{border:0;background:none;padding:0;text-align:left;font-family:var(--body);font-weight:500;cursor:pointer}
+.oname:hover{text-decoration:underline}
+.mini{padding:2px 8px;font-size:.76rem;border-color:var(--line);font-weight:500}
+.mini:hover:not(:disabled){border-color:var(--ink)}
+.sw{width:14px;height:14px;display:inline-block;border:1px solid rgba(0,0,0,.25)}
+.sw.metal{border-radius:50%;box-shadow:inset -3px -3px 0 rgba(255,255,255,.45)}
+.obj small{font-family:var(--mono);color:var(--ink2);font-size:.75rem}
+.qs button,.examples button{display:block;width:100%;text-align:left;font-family:var(--body);font-weight:400;font-size:.9rem;margin-bottom:5px;border-color:var(--line);padding:6px 9px}
+.examples{max-height:230px;overflow-y:auto}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-family:var(--display);font-size:.9rem}
+.steps li{color:var(--ink2);display:flex;gap:8px;align-items:center}
+.steps li::before{content:"";width:9px;height:9px;border:1.5px solid currentColor}
+.steps li.now{color:var(--sim);font-weight:700} .steps li.now::before{background:var(--sim)}
+.steps li.done{color:var(--ink)} .steps li.done::before{background:var(--ink)}
+.bar{height:5px;background:var(--tint);margin-top:6px} .bar i{display:block;height:100%;background:var(--sim);width:0;transition:width .3s}
+.err{color:var(--bad);font-size:.92rem;margin:6px 0 0}
+.note{font-size:.85rem;color:var(--ink2);margin:6px 0 0}
+.player{background:var(--panel);border:1px solid var(--line)}
+.views{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
+figure{margin:0;border:1px solid var(--line)}
+figure .head{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-bottom:1px solid var(--line);font-family:var(--display);font-weight:700}
+figure .head span{font-weight:500;color:var(--ink2);font-size:.85rem;text-align:right}
+canvas.view{width:100%;aspect-ratio:3/2;display:block;background:#dfe3e6;touch-action:none;cursor:grab}
+canvas.view.dragging{cursor:grabbing} canvas.view.marking{cursor:crosshair}
+.controls{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:9px 12px;border-top:1px solid var(--line)}
+.ctl{display:flex;align-items:center;gap:6px;font-family:var(--display);font-size:.85rem;color:var(--ink2)}
+.mono{font-family:var(--mono);font-size:.82rem;color:var(--ink2);min-width:13ch}
+.legend{display:flex;gap:6px 16px;flex-wrap:wrap;padding:8px 12px;font-size:.82rem;color:var(--ink2);font-family:var(--display);border-top:1px solid var(--line)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.ring{display:inline-block;width:11px;height:11px;border-radius:50%;border:2px dashed var(--lm);margin-right:5px;vertical-align:-2px}
+section.card{background:var(--panel);border:1px solid var(--line);padding:16px 18px}
+section.card h2{font-size:1.25rem;margin-bottom:10px}
+.summary{font-size:1.12rem;margin:0 0 10px}
+.card ul,.card ol{margin:6px 0 10px;padding-left:1.3rem}
+.caution{background:var(--amber-bg);padding:8px 12px;font-size:.93rem;margin:8px 0 0}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.three h3{font-size:.95rem;font-stretch:100%;margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.three ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;font-size:.93rem}
+.three li{padding:6px 8px;background:var(--tint)}
+.three .kept li{background:var(--amber-bg)} .three .new li{background:var(--bad-bg)} .three .gone li{text-decoration:line-through;text-decoration-color:var(--ink2)}
+.fr{font-family:var(--mono);font-size:.78rem;color:var(--ink2)}
+.tl{display:grid;grid-template-columns:230px 1fr;gap:8px 12px;align-items:center;font-size:.9rem}
+.track{position:relative;height:14px;background:var(--tint)}
+.track i{position:absolute;top:0;bottom:0}
+.track .v{background:var(--rec)} .track .s{background:var(--sim)} .track .x{background:var(--hand);opacity:.5}
+.track .chg{top:-5px;bottom:-5px;width:3px;margin-left:-1px;background:var(--lm)}
+.track .end{top:-4px;bottom:-4px;border-left:2px dashed var(--ink2)}
+.axis{grid-column:2;display:flex;justify-content:space-between;font-family:var(--mono);font-size:.75rem;color:var(--ink2)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--display);font-weight:700;background:var(--tint)}
+.ok{color:var(--sim);font-weight:600} .no{color:var(--bad);font-weight:600}
+.explain h3{font-size:.95rem;font-stretch:100%;margin-top:12px}
+@media (max-width:1100px){.app{grid-template-columns:1fr}.side{border-right:0;border-bottom:1px solid var(--line)}.views,.three{grid-template-columns:1fr}.tl{grid-template-columns:130px 1fr}}
+.oname{cursor:default}
+.oname:hover{text-decoration:none}
+.hosted{padding:12px 24px;border-bottom:1px solid var(--line);background:var(--tint);
+  font-size:.95rem;line-height:1.5;color:var(--ink2)}
+.hosted b{color:var(--ink);font-family:var(--display);font-stretch:90%}
+.hosted a{color:var(--sim);font-weight:500}
+#scenes{max-height:none;display:flex;flex-wrap:wrap;gap:5px}
+#scenes button{display:inline-block;width:auto;margin:0;font-size:.78rem;padding:5px 9px;
+  font-family:var(--mono)}
+#examples{max-height:none}
+.exq{display:block;border-left:2px solid var(--line);padding:2px 0 2px 9px;margin:5px 0;
+  font-size:.9rem;color:var(--ink2)}
 </style>
 </head>
 <body>
-
-<div class="wrap">
-
-<header>
-  <p class="eyebrow">Counterfactual video reasoning &middot; benchmark audit</p>
-  <h1>Does the benchmark measure the physics?
-    <span class="sub">An instrument for auditing counterfactual video evaluation</span>
-  </h1>
-  <p class="byline">
-    <strong>Syed Hamza Mukhtar Bukhari</strong><br>
-    Faculty of Computer Science and Engineering,<br>
-    Ghulam Ishaq Khan Institute of Engineering Sciences and Technology
-  </p>
-  <div class="links">
-    <a class="btn primary" href="causalvis-paper.pdf">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1.5h5l3.5 3.5v9.5H4z"/><path d="M9 1.5V5h3.5"/></svg>
-      Full paper (PDF)
-    </a>
-    <a class="btn" href="causalvis-workshop.pdf">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 3h12v10H2z"/><path d="M2 6h12"/></svg>
-      Short version
-    </a>
-    <a class="btn" href="https://github.com/bukhari-hamzamukhtar/CausalVis">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-      Code &amp; data
-    </a>
-  </div>
+<header class="top">
+  <h1>CausalVis Lab</h1>
+  <span class="tag">counterfactual physics · learned world model · 90.4% of held-out removal options</span>
+  <span class="tag" id="llmTag">language model: checking…</span>
 </header>
-
-<section>
-  <h2>The question</h2>
-  <p class="lead">A world model is useful for physical AI only if it gets the physics right, so the benchmarks we use to verify one must reward physical accuracy. We built an instrument to test whether the most widely used counterfactual video benchmark does.</p>
-  <p>CausalVis answers CLEVRER's counterfactual questions by explicit intervention. It removes the object, keeps every other object on its recorded path until the change can reach it, hands the reached objects to a simulator, and returns the event that decided each answer. Every stage is held fixed except the simulator, which can be swapped. The engine is never trained on questions or answers.</p>
-  <p>This is not a system entered into a leaderboard. It is a measuring device, and an audit run with it on <strong>1,398 held-out videos</strong>.</p>
-</section>
-
-<section>
-  <h2>What we found</h2>
-
-  <div class="finding">
-    <p><span class="big">2.2&times; &rarr; 2.2 points.</span> Swapping the simulator across a 2.2&times; range of rollout error moves the counterfactual score by 2.2 points. Straight-line motion lands within 0.75 points of a learned world model.</p>
-  </div>
-
-  <p>Two choices containing no physics matter more than the choice of simulator: how long the world runs past the last recorded frame is worth <strong>4.6 points</strong>, and when objects are handed to the simulator is worth <strong>1.2 points</strong>.</p>
-
-  <h3>Two explanations we can rule out</h3>
-  <ul>
-    <li><strong>Not a lenient detector.</strong> A generous contact rule absorbing trajectory error would mean a stricter rule separates the simulators further. It does the opposite: median spread is 2.18 points under the calibrated rule and <strong>1.50 under a strict one</strong>, because every simulator then loses the same real contacts.</li>
-    <li><strong>Not sensing either.</strong> On 52.2% of options neither asked object is ever simulated, so a perfect detector there is exactly CLEVRER's own annotation. Substituting it buys <strong>1.4 points</strong> &mdash; about what the entire accuracy sweep buys.</li>
-  </ul>
-
-  <p>Physics as a whole is not optional: removing simulation entirely costs <strong>9.0 points</strong>. The claim is narrower, and we think more useful &mdash; <em>above a low bar, accuracy buys almost nothing on this metric</em>.</p>
-</section>
-
-<section>
-  <h2>Results</h2>
-  <div class="tablewrap">
-  <table>
-    <caption>Counterfactual accuracy on 1,398 held-out videos (9,350 options, 2,619 questions), against rollout error measured separately on validation videos. Sorted by rollout error.</caption>
-    <thead>
-      <tr><th>Simulator</th><th>Rollout err @40</th><th>Options</th><th>Questions</th></tr>
-    </thead>
-    <tbody>
-      <tr class="best"><td>Analytic rigid-body, constants fitted on training videos</td><td class="num">0.050</td><td class="num">91.4%</td><td class="num">75.0%</td></tr>
-      <tr><td>Learned world model (43k parameters)</td><td class="num">0.063</td><td class="num">90.4%</td><td class="num">72.3%</td></tr>
-      <tr><td>Straight lines + friction</td><td class="num">0.095</td><td class="num">90.2%</td><td class="num">71.9%</td></tr>
-      <tr><td>Straight lines</td><td class="num">0.113</td><td class="num">89.7%</td><td class="num">70.2%</td></tr>
-      <tr class="rule-top"><td>No simulation at all</td><td class="num">&mdash;</td><td class="num">81.4%</td><td class="num">50.1%</td></tr>
-      <tr><td>A 7B vision-language model, 16 frames</td><td class="num">&mdash;</td><td class="num">54.4%</td><td class="num">2.9%</td></tr>
-      <tr><td>Answer &ldquo;no&rdquo; to every event</td><td class="num">&mdash;</td><td class="num">54.1%</td><td class="num">0.0%</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p class="note">The gap between the best and worst real simulator is 1.7 points. The gap between having a simulator and not having one is 9.0. A general vision-language model given the frames lands at the level of answering &ldquo;no&rdquo; to everything.</p>
-</section>
-
-<section>
-  <h2>Figures</h2>
-
-  <figure>
-    <img src="figures/fig3_audit.png" alt="Two scatter plots of benchmark score against rollout error, showing a nearly flat relationship on counterfactual questions and a reversed one on predictive questions.">
-    <figcaption><b>Physics quality against benchmark score.</b> (a) On counterfactual questions a 2.2&times; spread in rollout error moves the score by 2.2 points, and most differences sit inside the 95% intervals. Hollow circles are nine further checkpoints of the learned model, so the thirteen points are not independent simulators. (b) On predictive questions the ordering reverses under one detector and reverses back under another, so the ranking tracks the detector rather than the physics.</figcaption>
-  </figure>
-
-  <figure>
-    <img src="figures/fig4_changes.png" alt="Forest plot of the effect of each one-change ablation on the benchmark score, with 95% confidence intervals.">
-    <figcaption><b>Effect of each change on the full system.</b> Paired differences in options correct with 95% video-bootstrap intervals. The extension past the video end and the hand-off timing matter most; the learned parts matter little. Intervals on the one-change rows are computed within a single checkpoint, so effects below the 0.5-point seed spread need not survive a retrain.</figcaption>
-  </figure>
-
-  <figure>
-    <img src="figures/fig5_evidence.png" alt="Breakdown of the evidence behind each answer, the offset between detected and annotated contacts, and event precision and recall across three datasets.">
-    <figcaption><b>The evidence behind each answer.</b> Of 8,454 correct answers, 58.8% have a deciding event checkable against CLEVRER's annotation, and 98.2% of those agree with it. About half the passing checks confirm a collision did <em>not</em> happen; counted on positive events only, the detector reaches 93.1% precision at 98.5% recall. The remaining 40.5% are decided in simulation, where no ground truth exists.</figcaption>
-  </figure>
-
-  <figure>
-    <img src="figures/fig6_responsible.png" alt="Two panels comparing CLEVRER's chain rule against a but-for counterfactual test, against its own key and against human judgments.">
-    <figcaption><b>Two meanings of &ldquo;responsible&rdquo;.</b> When CLEVRER's key marks an object responsible for a collision, its own counterfactual answers say the pair still collides without that object in <b>35.3%</b> of matched cases (113 of 320). This comparison uses no model at all: it is between CLEVRER's two answer keys.</figcaption>
-  </figure>
-</section>
-
-<section>
-  <h2>What a benchmark should report</h2>
-  <p>Because the engine returns the event behind each answer, we can ask what the accuracy rests on. We propose that benchmarks intended to verify world models report two quantities alongside accuracy:</p>
-  <ul>
-    <li><strong>The share of decisions the simulator made</strong>, separating answers the recording already settles from answers the physics produced.</li>
-    <li><strong>The share of correct answers whose evidence is valid</strong>, checked against annotation where it exists, with positive and negative confirmations reported separately.</li>
-  </ul>
-  <p>Both are cheap once a system reports its deciding event, and together they distinguish a model that is right for the right reason from one inheriting its score from the evaluation protocol. The recipe needs no new annotation: make the simulator swappable, push a deliberately weak baseline through the same harness, and log which predicted event each decision rested on.</p>
-</section>
-
-<section>
-  <h2>Limitations</h2>
-  <p>The scenes are synthetic, planar, with three shapes and one object size, and no manipulator is involved; the instrument has not been tested on real video or contact-rich interaction. Perception reads a detector trained with the dataset's own labels. The simulators span a range of quality but are all rigid-body planar models, so we cannot say where saturation begins, only that it lies below the accuracy of straight-line motion. Seven checkpoints of one training recipe span 0.5 points on this benchmark, which is as large as several of the effects reported, and that spread is itself part of the finding.</p>
-</section>
-
-<section>
-  <h2>Reproducing it</h2>
-  <p>The repository carries the engine, the trained checkpoints, the splits, the recovered camera, every paper experiment, and one record per answered option of every test run.</p>
-  <ul>
-    <li>Settings were chosen on a separate validation split; each test run was made once.</li>
-    <li>The systems, settings and statistics were written down before the test runs (see the pre-registration in the repository).</li>
-    <li>All training and evaluation ran on a single laptop CPU, no GPU.</li>
-  </ul>
-  <p><a href="https://github.com/bukhari-hamzamukhtar/CausalVis">github.com/bukhari-hamzamukhtar/CausalVis</a></p>
-</section>
-
-<footer>
-  <p>Built and measured on one CPU. Code, checkpoints and per-answer records are public.</p>
-  <p>Contact via the repository.</p>
-</footer>
-
+<div class="hosted">
+  <b>Hosted demo.</b> Pick a scene, then press a button beside any object: remove it, double its
+  speed, stop it, or glue it to the table. The left panel is the recorded video and the right panel
+  is the counterfactual world the engine computed. Drag either view to turn it, scroll to zoom,
+  press space to play. The worlds here were computed ahead of time.
+  <a href="/paper">What this measures</a> ·
+  <a href="https://github.com/bukhari-hamzamukhtar/CausalVis">Run the engine yourself</a>
 </div>
+
+<div class="app">
+<aside class="side">
+  <div>
+    <div class="label">1 · Pick a scene</div>
+    <div class="examples" id="scenes"><span class="note">loading…</span></div>
+    <div class="row" style="margin-top:8px">
+      <button id="randTest" title="One of the scenes on this page, all from the held-out test set">Surprise me</button>
+      <button id="randAny" hidden></button>
+      <button id="loadBtn" hidden></button>
+    </div>
+    <input id="vid" type="hidden" value="">
+    <div class="badges" id="badges"></div>
+  </div>
+  <div>
+    <div class="label">2 · Objects in this scene</div>
+    <div class="objs" id="objs"><span class="note">Pick a scene to see its objects.</span></div>
+    <p class="note">Each small button is one what-if, already computed. Press it and the right
+    panel becomes that world.</p>
+  </div>
+  <div class="qs" id="qsWrap" hidden>
+    <div class="label">The dataset asks about removing…</div>
+    <div id="qs"></div>
+    <p class="note">These are the questions CausalVis is scored on. Pressing one runs that
+    removal and shows the question above.</p>
+  </div>
+  <div>
+    <div class="label">3 · Ask what if, in words</div>
+    <textarea id="req" disabled placeholder="Running locally, this box takes anything that changes the scene: remove, add, move, speed up, turn, come in from another side, change material, shape, size, mass, bounciness or friction, glue it down, tilt the table… and combinations."></textarea>
+    <p class="note">A sentence is read by a language model, turned into a plan of events and
+    simulated on the spot, so it needs the engine running. Here, use the four buttons beside each
+    object: those worlds are already computed.</p>
+    <div class="row">
+      <button id="markBtn" hidden></button>
+      <button id="clearMark" class="mini" hidden>Clear spot</button>
+      <button class="primary" id="runBtn" hidden disabled></button>
+    </div>
+    <p class="note" id="markNote"></p>
+  </div>
+  <div>
+    <div class="label">What the full version answers</div>
+    <div class="examples" id="examples"></div>
+  </div>
+  <div>
+    <div class="label">Progress</div>
+    <ol class="steps" id="steps">
+      <li data-k="reading">Reading your request</li>
+      <li data-k="building">Building the what-if world</li>
+      <li data-k="finding">Finding collisions</li>
+      <li data-k="writing">Writing the explanation</li>
+    </ol>
+    <div class="bar"><i id="barFill"></i></div>
+    <p class="note" id="stageNote"></p>
+    <p class="err" id="err" role="alert"></p>
+  </div>
+  <p class="note">Nothing is uploaded and nothing is stored. The page fetches static JSON and draws every frame in your browser.</p>
+</aside>
+
+<main class="main">
+  <section class="player" aria-label="3D player">
+    <div class="views">
+      <figure><div class="head">Real video <span>3D replay of the recorded tracks</span></div>
+        <canvas id="cvRec" class="view" tabindex="0" aria-label="3D replay of the real video. Drag to turn, scroll to zoom."></canvas></figure>
+      <figure><div class="head">What-if world <span id="cfNote">not run yet</span></div>
+        <canvas id="cvCf" class="view" tabindex="0" aria-label="3D view of the what-if world. Drag to turn, scroll to zoom."></canvas></figure>
+    </div>
+    <div class="controls">
+      <button id="playBtn" class="primary" style="min-width:74px">Pause</button>
+      <input id="frame" type="range" min="0" max="127" value="0" aria-label="Frame" style="flex:1;min-width:180px">
+      <span id="frameLbl" class="mono">frame 0</span>
+      <label class="ctl">speed <select id="speed"><option value="0.25">¼×</option><option value="0.5">½×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+    </div>
+    <div class="controls">
+      <label class="ctl">turn <input id="az" type="range" min="-180" max="180" step="1" aria-label="Turn the camera around the table"></label>
+      <label class="ctl">tilt <input id="el" type="range" min="3" max="89" step="1" aria-label="Tilt the camera"></label>
+      <label class="ctl">zoom <input id="zoom" type="range" min="4" max="20" step="0.1" aria-label="Zoom"></label>
+      <button class="mini" data-view="video">video camera</button>
+      <button class="mini" data-view="top">top</button>
+      <button class="mini" data-view="side">side</button>
+    </div>
+    <div class="controls">
+      <label class="ctl"><input type="checkbox" id="optLabels"> names</label>
+      <label class="ctl"><input type="checkbox" id="optGhosts" checked> faint real motion of removed / changed objects</label>
+      <span style="flex:1"></span>
+      <button class="mini" id="gif_rec" hidden disabled></button>
+      <button class="mini" id="gif_cf" hidden disabled></button>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:#ec9f1e"></i>collision that happens in the real video</span>
+      <span><i class="dot" style="background:#de3a2e"></i>new collision</span>
+      <span><i class="ring"></i>your marked spot</span>
+      <span>drag a view to turn it, scroll to zoom · both views move together · space = play/pause, ← → = step</span>
+    </div>
+  </section>
+
+  <section class="card" id="planCard" hidden>
+    <h2>What the system simulated</h2>
+    <div id="plan"></div>
+  </section>
+
+  <section class="card" id="truthCard">
+    <h2>Collisions in the real video</h2>
+    <div class="note" id="truthList">These are the dataset's own recorded collisions (the ground truth).</div>
+  </section>
+
+  <section class="card" id="diffCard" hidden>
+    <h2>What changed</h2>
+    <div class="three">
+      <div class="kept"><h3><i class="dot" style="background:var(--amber)"></i>Still happen</h3><ul id="kept"></ul></div>
+      <div class="gone"><h3><i class="dot" style="background:var(--hand)"></i>No longer happen</h3><ul id="gone"></ul></div>
+      <div class="new"><h3><i class="dot" style="background:var(--bad)"></i>New</h3><ul id="new"></ul></div>
+    </div>
+    <p class="note">Frames 128 and later are the world model's prediction after the real video ends.</p>
+  </section>
+
+  <section class="card" id="whoCard" hidden>
+    <h2>Who the world model simulated, and why</h2>
+    <div class="legend" style="padding:0 0 10px;border:0"><span><i class="dot" style="background:var(--rec)"></i>follows the real video</span><span><i class="dot" style="background:var(--sim)"></i>simulated by the world model</span><span><i class="dot" style="background:var(--lm);border-radius:0;width:4px"></i>your change</span><span>dashed line = end of the real video</span></div>
+    <div class="tl" id="tl"></div>
+  </section>
+
+  <section class="card" id="checkCard" hidden>
+    <h2>Checked against the dataset's answers</h2>
+    <p class="note">The dataset asks a question about this exact removal, so we can compare.</p>
+    <div style="overflow-x:auto"><table><thead><tr><th>Option</th><th>Dataset</th><th>World model</th><th></th></tr></thead><tbody id="checks"></tbody></table></div>
+  </section>
+
+  <section class="card explain" id="explainCard" hidden>
+    <h2>What happened, explained</h2>
+    <div id="explain"></div>
+  </section>
+</main>
+</div>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const D2R = Math.PI / 180;
+// the recovered CLEVRER camera (camera_fit.json) as azimuth / elevation / distance
+const VIEWS = {video: {az: -69.17, el: 34.89, dist: 8.29}, top: {az: -90, el: 89, dist: 12}, side: {az: -90, el: 9, dist: 10}};
+const PAL = {gray:[140,140,140], red:[196,60,50], blue:[55,95,190], green:[60,155,75], brown:[135,95,55], purple:[140,75,175], cyan:[60,175,190], yellow:[220,195,60]};
+const LIGHT = norm([0.35, -0.5, 0.78]);
+const S = {video:null, info:null, rec:null, cf:null, res:null, busy:false, marking:false, marked:null};
+const view = {...VIEWS.video};
+const play = {t:0, playing:true, speed:1, acc:0, last:0, dirty:true};
+const opts = {labels:false, ghosts:true};
+
+// ------------------------------------------------------------------ vector maths + camera
+function vsub(a,b){ return [a[0]-b[0], a[1]-b[1], a[2]-b[2]]; }
+function vadd(a,b){ return [a[0]+b[0], a[1]+b[1], a[2]+b[2]]; }
+function vmul(a,k){ return [a[0]*k, a[1]*k, a[2]*k]; }
+function dot(a,b){ return a[0]*b[0] + a[1]*b[1] + a[2]*b[2]; }
+function cross(a,b){ return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]; }
+function norm(a){ const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0]/l, a[1]/l, a[2]/l]; }
+const clamp = (x,a,b) => Math.min(b, Math.max(a, x));
+const rgb = (c) => `rgb(${c[0]|0},${c[1]|0},${c[2]|0})`;
+
+// same pinhole as src2/render3d.py and app/render_worker.py, so a saved GIF matches the view
+function makeCam(W, H){
+  const az = view.az*D2R, el = view.el*D2R, d = view.dist;
+  const loc = [d*Math.cos(el)*Math.cos(az), d*Math.cos(el)*Math.sin(az), d*Math.sin(el)];
+  const fwd = norm(vsub([0,0,0], loc)), right = norm(cross(fwd, [0,0,1])), up = cross(right, fwd);
+  return {loc, fwd, right, up, f: 34.21875/32*W, cx: W/2, cy: H/2};
+}
+function project(c, p){
+  const r = vsub(p, c.loc), z = dot(r, c.fwd);
+  if(z < 1e-3) return null;
+  return [c.cx + c.f*dot(r, c.right)/z, c.cy - c.f*dot(r, c.up)/z, z];
+}
+function shade(base, n, fc, cam, metal){
+  const diff = Math.max(dot(n, LIGHT), 0);
+  if(metal){
+    const h = norm(vadd(LIGHT, norm(vsub(cam.loc, fc))));
+    const spec = Math.pow(Math.max(dot(n, h), 0), 48), k = 0.40 + 0.52*diff;
+    return base.map(c => Math.min(255, c*k + 235*0.6*spec));
+  }
+  const k = 0.36 + 0.60*diff;
+  return base.map(c => c*k);
+}
+
+// ------------------------------------------------------------------ drawing
+let groundCache = {key:null, cv:null};
+function ground(cam, W, H){
+  const key = [view.az, view.el, view.dist, W, H].join(",");
+  if(groundCache.key === key) return groundCache.cv;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const g = cv.getContext("2d");
+  const sky = g.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, "#eef0f2"); sky.addColorStop(1, "#d9dde1");
+  g.fillStyle = sky; g.fillRect(0, 0, W, H);
+  const half = 6, step = 0.4, n = 30;
+  for(let i = 0; i < n; i++) for(let j = 0; j < n; j++){
+    const x0 = -half + i*step, y0 = -half + j*step;
+    const pts = [[x0,y0,0],[x0+step,y0,0],[x0+step,y0+step,0],[x0,y0+step,0]].map(p => project(cam, p));
+    if(pts.some(p => !p)) continue;
+    g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for(let k = 1; k < 4; k++) g.lineTo(pts[k][0], pts[k][1]); g.closePath();
+    const tone = (i + j) % 2 === 0 ? 206 : 190;
+    g.fillStyle = g.strokeStyle = `rgb(${tone},${tone},${tone+6})`; g.lineWidth = 0.8; g.fill(); g.stroke();
+  }
+  groundCache = {key, cv};
+  return cv;
+}
+const MESH = new Map();
+function mesh(shape, s){
+  const key = shape + ":" + s;
+  if(MESH.has(key)) return MESH.get(key);
+  let v, f;
+  if(shape === "cube"){
+    v = [[-s,-s,0],[s,-s,0],[s,s,0],[-s,s,0],[-s,-s,2*s],[s,-s,2*s],[s,s,2*s],[-s,s,2*s]];
+    f = [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]];
+  } else {
+    const n = 28; v = [];
+    for(let i = 0; i < n; i++){ const a = i/n*2*Math.PI; v.push([s*Math.cos(a), s*Math.sin(a), 0]); }
+    for(let i = 0; i < n; i++){ const a = i/n*2*Math.PI; v.push([s*Math.cos(a), s*Math.sin(a), 2*s]); }
+    f = []; for(let i = 0; i < n; i++) f.push([i, (i+1)%n, n+(i+1)%n, n+i]);
+    f.push([...Array(n).keys()].map(i => n + i));
+  }
+  const m = {v, f}; MESH.set(key, m); return m;
+}
+function shadow(ctx, cam, it){
+  const s = it.o.size*1.05, pts = [];
+  for(let a = 0; a < 18; a++){
+    const th = a/18*2*Math.PI;
+    const p = project(cam, [it.x + s*Math.cos(th) - 0.15*s, it.y + s*Math.sin(th) + 0.2*s, 0.002]);
+    if(!p) return; pts.push(p);
+  }
+  ctx.globalAlpha = 0.16*it.alpha; ctx.fillStyle = "#000";
+  ctx.beginPath(); pts.forEach((p,i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.fill();
+  ctx.globalAlpha = 1;
+}
+function drawObject(ctx, cam, it){
+  const o = it.o, s = o.size, base = PAL[o.color] || [150,150,150], metal = o.material === "metal";
+  ctx.globalAlpha = it.alpha;
+  if(o.shape === "sphere"){
+    const c = [it.x, it.y, s], pc = project(cam, c);
+    if(!pc){ ctx.globalAlpha = 1; return; }
+    const rad = cam.f*s/pc[2];
+    const hp = project(cam, vadd(c, vmul(LIGHT, s*0.5))) || pc;
+    const g = ctx.createRadialGradient(hp[0], hp[1], rad*0.05, pc[0], pc[1], rad);
+    const k0 = metal ? 1.0 : 0.95, k1 = metal ? 0.30 : 0.38;
+    g.addColorStop(0, rgb(base.map(x => Math.min(255, x*k0 + (metal ? 25 : 0)))));
+    g.addColorStop(0.65, rgb(base.map(x => x*(k0 + k1)/2)));
+    g.addColorStop(1, rgb(base.map(x => x*k1)));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(pc[0], pc[1], rad, 0, 2*Math.PI); ctx.fill();
+    if(metal){
+      const h = norm(vadd(LIGHT, norm(vsub(cam.loc, c)))), sp = project(cam, vadd(c, vmul(h, s*0.92)));
+      if(sp){
+        const gg = ctx.createRadialGradient(sp[0], sp[1], 0, sp[0], sp[1], rad*0.35);
+        gg.addColorStop(0, "rgba(255,255,255,0.9)"); gg.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(sp[0], sp[1], rad*0.35, 0, 2*Math.PI); ctx.fill();
+      }
+    }
+  } else {
+    const m = mesh(o.shape, s), cy = Math.cos(it.yaw), sy = Math.sin(it.yaw);
+    const W3 = m.v.map(p => [it.x + cy*p[0] - sy*p[1], it.y + sy*p[0] + cy*p[1], p[2]]);
+    const P2 = W3.map(p => project(cam, p)), centre = [it.x, it.y, s];
+    for(const f of m.f){
+      if(f.some(i => !P2[i])) continue;
+      const a = W3[f[0]], b = W3[f[1]], c = W3[f[2]];
+      let n = cross(vsub(b, a), vsub(c, a)); const L = Math.hypot(n[0], n[1], n[2]);
+      if(L < 1e-12) continue;
+      n = vmul(n, 1/L);
+      const fc = vmul(f.reduce((acc, i) => vadd(acc, W3[i]), [0,0,0]), 1/f.length);
+      if(dot(n, vsub(fc, centre)) < 0) n = vmul(n, -1);          // outward
+      if(dot(n, vsub(cam.loc, fc)) <= 0) continue;                // back face
+      const col = rgb(shade(base, n, fc, cam, metal));
+      ctx.beginPath(); f.forEach((i, j) => j ? ctx.lineTo(P2[i][0], P2[i][1]) : ctx.moveTo(P2[i][0], P2[i][1])); ctx.closePath();
+      ctx.fillStyle = ctx.strokeStyle = col; ctx.lineWidth = 0.6; ctx.fill(); ctx.stroke();
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+function drawMarks(ctx, cam, list, t, dpr){
+  for(const m of list || []){
+    const age = t - m.f;
+    if(age < 0 || age > 10) continue;
+    const p = project(cam, [m.x, m.y, 0.35]);
+    if(!p) continue;
+    ctx.globalAlpha = Math.max(0.3, 1 - age/11);
+    ctx.beginPath(); ctx.arc(p[0], p[1], (12 - age*0.6)*dpr, 0, 2*Math.PI);
+    ctx.fillStyle = m.kind === "new" ? "#de3a2e" : "#ec9f1e"; ctx.fill();
+    ctx.lineWidth = 2*dpr; ctx.strokeStyle = "#fff"; ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+function drawSpot(ctx, cam, dpr){
+  if(!S.marked) return;
+  const c = S.marked, pts = [];
+  for(let a = 0; a < 28; a++){
+    const th = a/28*2*Math.PI, p = project(cam, [c[0] + 0.35*Math.cos(th), c[1] + 0.35*Math.sin(th), 0.01]);
+    if(!p) return; pts.push(p);
+  }
+  ctx.beginPath(); pts.forEach((p,i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath();
+  ctx.lineWidth = 2.5*dpr; ctx.strokeStyle = "#6a4b9e"; ctx.setLineDash([6*dpr, 4*dpr]); ctx.stroke(); ctx.setLineDash([]);
+  const pc = project(cam, [c[0], c[1], 0.01]);
+  if(pc){ ctx.beginPath(); ctx.arc(pc[0], pc[1], 3*dpr, 0, 2*Math.PI); ctx.fillStyle = "#6a4b9e"; ctx.fill(); }
+}
+function pill(ctx, txt, x, y, dpr, bg, align){
+  ctx.font = `600 ${11.5*dpr}px Archivo, Arial, sans-serif`;
+  const w = ctx.measureText(txt).width + 12*dpr, h = 19*dpr, x0 = align === "center" ? x - w/2 : x;
+  ctx.fillStyle = bg; ctx.fillRect(x0, y, w, h);
+  ctx.fillStyle = "#fff"; ctx.textAlign = "left"; ctx.textBaseline = "middle"; ctx.fillText(txt, x0 + 6*dpr, y + h/2);
+}
+function drawPanel(cv, sc, kind){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = Math.round(cv.clientWidth*dpr), H = Math.round(W*2/3);
+  if(cv.width !== W || cv.height !== H){ cv.width = W; cv.height = H; }
+  if(!W) return;
+  const ctx = cv.getContext("2d"), cam = makeCam(W, H);
+  ctx.globalAlpha = 1; ctx.drawImage(ground(cam, W, H), 0, 0);
+  if(!sc){
+    drawSpot(ctx, cam, dpr);
+    const msg = kind === "rec" ? "Load a video" : (S.busy ? "The world model is working…" : "Ask a what-if question to see the world model's prediction");
+    ctx.font = `500 ${14*dpr}px Archivo, Arial, sans-serif`; ctx.fillStyle = "#4b555e"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(msg, W/2, H*0.12);
+    return;
+  }
+  const vf = S.rec ? S.rec.frames : 128;
+  const t = Math.min(play.t, sc.frames - 1), held = play.t >= sc.frames;
+  const items = [];
+  sc.objects.forEach(o => { if(o.x[t] !== null && o.y[t] !== null) items.push({o, x:o.x[t], y:o.y[t], yaw:o.yaw[t] || 0, alpha:1}); });
+  if(kind === "cf" && opts.ghosts && S.rec && play.t < S.rec.frames){
+    sc.objects.forEach((o, k) => {
+      if(o.status !== "removed" && o.status !== "changed") return;
+      const r = S.rec.objects[k];
+      if(r && r.x[play.t] !== null) items.push({o:r, x:r.x[play.t], y:r.y[play.t], yaw:r.yaw[play.t] || 0, alpha:0.22, ghost:true});
+    });
+  }
+  items.forEach(it => shadow(ctx, cam, it));
+  items.forEach(it => { const p = project(cam, [it.x, it.y, it.o.size]); it.depth = p ? p[2] : 1e9; });
+  items.sort((a, b) => b.depth - a.depth).forEach(it => drawObject(ctx, cam, it));
+  drawMarks(ctx, cam, sc.marks, t, dpr);
+  drawSpot(ctx, cam, dpr);
+  if(opts.labels) items.filter(it => !it.ghost).forEach(it => {
+    const p = project(cam, [it.x, it.y, 2*it.o.size + 0.3]);
+    if(p) pill(ctx, it.o.name, p[0], p[1] - 20*dpr, dpr, "rgba(20,24,28,.72)", "center");
+  });
+  let txt, bg = "rgba(20,24,28,.72)";
+  if(kind === "rec") txt = held ? `real video ended · showing frame ${sc.frames - 1}` : `real video · frame ${t}`;
+  else if(play.t >= vf){ txt = `what-if · frame ${t} · predicted after the video`; bg = "rgba(14,124,137,.92)"; }
+  else txt = `what-if · frame ${t}`;
+  pill(ctx, txt, 8*dpr, 8*dpr, dpr, bg, "left");
+}
+function totalFrames(){ return Math.max(S.rec ? S.rec.frames : 1, S.cf ? S.cf.frames : 1); }
+function draw(){
+  drawPanel($("#cvRec"), S.rec, "rec");
+  drawPanel($("#cvCf"), S.cf, "cf");
+  const n = totalFrames(), sl = $("#frame"), vf = S.rec ? S.rec.frames : 128;
+  if(+sl.max !== n - 1) sl.max = n - 1;
+  if(+sl.value !== play.t) sl.value = play.t;
+  $("#frameLbl").textContent = `frame ${play.t} / ${n - 1}` + (play.t >= vf ? " · after the video" : "");
+}
+const dirty = () => { play.dirty = true; };
+function loop(ts){
+  if(play.playing && S.rec){
+    const dt = Math.min(0.1, (ts - (play.last || ts))/1000);
+    play.acc += dt*25*play.speed;                       // CLEVRER runs at about 25 frames per second
+    const adv = Math.floor(play.acc);
+    if(adv > 0){ play.acc -= adv; play.t = (play.t + adv) % totalFrames(); dirty(); }
+  }
+  play.last = ts;
+  if(play.dirty){ play.dirty = false; draw(); }
+  requestAnimationFrame(loop);
+}
+
+// ------------------------------------------------------------------ camera + playback controls
+function syncView(){
+  view.az = ((view.az + 540) % 360) - 180;
+  $("#az").value = Math.round(view.az); $("#el").value = Math.round(view.el); $("#zoom").value = (24 - view.dist).toFixed(1);
+  dirty();
+}
+function pickGround(cv, ev){
+  const rect = cv.getBoundingClientRect(), k = cv.width/rect.width;
+  const u = (ev.clientX - rect.left)*k, v = (ev.clientY - rect.top)*k, cam = makeCam(cv.width, cv.height);
+  const d = norm(vadd(vadd(vmul(cam.right, (u - cam.cx)/cam.f), vmul(cam.up, -(v - cam.cy)/cam.f)), cam.fwd));
+  if(d[2] >= -1e-6) return null;
+  const s = -cam.loc[2]/d[2], x = cam.loc[0] + s*d[0], y = cam.loc[1] + s*d[1];
+  return Math.abs(x) > 5.4 || Math.abs(y) > 5.4 ? null : [x, y];
+}
+function bindCanvas(cv){
+  let drag = null;
+  cv.addEventListener("pointerdown", e => {
+    if(S.marking){
+      const p = pickGround(cv, e);
+      if(p){ S.marked = p; S.marking = false; updateMark(); }
+      else $("#markNote").textContent = "That point is off the table. Click on the table.";
+      return;
+    }
+    drag = {x:e.clientX, y:e.clientY}; cv.setPointerCapture(e.pointerId); cv.classList.add("dragging");
+  });
+  cv.addEventListener("pointermove", e => {
+    if(!drag) return;
+    view.az -= (e.clientX - drag.x)*0.4; view.el = clamp(view.el + (e.clientY - drag.y)*0.3, 3, 89);
+    drag = {x:e.clientX, y:e.clientY}; syncView();
+  });
+  const end = () => { drag = null; cv.classList.remove("dragging"); };
+  cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+  cv.addEventListener("wheel", e => { e.preventDefault(); view.dist = clamp(view.dist*(e.deltaY > 0 ? 1.08 : 1/1.08), 4, 20); syncView(); }, {passive:false});
+}
+function updatePlay(){ $("#playBtn").textContent = play.playing ? "Pause" : "Play"; }
+function togglePlay(){ play.playing = !play.playing; updatePlay(); }
+function updateMark(){
+  $("#markBtn").textContent = S.marking ? "Click the table…" : (S.marked ? "Mark again" : "Mark a spot");
+  $("#markBtn").classList.toggle("on", S.marking);
+  $("#clearMark").hidden = !S.marked;
+  $("#markNote").textContent = S.marking ? "Click a point on the table in either view." : (S.marked ? "Spot marked (dashed ring). Say 'here' in your question." : "");
+  document.querySelectorAll("canvas.view").forEach(c => c.classList.toggle("marking", S.marking));
+  dirty();
+}
+
+// ------------------------------------------------------------------ talking to the server
+function el(tag, cls, text){ const e = document.createElement(tag); if(cls) e.className = cls; if(text !== undefined) e.textContent = text; return e; }
+// Hosted build. Every world below was produced by the real engine and saved as JSON,
+// because the engine runs a learned physics model per request and this page has no server.
+const STATIC_JOBS = new Map();
+let STATIC_INDEX = null;
+async function getIndex(){
+  if(!STATIC_INDEX){
+    const r = await fetch("data/index.json", {cache:"force-cache"});
+    if(!r.ok) throw new Error("Could not load the list of scenes.");
+    STATIC_INDEX = await r.json();
+  }
+  return STATIC_INDEX;
+}
+async function getJSON(name){
+  const r = await fetch("data/" + name, {cache:"force-cache"});
+  if(!r.ok) throw new Error("That world did not load.");
+  return await r.json();
+}
+const pad5 = (v) => String(v).padStart(5, "0");
+function planKey(plan){
+  const ev = (plan && plan.events) || [];
+  if(ev.length !== 1) return null;
+  const e = ev[0], m = e.motion || {};
+  if(e.do === "remove") return "remove-" + e.object;
+  if(e.do === "pin") return "pin-" + e.object;
+  if(e.do === "move" && m.speed_factor === 2) return "fast-" + e.object;
+  if(e.do === "move" && m.stop) return "stop-" + e.object;
+  return null;
+}
+async function api(path, body){
+  const idx = await getIndex();
+  const ids = idx.videos.map(x => x.video);
+
+  if(path.startsWith("/api/status"))
+    return {llm:false, llm_model:null, llm_why:"hosted demo", detector:idx.detector,
+            extend:idx.extend, videos:idx.corpus, test_videos:idx.test_videos};
+
+  if(path.startsWith("/api/reset")) return {ok:true};
+
+  if(path.startsWith("/api/random"))
+    return {video: ids[Math.floor(Math.random()*ids.length)]};
+
+  if(path.startsWith("/api/job/")){
+    const r = STATIC_JOBS.get(path.split("/").pop());
+    if(!r) throw new Error("Unknown job.");
+    return {status:"done", stage:"done", progress:1, elapsed:r.seconds, result:r.result};
+  }
+
+  if(path.startsWith("/api/load")){
+    const v = parseInt(body && body.video, 10);
+    if(!ids.includes(v))
+      throw new Error("This page carries " + ids.length + " scenes, computed ahead of time. " +
+                      "Use the buttons above, or run the engine locally for any of CLEVRER's 20,000.");
+    return await getJSON("v" + pad5(v) + ".json");
+  }
+
+  if(path.startsWith("/api/intervene")){
+    const v = parseInt(body && body.video, 10);
+    const entry = idx.videos.find(x => x.video === v);
+    const key = planKey(body && body.plan);
+    if(!key)
+      throw new Error("A what-if written in words is read by a language model and simulated on the " +
+                      "spot, so it needs the engine running. The four buttons beside each object " +
+                      "are computed ahead of time here.");
+    const w = entry && entry.worlds.find(x => x.key === key);
+    if(!w)
+      throw new Error("That one is not stored on this page. Try another object or another scene.");
+    const id = "j" + Math.random().toString(36).slice(2);
+    STATIC_JOBS.set(id, {result: await getJSON(w.file), seconds: w.seconds || 0});
+    return {job:id};
+  }
+
+  if(path.startsWith("/api/gif"))
+    throw new Error("A GIF is drawn frame by frame on the server, and this page has none.");
+
+  throw new Error("Not available on the hosted page.");
+}
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+async function poll(job, onTick){
+  for(;;){
+    const j = await api("/api/job/" + job); onTick && onTick(j);
+    if(j.status === "done") return j.result;
+    if(j.status === "error") throw new Error(j.error);
+    await sleep(700);
+  }
+}
+function setBusy(b){
+  S.busy = b;
+  ["loadBtn","randTest","randAny","markBtn"].forEach(id => $("#" + id).disabled = b);
+  $("#runBtn").disabled = b || !S.video;
+  $("#gif_rec").disabled = b || !S.rec; $("#gif_cf").disabled = b || !S.cf;
+  document.querySelectorAll("#objs .mini, #scenes button, #qs button").forEach(x => x.disabled = b);
+  dirty();
+}
+function showErr(m){ $("#err").textContent = m || ""; }
+function stepper(stage, progress, elapsed){
+  const order = ["reading","building","finding","writing"], cur = order.findIndex(k => (stage || "").startsWith(k));
+  document.querySelectorAll("#steps li").forEach((li, i) => { li.className = stage === "done" ? "done" : (i < cur ? "done" : (i === cur ? "now" : "")); });
+  $("#barFill").style.width = Math.round((progress || 0)*100) + "%";
+  $("#stageNote").textContent = stage && stage !== "waiting" && stage !== "done" ? `${stage} · ${elapsed || 0}s` : "";
+}
+function resetResults(){
+  ["planCard","diffCard","whoCard","checkCard","explainCard"].forEach(id => $("#" + id).hidden = true);
+  S.cf = null; S.res = null; $("#cfNote").textContent = "not run yet"; dirty();
+}
+
+async function loadVideo(v){
+  if(S.busy) return;
+  showErr(""); stepper("", 0); resetResults(); setBusy(true);
+  try{
+    const info = await api("/api/load", {video:v});
+    Object.assign(S, {video:info.video, info, rec:info.scene, marked:null, marking:false});
+    $("#vid").value = info.video; renderInfo(info); updateMark();
+    play.t = 0; play.playing = true; updatePlay();
+  }catch(e){ showErr(e.message); }
+  setBusy(false);
+}
+
+function quickPlan(kind, o){
+  const k = o.index;
+  if(kind === "remove") return {understood:`The ${o.name} is removed.`, events:[{do:"remove", object:k}]};
+  if(kind === "fast") return {understood:`The ${o.name} moves twice as fast.`, events:[{do:"move", object:k, motion:{speed_factor:2}}]};
+  if(kind === "stop") return {understood:`The ${o.name} stops as soon as it starts moving.`, events:[{do:"move", object:k, motion:{stop:true}}]};
+  return {understood:`The ${o.name} is glued to the table.`, events:[{do:"pin", object:k}]};
+}
+function insertText(txt){
+  const ta = $("#req"), a = ta.selectionStart ?? ta.value.length, b = ta.selectionEnd ?? a;
+  ta.value = ta.value.slice(0, a) + txt + ta.value.slice(b); ta.focus(); ta.selectionStart = ta.selectionEnd = a + txt.length;
+}
+function hasWorld(video, key){
+  const e = STATIC_INDEX && STATIC_INDEX.videos.find(x => x.video === video);
+  return !!(e && key && e.worlds.some(w => w.key === key));
+}
+function renderInfo(info){
+  const b = $("#badges"); b.replaceChildren();
+  b.append(el("span", "chip", "video " + info.video), el("span", "chip" + (info.split === "test" ? " test" : ""), info.split === "test" ? "held-out test" : info.split + " split"), el("span", "chip", info.questions.length + " dataset questions"));
+  const box = $("#objs"); box.replaceChildren();
+  info.objects.forEach(o => {
+    const row = el("div", "obj"), sw = el("span", "sw" + (o.material === "metal" ? " metal" : ""));
+    sw.style.background = rgb(PAL[o.color] || [150,150,150]);
+    const nm = el("span", "oname", o.name);
+    const acts = el("div", "acts");
+    [["remove","remove"],["fast","2× speed"],["stop","stop"],["pin","glue down"]].forEach(([k, lbl]) => {
+      const q = quickPlan(k, o);
+      if(!hasWorld(info.video, planKey(q))) return;
+      const btn = el("button", "mini", lbl); btn.title = q.understood; btn.onclick = () => run(q); acts.append(btn);
+    });
+    if(!acts.children.length) acts.append(el("small", "note", "nothing stored for this one"));
+    row.append(sw, nm, el("small", null, o.enters === null ? "" : `frames ${o.enters}–${o.leaves}`), acts);
+    box.append(row);
+  });
+  const qs = $("#qs"); qs.replaceChildren(); $("#qsWrap").hidden = !info.questions.length;
+  const seen = new Set();
+  info.questions.forEach(q => {
+    if(seen.has(q.removed)) return; seen.add(q.removed);
+    const btn = el("button", null, `the ${q.removed_name}`); btn.title = q.question;
+    btn.onclick = () => { $("#req").value = q.question;
+      run(quickPlan("remove", {index:q.removed, name:q.removed_name})); };
+    qs.append(btn);
+  });
+  const t = $("#truthList"); t.replaceChildren();
+  if(!info.truth.length) t.textContent = "The dataset records no collisions in this video.";
+  else { const ul = el("ul"); ul.style.margin = "0"; info.truth.forEach(c => { const li = el("li"); li.append(el("span", "fr", `frame ${c.frame} · `), document.createTextNode(`${c.a} and ${c.b}`)); ul.append(li); }); t.append(ul); }
+  renderExamples(info);
+  $("#req").value = "";
+}
+function renderExamples(info){
+  const obs = info.objects, box = $("#examples"); box.replaceChildren();
+  if(!obs.length) return;
+  const mover = obs.find(o => o.moves) || obs[0], other = obs.find(o => o !== mover) || obs[0], entering = obs.find(o => o.side);
+  const opp = {left:"right", right:"left", near:"back", far:"front"};
+  box.append(el("p", "note", "These run on the local engine, not here. Each sentence becomes a plan "
+    + "of composable events, and the world model simulates the scene from the first frame the change "
+    + "can reach an object."));
+  [
+    [`What if the ${other.name} were removed?`, false],
+    [`What if the ${mover.name} moved twice as fast?`, false],
+    [entering ? `What if the ${entering.name} came in from the ${opp[entering.side]}?` : `What if the ${mover.name} came in from the left?`, false],
+    ["What if a red rubber cube were standing here?", true],
+    [`What if a purple metal sphere rolled in from the right and hit the ${other.name}?`, false],
+    [`What if the ${other.name} were made of metal and three times as heavy?`, false],
+    [`What if the ${mover.name} stopped at frame 40 and a cyan cylinder appeared right behind it?`, false],
+    [`What if the ${mover.name} were twice as big?`, false],
+    ["What if there were no friction at all?", false],
+    ["What if the table were tilted so everything slides to the left?", false],
+    [`What if the ${other.name} were glued to the table?`, false],
+    ["What happens in the 3 seconds after the video ends?", false],
+  ].forEach(([q]) => { box.append(el("span", "exq", q)); });
+}
+
+async function run(plan){
+  if(S.busy || !S.video) return;
+  showErr("");
+  const text = $("#req").value.trim();
+  if(!plan && !text){ showErr("Type a what-if question, or use a button next to an object."); return; }
+  resetResults(); setBusy(true); stepper("reading", 0.02, 0);
+  try{
+    const {job} = await api("/api/intervene", {video:S.video, text: plan ? plan.understood : text, plan: plan || null, marked:S.marked});
+    const res = await poll(job, j => stepper(j.stage, j.progress, j.elapsed));
+    stepper("done", 1);
+    S.res = res; S.cf = res.scene; play.t = 0; play.playing = true; updatePlay();
+    renderResult(res);
+  }catch(e){ showErr(e.message); stepper("", 0); }
+  setBusy(false);
+}
+
+function pairLi(x){
+  const li = el("li");
+  li.append(document.createTextNode(`${x.a} + ${x.b} `), el("span", "fr", `frame ${x.frames.join(", ")}${x.after_end ? " · after the video ends" : ""}${x.with_removed ? " · removed object" : ""}`));
+  return li;
+}
+function why(a){
+  const chg = a.change_frame !== null && a.change_frame !== undefined && a.cause !== "edited" ? ` · your change at frame ${a.change_frame}` : "";
+  if(a.status === "removed") return "removed";
+  if(a.status === "added") return `added · simulated from frame ${a.sim_from}`;
+  if(a.replaced) return `its real path was replaced · simulated from frame ${a.sim_from}`;
+  if(a.cause === "vanished") return `disappears at frame ${a.sim_from}`;
+  if(a.cause === "edited") return `your change at frame ${a.sim_from} · simulated after`;
+  if(a.cause === "lost_contact") return `simulated from frame ${a.sim_from}: it was about to touch the ${a.because_of}, which now moves differently` + chg;
+  if(a.cause === "new_contact") return `simulated from frame ${a.sim_from}: the simulated ${a.because_of} came close` + chg;
+  if(a.cause === "video_ended") return "follows the real video until it ends, then predicted" + chg;
+  return "follows the real video" + chg;
+}
+function renderResult(r){
+  $("#cfNote").textContent = r.understood || "your change";
+  const pc = $("#plan"); pc.replaceChildren(); $("#planCard").hidden = false;
+  if(r.understood) pc.append(el("p", "summary", r.understood));
+  const ul = el("ul"); r.steps.forEach(s => ul.append(el("li", null, s))); pc.append(ul);
+  r.notes.forEach(n => pc.append(el("p", "caution", n)));
+  if(!r.pure_removal) pc.append(el("p", "note", "The dataset only has answers for removals, and the world model was only scored on removals (90.4%). For this change there is no answer key: the result is the world model's prediction, compared below with the real video."));
+
+  $("#diffCard").hidden = false;
+  [["kept", r.kept], ["gone", r.gone], ["new", r.new]].forEach(([id, list]) => {
+    const u = $("#" + id); u.replaceChildren();
+    if(!list.length) u.append(el("li", null, "none")); else list.forEach(x => u.append(pairLi(x)));
+  });
+
+  $("#whoCard").hidden = false;
+  const tl = $("#tl"); tl.replaceChildren();
+  const total = r.total_frames, end = r.video_frames, pct = f => (100*f/total).toFixed(2) + "%";
+  r.affected.forEach((a, k) => {
+    const o = S.cf.objects[k], name = el("div", null, a.name), tr = el("div", "track");
+    if(a.status === "removed"){ const x = el("i", "x"); x.style.left = "0"; x.style.width = "100%"; tr.append(x); }
+    else {
+      const m = o.mode; let s = 0;
+      for(let t = 1; t <= m.length; t++){
+        if(t === m.length || m[t] !== m[s]){
+          if(m[s] > 0){ const seg = el("i", m[s] === 1 ? "v" : "s"); seg.style.left = pct(s); seg.style.width = pct(t - s); tr.append(seg); }
+          s = t;
+        }
+      }
+    }
+    if(a.change_frame !== null && a.change_frame !== undefined){ const c = el("i", "chg"); c.style.left = pct(a.change_frame); c.title = `your change, frame ${a.change_frame}`; tr.append(c); }
+    const e = el("i", "end"); e.style.left = pct(end); tr.append(e);
+    name.append(el("div", "fr", why(a)));
+    tl.append(name, tr);
+  });
+  const ax = el("div", "axis"); ["0", String(end - 1), String(total - 1)].forEach(t => ax.append(el("span", null, t))); tl.append(ax);
+
+  $("#checkCard").hidden = !r.checks.length;
+  const tb = $("#checks"); tb.replaceChildren();
+  r.checks.forEach(c => { const tr = el("tr"); tr.append(el("td", null, c.option), el("td", null, c.truth), el("td", null, c.ours), el("td", c.match ? "ok" : "no", c.match ? "match" : "differs")); tb.append(tr); });
+
+  const ex = $("#explain"); ex.replaceChildren(); $("#explainCard").hidden = false;
+  if(!r.explanation){ ex.append(el("p", "note", r.llm_error ? "The language model could not answer: " + r.llm_error : "The explanation in words is written by a language model, which runs alongside the engine. Everything else on this page, the two panels, the collisions, the comparison with the dataset, comes from the world model itself.")); return; }
+  const E = r.explanation;
+  if(E.summary) ex.append(el("p", "summary", E.summary));
+  const list = (title, items, ordered) => { if(!items || !items.length) return; ex.append(el("h3", null, title)); const l = el(ordered ? "ol" : "ul"); items.forEach(t => l.append(el("li", null, String(t)))); ex.append(l); };
+  list("The story, in order", E.story, true);
+  list("What changed and why", E.changes, false);
+  if(E.unchanged){ ex.append(el("h3", null, "What stayed the same")); ex.append(el("p", null, E.unchanged)); }
+  if(E.ground_truth_check){ ex.append(el("h3", null, "Compared with the ground truth")); ex.append(el("p", null, E.ground_truth_check)); }
+  if(E.caution) ex.append(el("p", "caution", E.caution));
+}
+
+async function saveGif(which){
+  if(S.busy) return;
+  const btn = $("#gif_" + which), label = btn.textContent;
+  showErr(""); setBusy(true);
+  try{
+    const {job} = await api("/api/gif", {which, view:{az:view.az, el:view.el, dist:view.dist}});
+    const res = await poll(job, j => { btn.textContent = `Drawing the GIF… ${Math.round((j.progress || 0)*100)}%`; });
+    const a = document.createElement("a"); a.href = res.gif; a.download = res.download; document.body.append(a); a.click(); a.remove();
+  }catch(e){ showErr(e.message); }
+  btn.textContent = label; setBusy(false);
+}
+
+// ------------------------------------------------------------------ wiring
+$("#loadBtn").onclick = () => { const v = parseInt($("#vid").value, 10); if(Number.isNaN(v)) return showErr("Type a video number."); loadVideo(v); };
+$("#vid").addEventListener("keydown", e => { if(e.key === "Enter") $("#loadBtn").click(); });
+$("#randTest").onclick = async () => { const {video} = await api("/api/random?pool=test"); loadVideo(video); };
+$("#randAny").onclick = async () => { const {video} = await api("/api/random?pool=any"); loadVideo(video); };
+$("#runBtn").onclick = () => run(null);
+$("#req").addEventListener("keydown", e => { if(e.key === "Enter" && (e.ctrlKey || e.metaKey)) run(null); });
+$("#markBtn").onclick = () => { S.marking = !S.marking; updateMark(); };
+$("#clearMark").onclick = () => { S.marked = null; S.marking = false; updateMark(); };
+$("#playBtn").onclick = togglePlay;
+$("#frame").addEventListener("input", e => { play.t = +e.target.value; dirty(); });
+$("#speed").addEventListener("change", e => { play.speed = +e.target.value; });
+$("#az").addEventListener("input", e => { view.az = +e.target.value; dirty(); });
+$("#el").addEventListener("input", e => { view.el = +e.target.value; dirty(); });
+$("#zoom").addEventListener("input", e => { view.dist = 24 - +e.target.value; dirty(); });
+document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => { Object.assign(view, VIEWS[b.dataset.view]); syncView(); });
+$("#optLabels").addEventListener("change", e => { opts.labels = e.target.checked; dirty(); });
+$("#optGhosts").addEventListener("change", e => { opts.ghosts = e.target.checked; dirty(); });
+$("#gif_rec").onclick = () => saveGif("rec");
+$("#gif_cf").onclick = () => saveGif("cf");
+document.addEventListener("keydown", e => {
+  if(["INPUT","TEXTAREA","SELECT","BUTTON"].includes(document.activeElement.tagName)) return;
+  if(e.code === "Space"){ e.preventDefault(); togglePlay(); }
+  else if(e.key === "ArrowRight" || e.key === "ArrowLeft"){
+    e.preventDefault(); play.playing = false; updatePlay();
+    play.t = clamp(play.t + (e.key === "ArrowRight" ? 1 : -1), 0, totalFrames() - 1); dirty();
+  }
+});
+window.addEventListener("resize", dirty);
+// no server session to reset on the hosted page
+bindCanvas($("#cvRec")); bindCanvas($("#cvCf"));
+syncView(); updatePlay(); requestAnimationFrame(loop);
+
+async function renderScenes(){
+  const idx = await getIndex(), box = $("#scenes");
+  box.replaceChildren();
+  idx.videos.forEach(v => {
+    const b = el("button", null, "scene " + v.video);
+    b.title = v.objects.map(o => o.name).join(", ");
+    b.onclick = () => loadVideo(v.video);
+    box.append(b);
+  });
+}
+
+(async () => {
+  try{
+    await renderScenes();
+    const st = await api("/api/status");
+    $("#llmTag").textContent = `detector: ${st.detector} \u00b7 ${st.extend} frames past the video end`;
+    const {video} = await api("/api/random?pool=test"); loadVideo(video);
+  }catch(e){ showErr("Can't reach the server: " + e.message); }
+})();
+</script>
 </body>
 </html>

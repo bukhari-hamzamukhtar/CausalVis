@@ -3,7 +3,7 @@ app/server.py  —  CausalVis Lab: pick a video, ask any "what if", turn the 3D 
 =========================================================================================
 
 A local web app around v7.1: v7's learned world model with the entry-state
-correction (88.4% of options on the held-out test questions, which are all
+correction (90.4% of options on the held-out test questions, which are all
 removals). One what-if world per request, detector "cal", 30 frames past the end
 of the video, world model v6_voxel.pt.
 

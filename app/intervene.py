@@ -27,7 +27,7 @@ properties (material, shape, size, mass, bounciness, friction). The language
 model never decides what HAPPENS: every collision comes from the world model.
 
 HONEST LIMITS. The world model was trained on CLEVRER (3 shapes x 2 materials,
-one size) and scored only on removals (88.4%). Material and shape changes stay
+one size) and scored only on removals (90.4%). Material and shape changes stay
 inside what it saw. Mass, size and friction factors act on the physics directly
 (inertia, contact distance, the learned drag term) and are extrapolations; the
 page says so.

@@ -105,7 +105,7 @@ th{font-family:var(--display);font-weight:700;background:var(--tint)}
 <body>
 <header class="top">
   <h1>CausalVis Lab</h1>
-  <span class="tag">what-if physics · world model v7.1 · 88.4% on held-out removal questions</span>
+  <span class="tag">what-if physics · learned world model · 90.4% on held-out removal questions</span>
   <span class="tag" id="llmTag">language model: checking…</span>
 </header>
 <div class="app">
@@ -664,7 +664,7 @@ function renderResult(r){
   if(r.understood) pc.append(el("p", "summary", r.understood));
   const ul = el("ul"); r.steps.forEach(s => ul.append(el("li", null, s))); pc.append(ul);
   r.notes.forEach(n => pc.append(el("p", "caution", n)));
-  if(!r.pure_removal) pc.append(el("p", "note", "The dataset only has answers for removals, and the world model was only scored on removals (88.4%). For this change there is no answer key: the result is the world model's prediction, compared below with the real video."));
+  if(!r.pure_removal) pc.append(el("p", "note", "The dataset only has answers for removals, and the world model was only scored on removals (90.4%). For this change there is no answer key: the result is the world model's prediction, compared below with the real video."));
 
   $("#diffCard").hidden = false;
   [["kept", r.kept], ["gone", r.gone], ["new", r.new]].forEach(([id, list]) => {
