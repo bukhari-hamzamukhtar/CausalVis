@@ -168,3 +168,16 @@ paper/workshop/*.bbl
 paper/workshop/*.blg
 paper/workshop/refs.bib
 paper/workshop/figures/
+
+# Kept on this machine, out of the public repo
+paper/
+CausalVis_v1.pdf
+report/
+WORKING_LOG.md
+NEXT_PHASE.md
+paper_exp/LIMITATIONS_IMPACT.md
+paper_exp/STYLE_GUIDE.md
+paper_exp/VENUES.md
+paper_exp/FIGURES.md
+paper_exp/PLAN.md
+paper_exp/email_clevrer_authors_DROPPED.md

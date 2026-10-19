@@ -9,7 +9,7 @@ Objects follow the recorded video until the change can reach them. At that momen
 to a simulator, which can be a small learned world model, an analytic rigid-body simulator fitted
 on training videos, or straight-line motion. No part of the system is trained on questions or answers.
 
-The paper, the figures and the per-option records of every experiment are in this repository.
+The code, the figure data and the per-option records of every experiment are in this repository.
 
 ## Results on CLEVRER counterfactual questions
 
@@ -56,8 +56,7 @@ Python 3.10 or newer, PyTorch (CPU build), NumPy, Pillow.
 
 | path | contents |
 |---|---|
-| `paper/` | the paper: `main.tex`, `supp.tex`, `refs.bib`, the nine figures, and the compiled PDFs |
-| `paper_exp/` | everything behind the paper: engine, evaluation, scoring, audits, figure scripts |
+| `paper_exp/` | the experiments: engine, evaluation, scoring, audits, figure scripts |
 | `paper_exp/REPRODUCE.md` | every command, in order, that produces every number |
 | `paper_exp/PREREGISTRATION.md` | the test plan, written before the test runs |
 | `paper_exp/RESULTS.md` | all results, including the negative ones |
@@ -67,9 +66,8 @@ Python 3.10 or newer, PyTorch (CPU build), NumPy, Pillow.
 | `v5/` to `v8/` | the versions of the engine, in order, each with its own README notes |
 | `probe/` | measurement scripts (shadow replay, fitted laws, entry-state study) |
 | `legacy/`, `src/` | the first two generations of the project, kept for the record |
-| `WORKING_LOG.md` | the working log: every experiment, including the ones that failed |
 
-Model checkpoints sit in the repository root. `v6_voxel.pt` is the one used in the paper.
+Model checkpoints sit in the repository root. `v6_voxel.pt` is the learned world model reported above.
 `v8/laws.json` holds the six fitted constants of the analytic simulator, `camera_fit.json` the camera recovered from object
 silhouettes, and `split3d_yaw.json` the fixed train, validation and test split of the videos.
 

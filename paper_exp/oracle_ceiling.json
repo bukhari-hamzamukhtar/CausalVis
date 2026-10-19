@@ -1,0 +1,10 @@
+{
+ "learned": {
+  "det": "union",
+  "ext": 30
+ },
+ "laws": {
+  "det": "union",
+  "ext": 60
+ }
+}

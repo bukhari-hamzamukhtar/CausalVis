@@ -1,0 +1,39 @@
+invented-in-video   video 150 q15   pair 0-1  removed [5]  on the recording
+    truth correct detector fired [30]  annotation no collision  negated question
+    The gray sphere collides with the cube
+
+invented-in-video   video 180 q14   pair 0-1  removed [3]  on the recording
+    truth correct detector fired [43, 45]  annotation no collision  negated question
+    The yellow object and the purple cylinder collide
+
+invented-in-video   video 200 q14   pair 3-4  removed [0]  on the recording
+    truth correct detector fired [99]  annotation no collision  negated question
+    The cyan cube collides with the gray sphere
+
+missed-visible      video 7160 q13   pair 0-5  removed [1]  simulated
+    truth correct detector fired never  annotation [72]  plain question
+    The red cylinder and the brown cylinder collide
+
+invented-after-end  video 490 q15   pair 3-4  removed [0]  on the recording
+    truth correct detector fired [137, 140]  annotation no collision  negated question
+    The cylinder and the rubber sphere collide
+
+invented-after-end  video 820 q14   pair 3-4  removed [0]  on the recording
+    truth wrong   detector fired [143, 150]  annotation no collision  plain question
+    The blue object collides with the cyan object
+
+invented-after-end  video 870 q15   pair 2-3  removed [1]  on the recording
+    truth correct detector fired [134, 136]  annotation no collision  negated question
+    The red object collides with the sphere
+
+missed-after-end    video 200 q14   pair 1-5  removed [0]  on the recording
+    truth wrong   detector fired never  annotation no collision  negated question
+    The cyan sphere collides with the blue sphere
+
+missed-after-end    video 290 q15   pair 2-4  removed [0]  on the recording
+    truth wrong   detector fired never  annotation no collision  negated question
+    The yellow metal object and the cube collide
+
+missed-after-end    video 490 q15   pair 2-4  removed [0]  on the recording
+    truth wrong   detector fired never  annotation no collision  negated question
+    The cube and the rubber object collide

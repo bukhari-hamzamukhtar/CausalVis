@@ -227,6 +227,7 @@ def score(split, rules=("trace", "butfor", "yes"), limit=None):
     model = load_spatial(os.path.join(ROOT, "v6_voxel.pt"), yaw_known=False)
     torch.set_num_threads(1)
     res = {r: [0, 0, 0, 0] for r in rules}          # options ok, options, questions ok, questions
+    detail = []                                     # per option, so the rules can be paired
     for vid, item in qs.items():
         g = cache.get(vid, {})
         ev = g.get("events", [])
@@ -241,15 +242,23 @@ def score(split, rules=("trace", "butfor", "yes"), limit=None):
             for c in q["choices"]:
                 a = sc.locate(ev[k]) if sc and k < len(ev) else None
                 k += 1
+                row = {"video": vid, "answer": c["answer"]}
                 for r in rules:
                     pred = decide(r, sc, a, b) if (sc or r == "yes") else False
                     good = ("correct" if pred else "wrong") == c["answer"]
+                    row[r] = bool(good)
                     res[r][0] += good; res[r][1] += 1; okq[r] &= good
+                detail.append(row)
             for r in rules:
                 res[r][2] += okq[r]; res[r][3] += 1
     for r, (a, b, c, d) in res.items():
         print("%-7s per option %.1f%% (%d/%d)   per question %.1f%% (%d/%d)" % (r, 100.0 * a / b, a, b, 100.0 * c / d, c, d))
     json.dump(res, open(os.path.join(HERE, "humans_score_%s.json" % split), "w"), indent=1)
+    json.dump(detail, open(os.path.join(HERE, "humans_detail_%s.json" % split), "w"))
+    b = sum(1 for d in detail if d.get("butfor") and not d.get("trace"))
+    c = sum(1 for d in detail if d.get("trace") and not d.get("butfor"))
+    z = (b - c) / (b + c) ** 0.5 if b + c else 0.0
+    print("paired but-for vs chain rule: %d vs %d discordant, McNemar z = %.2f" % (b, c, z))
 
 
 if __name__ == "__main__":

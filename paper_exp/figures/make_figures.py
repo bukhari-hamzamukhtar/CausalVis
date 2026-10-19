@@ -36,9 +36,9 @@ OUTPNG = os.path.join(OUT, "png")
 BLUE, GREEN, ORANGE, PURPLE, GREY, SKY, VERM = "#0072B2", "#009E73", "#E69F00", "#CC79A7", "#7F7F7F", "#56B4E9", "#D55E00"
 LIGHTGREEN, LIGHTGREY, MIDGREY = "#7FCBB6", "#D9D9D9", "#BFBFBF"
 TXT, TXT2 = "#222222", "#555555"
-SIM = {"learned": (BLUE, "o", "learned (ours)"), "laws": (GREEN, "s", "textbook laws"),
+SIM = {"learned": (BLUE, "o", "learned (ours)"), "laws": (GREEN, "s", "rigid-body"),
        "strfric": (ORANGE, "^", "straight + friction"), "straight": (PURPLE, "D", "straight lines"),
-       "nosim": (GREY, "x", "no physics")}
+       "nosim": (GREY, "x", "no simulation")}
 
 matplotlib.rcParams.update({
     "font.family": "sans-serif", "font.sans-serif": ["Arial", "DejaVu Sans"],
@@ -187,7 +187,7 @@ def fig2():
              ("Question", "template parser,\nthen the intervention\n(remove the cube)"),
              ("Reach test", "objects follow the\nvideo until the change\ncan reach them"),
              ("Hand-off", "3 frames before a\nlost contact, state from\nthe last 3 frames"),
-             ("Simulator (any)", "learned world model,\ntextbook laws or\nstraight lines"),
+             ("Simulator (any)", "learned world model,\nrigid-body laws or\nstraight lines"),
              ("Events and answer", "distance rule OR path\nchange, then frame,\npair, recorded or\nsimulated")]
     for i, (title, body) in enumerate(boxes):
         x = x0 + i * (bw + gap)
@@ -305,7 +305,7 @@ def fig3():
         axa.errorbar([x], [y], yerr=[[y - lo], [hi - y]], fmt=mk, ms=5, color=col, ecolor=col,
                      elinewidth=0.75, capsize=2, capthick=0.75, zorder=5)
     axa.set_ylim(88.8, 92.0); axa.set_yticks([89, 90, 91, 92])
-    axa.annotate("textbook laws", (0.0502, 91.4), (0.0545, 91.55), fontsize=7, va="center")
+    axa.annotate("rigid-body", (0.0502, 91.4), (0.0545, 91.55), fontsize=7, va="center")
     axa.annotate("learned (ours)", (0.0629, 90.4), (0.0672, 90.75), fontsize=7, fontweight="bold", va="center")
     axa.annotate("straight + friction", (0.0945, 90.2), (0.0945, 90.95), fontsize=7, va="center", ha="center")
     axa.annotate("straight lines", (0.1125, 89.7), (0.1125, 89.22), fontsize=7, va="center", ha="center")
@@ -319,14 +319,15 @@ def fig3():
         axb.errorbar([x], [y], yerr=[[y - lo], [hi - y]], fmt=mk, ms=5, color=col, ecolor=col,
                      elinewidth=0.75, capsize=2, capthick=0.75, zorder=5)
     axb.set_ylim(86.5, 93.0); axb.set_yticks([87, 89, 91, 93])
-    axb.annotate("textbook laws", (0.0502, 88.1), (0.0545, 87.75), fontsize=7, va="center")
+    axb.annotate("rigid-body", (0.0502, 88.1), (0.0545, 87.75), fontsize=7, va="center")
     axb.annotate("learned (ours)", (0.0629, 90.5), (0.0665, 90.95), fontsize=7, fontweight="bold", va="center")
     axb.annotate("straight + friction", (0.0945, 90.9), (0.0905, 92.15), fontsize=7, va="center", ha="center")
     axb.annotate("straight lines", (0.1125, 91.4), (0.1150, 92.6), fontsize=7, va="center", ha="right")
-    axb.text(0.1165, 86.7, "better physics, lower score", fontsize=7, color=TXT2, ha="right", va="bottom")
+    axb.text(0.1165, 86.7, "order reverses; it reverses back under\nthe calibrated detector (Supp. D)",
+             fontsize=6.5, color=TXT2, ha="right", va="bottom", linespacing=1.25)
     for ax in (axa, axb):
         ax.set_xlabel("Rollout error at 40 frames on VAL-A (lower is better)", fontsize=7.5, labelpad=3)
-    panel_label(fig, 0.012, 2.26 / H, "(a)")
+    panel_label(fig, 0.012, 0.985, "(a)")
     panel_label(fig, (0.52 + axw + 0.62) / W, 0.985, "(b)")
     save(fig, "fig3_audit")
 
@@ -339,16 +340,16 @@ def fig4():
     tidy(ax, grid=None)
     ax.spines["left"].set_visible(False)
     r = {x["change"]: x for x in rows("fig3_effects.csv")}
-    groups = [("Swap the simulator", [("textbook laws", "laws"), ("straight + friction", "strfric"),
-                                      ("straight lines", "straight"), ("no physics", "nosim")]),
+    groups = [("Swap the simulator", [("rigid-body", "laws"), ("straight + friction", "strfric"),
+                                      ("straight lines", "straight"), ("no simulation", "nosim")]),
               ("Remove one part", [("no extension past the video end", "l"), ("12-frame hand-off (instead of 3)", "l"),
                                    ("no voxel contact impulse", "l"), ("distance rule only", "l"),
                                    ("no entry correction", "l"), ("no learned friction", "l"),
                                    ("no learned pair energy", "l")]),
               ("Retrain (new seed)", [("seed 1", "seed"), ("seed 2", "seed"), ("seed 3", "seed"),
                                       ("seed 4", "seed"), ("seed 5", "seed"), ("seed 6", "seed")])]
-    key = {"textbook laws": "textbook laws", "straight + friction": "straight lines + friction",
-           "straight lines": "straight lines", "no physics": "no physics",
+    key = {"rigid-body": "textbook laws", "straight + friction": "straight lines + friction",
+           "straight lines": "straight lines", "no simulation": "no physics",
            "no extension past the video end": "no extension past the video end",
            "12-frame hand-off (instead of 3)": "12-frame hand-off", "no voxel contact impulse": "no voxel contact impulse",
            "distance rule only": "distance rule only", "no entry correction": "no entry correction",
@@ -513,6 +514,9 @@ def fig6():
     b.bar(xs + 0.17, butfor, width=0.34, color=BLUE, lw=0, label="ours: remove the cause, then check")
     for x, v in list(zip(xs - 0.17, chain)) + list(zip(xs + 0.17, butfor)):
         b.text(x, v + 0.8, "%.1f" % v, fontsize=6.5, ha="center", va="bottom")
+    # the human-judgments pair is 54 against 39 discordant options, McNemar z = 1.56
+    b.plot([0.83, 1.17], [70.5, 70.5], color=TXT2, lw=0.6)
+    b.text(1.0, 71.3, "n.s.", fontsize=6, color=TXT2, ha="center", va="bottom")
     b.plot([0.60, 1.40], [84.5, 84.5], color="black", lw=0.75, ls=(0, (4, 2)))
     b.text(1.46, 84.5, "humans 84.5", fontsize=6, va="center", ha="left")
     b.plot([0.60, 1.40], [54.0, 54.0], color=GREY, lw=0.75, ls=(0, (1, 2)))
@@ -537,9 +541,9 @@ def figS1():
     fig = plt.figure(figsize=(W, H))
     ax = fig.add_axes([0.52 / W, 0.55 / H, 2.6 / W, 1.35 / H])
     r = rows("fig4_subsets.csv")
-    order = ["no physics", "straight lines", "straight + friction", "learned (CausalVis)", "textbook laws"]
+    order = ["no physics", "straight lines", "straight + friction", "learned (CausalVis)", "textbook laws"]  # CSV keys, unchanged
     cols = [GREY, PURPLE, ORANGE, BLUE, GREEN]
-    labs = ["no physics", "straight lines", "straight + friction", "learned (ours)", "textbook laws"]
+    labs = ["no simulation", "straight lines", "straight + friction", "learned (ours)", "rigid-body"]
     subs = ["E", "M", "H"]
     xs = np.arange(3)
     for i, (sysname, col, lab) in enumerate(zip(order, cols, labs)):
@@ -596,7 +600,7 @@ def figS2():
     b.set_ylabel("Options correct on VAL-A (%)")
     tidy(b)
     b.legend(frameon=False, loc="lower right", handlelength=1.4, handletextpad=0.4, borderpad=0.2)
-    panel_label(fig, 0.012, 2.26 / H, "(a)")
+    panel_label(fig, 0.012, 0.985, "(a)")
     panel_label(fig, (0.62 + axw + 0.62) / W, 0.985, "(b)")
     save(fig, "figS2_handoff")
 
