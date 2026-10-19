@@ -6,8 +6,8 @@ answer carries the event that decided it: which two objects collide, at which fr
 that event was recorded in the video or simulated.
 
 Objects follow the recorded video until the change can reach them. At that moment they are handed
-to a simulator, which can be a small learned world model, textbook laws fitted on training videos,
-or straight-line motion. No part of the system is trained on questions or answers.
+to a simulator, which can be a small learned world model, an analytic rigid-body simulator fitted
+on training videos, or straight-line motion. No part of the system is trained on questions or answers.
 
 The paper, the figures and the per-option records of every experiment are in this repository.
 
@@ -18,22 +18,32 @@ separate validation split and each test run was made once. Intervals resample vi
 
 | simulator inside the engine | options correct | questions correct |
 |---|---|---|
-| textbook laws fitted on training videos | 91.4 [90.8, 92.1] | 75.0 [73.2, 76.8] |
+| analytic rigid-body simulator, fitted on training videos | 91.4 [90.8, 92.1] | 75.0 [73.2, 76.8] |
 | learned world model (43,460 parameters) | 90.4 [89.7, 91.1] | 72.3 [70.5, 74.2] |
 | straight lines with friction | 90.2 | 71.9 |
 | straight lines | 89.7 | 70.2 |
 | no physics (delete the object, keep the recording) | 81.4 | 50.1 |
 
-Across 13 simulators a 2.2x spread in physics error moves the score by 2.2 points, and on
-predictive questions the ranking reverses. Of the correct answers whose deciding event can be
-checked against CLEVRER's annotation, 98.2% rest on a real event. Full results, ablations and the
-other benchmarks (CLEVRER-Humans, ComPhy, CoPhy) are in `paper_exp/RESULTS.md`.
+Four simulators and nine further checkpoints of the learned model span a 2.2x range of rollout
+error, and across them the score moves by only 2.2 points. On predictive questions the ranking of
+the simulators depends on the event detector: it reverses under the detector chosen on validation
+and reverses back under a calibrated one.
+
+Because every answer reports the event that decided it, the evidence can be checked. Of 8,454
+correct answers, 4,973 (58.8%) have a deciding event that CLEVRER's annotation can check, and 98.2%
+of those agree with it. About half of those checks confirm that a collision did not happen, which
+is easy in a sparse scene. Counted on positive events only, the detector reaches 93.1% precision at
+98.5% recall. Another 40.5% of correct answers are decided in the simulated part of the world,
+where the dataset has no ground truth.
+
+Full results, ablations and the other benchmarks (CLEVRER-Humans, ComPhy, CoPhy) are in
+`paper_exp/RESULTS.md`.
 
 ## Hardware
 
 Everything, including training, ran on one laptop CPU (Intel i5-8350U, 4 cores, 7.9 GB RAM).
 No GPU is needed. Training the world model took 8.1 hours; answering one question takes
-2.2 seconds with the learned model and 1.4 with the textbook laws.
+2.2 seconds with the learned model and 1.4 with the analytic simulator.
 
 ## Setup
 
@@ -60,7 +70,7 @@ Python 3.10 or newer, PyTorch (CPU build), NumPy, Pillow.
 | `WORKING_LOG.md` | the working log: every experiment, including the ones that failed |
 
 Model checkpoints sit in the repository root. `v6_voxel.pt` is the one used in the paper.
-`v8/laws.json` holds the fitted textbook laws, `camera_fit.json` the camera recovered from object
+`v8/laws.json` holds the six fitted constants of the analytic simulator, `camera_fit.json` the camera recovered from object
 silhouettes, and `split3d_yaw.json` the fixed train, validation and test split of the videos.
 
 ## Data (not included, download separately)
