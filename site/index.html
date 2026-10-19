@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CausalVis</title>
+<meta name="description" content="An instrument for auditing counterfactual video evaluation. Swapping simulators across a 2.2x range of rollout error moves CLEVRER's counterfactual score by 2.2 points.">
+<meta property="og:title" content="CausalVis: Does the Benchmark Measure the Physics?">
+<meta property="og:description" content="An auditable counterfactual engine, used to measure how much of CLEVRER's score the physics actually earns.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='11' cy='17' r='6' fill='%232f6f4e'/><circle cx='23' cy='12' r='4' fill='%23c2410c'/></svg>">
+<style>
+  :root{
+    --bg:#fbfbf9; --panel:#ffffff; --ink:#15171a; --muted:#5b6168; --faint:#8b9199;
+    --line:#e4e4df; --accent:#2f6f4e; --accent-soft:#eef4f0; --warm:#b45309;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#111315; --panel:#191c1f; --ink:#e9eaec; --muted:#a3a9b0; --faint:#767c84;
+      --line:#2a2e33; --accent:#6fbf92; --accent-soft:#18241d; --warm:#e0a158;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#111315; --panel:#191c1f; --ink:#e9eaec; --muted:#a3a9b0; --faint:#767c84;
+    --line:#2a2e33; --accent:#6fbf92; --accent-soft:#18241d; --warm:#e0a158;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-feature-settings:"kern" 1;
+  }
+  .wrap{max-width:820px; margin:0 auto; padding:0 16px}
+  a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent}
+  a:hover{border-bottom-color:currentColor}
+
+  header{padding:64px 0 40px; border-bottom:1px solid var(--line)}
+  .eyebrow{font:600 12px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin:0 0 18px}
+  h1{font-size:clamp(28px,5vw,40px); line-height:1.18; letter-spacing:-.02em; margin:0 0 6px; font-weight:650}
+  h1 .sub{display:block; font-weight:450; color:var(--muted); font-size:clamp(17px,2.8vw,22px); margin-top:8px; letter-spacing:-.01em}
+  .byline{margin:22px 0 0; color:var(--muted); font-size:15px}
+  .byline strong{color:var(--ink); font-weight:600}
+
+  .links{display:flex; flex-wrap:wrap; gap:10px; margin:28px 0 0}
+  .btn{
+    display:inline-flex; align-items:center; gap:7px; padding:9px 15px; border-radius:8px;
+    border:1px solid var(--line); background:var(--panel); color:var(--ink);
+    font-size:14px; font-weight:550; border-bottom:1px solid var(--line);
+  }
+  .btn:hover{border-color:var(--accent); color:var(--accent)}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  .btn.primary:hover{opacity:.9; color:#fff}
+  .btn svg{width:15px; height:15px; flex:none}
+
+  section{padding:44px 0; border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  h2{font-size:13px; font-weight:650; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); margin:0 0 18px; font-family:var(--mono)}
+  h3{font-size:17px; font-weight:620; margin:30px 0 8px; letter-spacing:-.01em}
+  p{margin:0 0 16px; color:var(--muted)}
+  p.lead{color:var(--ink); font-size:17px}
+  strong{color:var(--ink); font-weight:600}
+
+  .finding{
+    background:var(--accent-soft); border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:8px; padding:18px 20px; margin:0 0 22px;
+  }
+  .finding p{margin:0; color:var(--ink)}
+  .finding .big{font-family:var(--mono); font-size:15px; font-weight:600; color:var(--accent)}
+
+  .tablewrap{overflow-x:auto; margin:0 0 10px; -webkit-overflow-scrolling:touch}
+  table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:440px}
+  th,td{text-align:right; padding:9px 10px; border-bottom:1px solid var(--line); white-space:nowrap}
+  th:first-child,td:first-child{text-align:left; white-space:normal}
+  thead th{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600; border-bottom:1px solid var(--line)}
+  tbody tr.best td{font-weight:600; color:var(--ink)}
+  tbody tr.rule-top td{border-top:1px solid var(--line)}
+  td.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
+  caption{caption-side:bottom; text-align:left; color:var(--faint); font-size:13px; padding-top:12px; line-height:1.55}
+
+  figure{margin:0 0 26px}
+  figure img{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:8px; background:#fff}
+  figcaption{color:var(--faint); font-size:13.5px; line-height:1.6; margin-top:10px}
+  figcaption b{color:var(--muted); font-weight:600}
+
+  ul{margin:0 0 16px; padding-left:20px; color:var(--muted)}
+  li{margin-bottom:7px}
+  li::marker{color:var(--faint)}
+
+  .note{font-size:14px; color:var(--faint); border-left:2px solid var(--line); padding-left:14px; margin:22px 0 0}
+  code{font-family:var(--mono); font-size:.9em; background:var(--accent-soft); padding:1px 5px; border-radius:4px; color:var(--ink)}
+
+  footer{padding:36px 0 64px; color:var(--faint); font-size:13.5px}
+  footer p{color:var(--faint); margin:0 0 8px}
+
+  @media (max-width:560px){
+    header{padding:44px 0 32px}
+    section{padding:34px 0}
+    .btn{flex:1 1 calc(50% - 5px); justify-content:center}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Counterfactual video reasoning &middot; benchmark audit</p>
+  <h1>Does the benchmark measure the physics?
+    <span class="sub">An instrument for auditing counterfactual video evaluation</span>
+  </h1>
+  <p class="byline">
+    <strong>Syed Hamza Mukhtar Bukhari</strong><br>
+    Faculty of Computer Science and Engineering,<br>
+    Ghulam Ishaq Khan Institute of Engineering Sciences and Technology
+  </p>
+  <div class="links">
+    <a class="btn primary" href="causalvis-paper.pdf">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1.5h5l3.5 3.5v9.5H4z"/><path d="M9 1.5V5h3.5"/></svg>
+      Full paper (PDF)
+    </a>
+    <a class="btn" href="causalvis-workshop.pdf">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 3h12v10H2z"/><path d="M2 6h12"/></svg>
+      Short version
+    </a>
+    <a class="btn" href="https://github.com/bukhari-hamzamukhtar/CausalVis">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      Code &amp; data
+    </a>
+  </div>
+</header>
+
+<section>
+  <h2>The question</h2>
+  <p class="lead">A world model is useful for physical AI only if it gets the physics right, so the benchmarks we use to verify one must reward physical accuracy. We built an instrument to test whether the most widely used counterfactual video benchmark does.</p>
+  <p>CausalVis answers CLEVRER's counterfactual questions by explicit intervention. It removes the object, keeps every other object on its recorded path until the change can reach it, hands the reached objects to a simulator, and returns the event that decided each answer. Every stage is held fixed except the simulator, which can be swapped. The engine is never trained on questions or answers.</p>
+  <p>This is not a system entered into a leaderboard. It is a measuring device, and an audit run with it on <strong>1,398 held-out videos</strong>.</p>
+</section>
+
+<section>
+  <h2>What we found</h2>
+
+  <div class="finding">
+    <p><span class="big">2.2&times; &rarr; 2.2 points.</span> Swapping the simulator across a 2.2&times; range of rollout error moves the counterfactual score by 2.2 points. Straight-line motion lands within 0.75 points of a learned world model.</p>
+  </div>
+
+  <p>Two choices containing no physics matter more than the choice of simulator: how long the world runs past the last recorded frame is worth <strong>4.6 points</strong>, and when objects are handed to the simulator is worth <strong>1.2 points</strong>.</p>
+
+  <h3>Two explanations we can rule out</h3>
+  <ul>
+    <li><strong>Not a lenient detector.</strong> A generous contact rule absorbing trajectory error would mean a stricter rule separates the simulators further. It does the opposite: median spread is 2.18 points under the calibrated rule and <strong>1.50 under a strict one</strong>, because every simulator then loses the same real contacts.</li>
+    <li><strong>Not sensing either.</strong> On 52.2% of options neither asked object is ever simulated, so a perfect detector there is exactly CLEVRER's own annotation. Substituting it buys <strong>1.4 points</strong> &mdash; about what the entire accuracy sweep buys.</li>
+  </ul>
+
+  <p>Physics as a whole is not optional: removing simulation entirely costs <strong>9.0 points</strong>. The claim is narrower, and we think more useful &mdash; <em>above a low bar, accuracy buys almost nothing on this metric</em>.</p>
+</section>
+
+<section>
+  <h2>Results</h2>
+  <div class="tablewrap">
+  <table>
+    <caption>Counterfactual accuracy on 1,398 held-out videos (9,350 options, 2,619 questions), against rollout error measured separately on validation videos. Sorted by rollout error.</caption>
+    <thead>
+      <tr><th>Simulator</th><th>Rollout err @40</th><th>Options</th><th>Questions</th></tr>
+    </thead>
+    <tbody>
+      <tr class="best"><td>Analytic rigid-body, constants fitted on training videos</td><td class="num">0.050</td><td class="num">91.4%</td><td class="num">75.0%</td></tr>
+      <tr><td>Learned world model (43k parameters)</td><td class="num">0.063</td><td class="num">90.4%</td><td class="num">72.3%</td></tr>
+      <tr><td>Straight lines + friction</td><td class="num">0.095</td><td class="num">90.2%</td><td class="num">71.9%</td></tr>
+      <tr><td>Straight lines</td><td class="num">0.113</td><td class="num">89.7%</td><td class="num">70.2%</td></tr>
+      <tr class="rule-top"><td>No simulation at all</td><td class="num">&mdash;</td><td class="num">81.4%</td><td class="num">50.1%</td></tr>
+      <tr><td>A 7B vision-language model, 16 frames</td><td class="num">&mdash;</td><td class="num">54.4%</td><td class="num">2.9%</td></tr>
+      <tr><td>Answer &ldquo;no&rdquo; to every event</td><td class="num">&mdash;</td><td class="num">54.1%</td><td class="num">0.0%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">The gap between the best and worst real simulator is 1.7 points. The gap between having a simulator and not having one is 9.0. A general vision-language model given the frames lands at the level of answering &ldquo;no&rdquo; to everything.</p>
+</section>
+
+<section>
+  <h2>Figures</h2>
+
+  <figure>
+    <img src="figures/fig3_audit.png" alt="Two scatter plots of benchmark score against rollout error, showing a nearly flat relationship on counterfactual questions and a reversed one on predictive questions.">
+    <figcaption><b>Physics quality against benchmark score.</b> (a) On counterfactual questions a 2.2&times; spread in rollout error moves the score by 2.2 points, and most differences sit inside the 95% intervals. Hollow circles are nine further checkpoints of the learned model, so the thirteen points are not independent simulators. (b) On predictive questions the ordering reverses under one detector and reverses back under another, so the ranking tracks the detector rather than the physics.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="figures/fig4_changes.png" alt="Forest plot of the effect of each one-change ablation on the benchmark score, with 95% confidence intervals.">
+    <figcaption><b>Effect of each change on the full system.</b> Paired differences in options correct with 95% video-bootstrap intervals. The extension past the video end and the hand-off timing matter most; the learned parts matter little. Intervals on the one-change rows are computed within a single checkpoint, so effects below the 0.5-point seed spread need not survive a retrain.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="figures/fig5_evidence.png" alt="Breakdown of the evidence behind each answer, the offset between detected and annotated contacts, and event precision and recall across three datasets.">
+    <figcaption><b>The evidence behind each answer.</b> Of 8,454 correct answers, 58.8% have a deciding event checkable against CLEVRER's annotation, and 98.2% of those agree with it. About half the passing checks confirm a collision did <em>not</em> happen; counted on positive events only, the detector reaches 93.1% precision at 98.5% recall. The remaining 40.5% are decided in simulation, where no ground truth exists.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="figures/fig6_responsible.png" alt="Two panels comparing CLEVRER's chain rule against a but-for counterfactual test, against its own key and against human judgments.">
+    <figcaption><b>Two meanings of &ldquo;responsible&rdquo;.</b> When CLEVRER's key marks an object responsible for a collision, its own counterfactual answers say the pair still collides without that object in <b>35.3%</b> of matched cases (113 of 320). This comparison uses no model at all: it is between CLEVRER's two answer keys.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>What a benchmark should report</h2>
+  <p>Because the engine returns the event behind each answer, we can ask what the accuracy rests on. We propose that benchmarks intended to verify world models report two quantities alongside accuracy:</p>
+  <ul>
+    <li><strong>The share of decisions the simulator made</strong>, separating answers the recording already settles from answers the physics produced.</li>
+    <li><strong>The share of correct answers whose evidence is valid</strong>, checked against annotation where it exists, with positive and negative confirmations reported separately.</li>
+  </ul>
+  <p>Both are cheap once a system reports its deciding event, and together they distinguish a model that is right for the right reason from one inheriting its score from the evaluation protocol. The recipe needs no new annotation: make the simulator swappable, push a deliberately weak baseline through the same harness, and log which predicted event each decision rested on.</p>
+</section>
+
+<section>
+  <h2>Limitations</h2>
+  <p>The scenes are synthetic, planar, with three shapes and one object size, and no manipulator is involved; the instrument has not been tested on real video or contact-rich interaction. Perception reads a detector trained with the dataset's own labels. The simulators span a range of quality but are all rigid-body planar models, so we cannot say where saturation begins, only that it lies below the accuracy of straight-line motion. Seven checkpoints of one training recipe span 0.5 points on this benchmark, which is as large as several of the effects reported, and that spread is itself part of the finding.</p>
+</section>
+
+<section>
+  <h2>Reproducing it</h2>
+  <p>The repository carries the engine, the trained checkpoints, the splits, the recovered camera, every paper experiment, and one record per answered option of every test run.</p>
+  <ul>
+    <li>Settings were chosen on a separate validation split; each test run was made once.</li>
+    <li>The systems, settings and statistics were written down before the test runs (see the pre-registration in the repository).</li>
+    <li>All training and evaluation ran on a single laptop CPU, no GPU.</li>
+  </ul>
+  <p><a href="https://github.com/bukhari-hamzamukhtar/CausalVis">github.com/bukhari-hamzamukhtar/CausalVis</a></p>
+</section>
+
+<footer>
+  <p>Built and measured on one CPU. Code, checkpoints and per-answer records are public.</p>
+  <p>Contact via the repository.</p>
+</footer>
+
+</div>
+</body>
+</html>
